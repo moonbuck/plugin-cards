@@ -8,7 +8,7 @@
     "fields": [
         {
             "field": "params.card_data_json",
-            "label": "Card Data JSON",
+            "label": "Card Data (JSON)",
             "placeholder": "{ \"default\": \"url\", \"path\": \"url\" }"
           }
     ]
