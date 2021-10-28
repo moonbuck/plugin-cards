@@ -19,14 +19,17 @@
   {{ $page_path := (urls.Parse .Permalink).Path }}
   
   {{/* Check whether card data is available */}}
-  {{ with site.Params.card_data_file }}
-
-    {{/* Check whether the data has an entry for this page */}}
-    {{ with (index . $page_path) }}{{ $image = . }}{{ end }}
+  {{ with site.Params.card_data_json }}
+    {{ with transform.Unmarshal . }}
     
-    {{/* Otherwise check for a default image */}}
-    {{ if not $image }}
-      {{ with index . "default" }}{{ $image = . }}{{ end }}
+      {{/* Check whether the data has an entry for this page */}}
+      {{ with (index . $page_path) }}{{ $image = . }}{{ end }}
+      
+      {{/* Otherwise check for a default image */}}
+      {{ if not $image }}
+        {{ with index . "default" }}{{ $image = . }}{{ end }}
+      {{ end }}
+    
     {{ end }}
     
   {{ end }}
@@ -76,11 +79,7 @@
 <meta property="og:title" content="{{ $description }}" />
 {{ end }}
 <meta property="og:description" content="{{ $description }}" />
-{{ if $image }}
-<meta property="og:image" content="{{ $image }}" />
-{{ else }}
-<meta property="og:image" content="{{ $image_default }}" />
-{{ end }}
+{{ with $image }}<meta property="og:image" content="{{ . }}" />{{ end }}
 {{ with $published_time }}<meta property="article:published_time" content="{{ . }}" />{{ end }}
 {{ with $modified_time }}<meta property="article:modified_time" content="{{ . }}" />{{ end }}
 {{ with $section }}<meta property="article:section" content="{{ . }}" />{{ end }}
