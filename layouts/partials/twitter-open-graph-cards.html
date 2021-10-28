@@ -1,0 +1,108 @@
+{{/* Determine site name */}}
+{{ $site_name := site.Title }}
+
+{{/* Determine the title */}}
+{{ $title := .Title }}
+
+{{/* Determine description */}}
+{{ $description := .Summary | default (.Description | default .Site.Params.description )  }}
+
+{{/* Create a variable for the card image */}}
+{{ $image := false }}
+
+{{/* Check whether the page as an image */}}
+{{ with .Params.images }}{{ $image = (index . 0 | absURL) }}{{ end }}
+
+{{ if not $image }}
+
+  {{/* Capture the path for the page */}}
+  {{ $page_path := (urls.Parse .Permalink).Path }}
+  
+  {{/* Check whether card data is available */}}
+  {{ with site.Params.card_data_file }}
+
+    {{/* Check whether the data has an entry for this page */}}
+    {{ with (index . $page_path) }}{{ $image = . }}{{ end }}
+    
+    {{/* Otherwise check for a default image */}}
+    {{ if not $image }}
+      {{ with index . "default" }}{{ $image = . }}{{ end }}
+    {{ end }}
+    
+  {{ end }}
+  
+{{ end }}
+
+{{/* Grab section and categories */}}
+{{ $section := false }}
+{{ $categories := false }}
+{{ if .IsPage }}
+  {{ if ne (len .Section) 0 }}{{ $section = .Section }}{{ end }}
+  {{ if .Page.Params.categories }}{{ $categories = .Page.Params.categories }}{{ end }}
+{{ end }}
+
+{{/* Grab times */}}
+{{ $iso8601 := "2006-01-02T15:04:05-07:00" }}
+{{ $published_time := false }}
+{{ $modified_time := false }}
+{{ $updated_time := false }}
+{{ if .IsPage }}
+  {{ if not .PublishDate.IsZero }}
+    {{ $published_time = (.PublishDate.Format $iso8601 | safeHTML) }}
+  {{ else if not .Date.IsZero }}
+    {{ $published_time = (.Date.Format $iso8601 | safeHTML) }}
+  {{ end }}
+  {{ if not .Lastmod.IsZero }}{{ $modified_time = (.Lastmod.Format $iso8601 | safeHTML) }}{{ end }}
+{{ else if not .Date.IsZero }}
+  {{ $updated_time = (.Date.Format $iso8601 | safeHTML) }}
+{{ end }}
+
+{{/* Determine type */}}
+{{ $type := "website" }}
+{{ $audio := false }}
+{{ with .Params.audio }}
+{{ $audio = (index . 0 | absURL) }}
+{{ $type = "music.song" }}
+{{ else }}
+{{ if .Title }}{{ $type = "article" }}{{ end }}
+{{ end }}
+
+{{/* Create meta tags using the variable values. */}}
+<meta property="og:url" content="{{ .Permalink }}" />
+<meta property="og:site_name" content="{{ $site_name }}" />
+{{ if $title }}
+<meta property="og:title" content="{{ $title }}" />
+{{ else }}
+<meta property="og:title" content="{{ $description }}" />
+{{ end }}
+<meta property="og:description" content="{{ $description }}" />
+{{ if $image }}
+<meta property="og:image" content="{{ $image }}" />
+{{ else }}
+<meta property="og:image" content="{{ $image_default }}" />
+{{ end }}
+{{ with $published_time }}<meta property="article:published_time" content="{{ . }}" />{{ end }}
+{{ with $modified_time }}<meta property="article:modified_time" content="{{ . }}" />{{ end }}
+{{ with $section }}<meta property="article:section" content="{{ . }}" />{{ end }}
+{{ with $categories }}{{ range first 6 . }}<meta property="article:tag" content="{{ . }}" />{{ end }}{{ end }}
+{{ with $updated_time }}<meta property="og:updated_time" content="{{ . }}" />{{ end }}
+{{ with $audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
+<meta property="og:type" content="{{ $type }}" />
+{{ if $image }}
+<meta name="twitter:card" content="summary_large_image"/>
+{{ else }}
+<meta name="twitter:card" content="summary"/>
+{{ end }}
+{{ with site.Params.twitter_username }}
+<meta name="twitter:site" content="@{{ . }}" />
+<meta name="twitter:creator" content="@{{ . }}" />
+{{ end }}
+<meta property="twitter:domain" content="{{ (urls.Parse site.BaseURL).Host }}">
+<meta property="twitter:url" content="{{ .Permalink }}">
+{{ if $title }}
+<meta name="twitter:title" content="{{ $title }}" />
+{{ else }}
+<meta name="twitter:title" content="{{ $description }}" />
+{{ end }}
+<meta name="twitter:description" content="{{ $description }}" />
+{{ with $image }}<meta property="twitter:image" content="{{ . }}" />{{ end }}

@@ -1,0 +1,15 @@
+{
+    "version": "1.0.0",
+    "title": "Moondeer's Cards",
+    "description": "Injects Twitter/Open Graph card meta data.",
+    "includes": [
+        "twitter-open-graph-cards.html"
+    ],
+    "fields": [
+        {
+            "field": "params.card_data_file",
+            "label": "Data File",
+            "placeholder": "cards"
+          }
+    ]
+  }
