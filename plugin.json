@@ -7,9 +7,14 @@
     ],
     "fields": [
         {
-            "field": "params.card_data_json",
-            "label": "Card Data (JSON)",
-            "placeholder": ""
-          }
+          "field": "params.card_twitter_username",
+          "label": "Twitter Username",
+          "placeholder": ""
+        },
+        {
+          "field": "params.card_data_json",
+          "label": "Card Data (JSON)",
+          "placeholder": ""
+        }
     ]
   }
