@@ -19,19 +19,29 @@
   {{ $page_path := (urls.Parse .Permalink).Path }}
   
   {{/* Check whether card data is available */}}
-  {{ with site.Params.card_data_json }}
-    {{ with transform.Unmarshal . }}
+  {{ $card_data := false }}
+  {{ with site.Data.plugin_cards.card_data }}
+  {{ $card_data = . }}
+  {{ else }}
+  {{ with site.Params.card_data }}{{ $card_data = . }}{{ end }}
+  {{ end }}
+  
+  {{ if (and $card_data (not ($card_data | reflect.IsMap))) }}
+  {{ with transform.Unmarshal $card_data }}
+  {{ $card_data = . }}
+  {{ end }}
+  {{ end }}
+  
+  {{ with $card_data }}
+
+    {{/* Check whether the data has an entry for this page */}}
+    {{ with (index . $page_path) }}{{ $image = . }}{{ end }}
     
-      {{/* Check whether the data has an entry for this page */}}
-      {{ with (index . $page_path) }}{{ $image = . }}{{ end }}
-      
-      {{/* Otherwise check for a default image */}}
-      {{ if not $image }}
-        {{ with index . "default" }}{{ $image = . }}{{ end }}
-      {{ end }}
-    
+    {{/* Otherwise check for a default image */}}
+    {{ if not $image }}
+      {{ with index . "default" }}{{ $image = . }}{{ end }}
     {{ end }}
-    
+  
   {{ end }}
   
 {{ end }}
