@@ -173,6 +173,8 @@ The data consists of a JSON object stored as a `string` (which is what happens w
 
 All the values are image URLs. As for the keys, there are really only two things happening here. There is a `default` entry, which is used whenever nothing else could be retrieved. All the remaining keys are site paths. The bits that follow `[SCHEME://HOSTNAME]`. This is how your pages without images in the front matter get their image card.
 
+Starting with `version 2`, instead of pasting all that JSON into the parameter field, you can save it into a template file located at `data/plugin_cards/card_data.json`.
+
 Soooo … when I leave a link like this: `https://moondeer.blog/gallery/`
 
 I get a Twitter card like this:
