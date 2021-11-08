@@ -1,19 +1,19 @@
 # plugin-cards
 A [Micro.blog](https://micro.blog "Micro.blog") plugin for adding [Twitter](https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards "Twitter Cards") and [Open Graph](https://ogp.me "Open Graph Protocol") `<meta>` tags, which are used to generate link preview cards all over the g0dd@mn place.
 
-![Facebook](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/facebook.jpeg)
+![Facebook](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/facebook.jpeg)
 
-![Twitter](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/twitter.jpeg)
+![Twitter](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/twitter.jpeg)
 
-![Slack](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/slack.jpeg)
+![Slack](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/slack.jpeg)
 
-![LinkedIn](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/linkedin.jpeg)
+![LinkedIn](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/linkedin.jpeg)
 
-![Pinterest](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/pinterest.jpeg)
+![Pinterest](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/pinterest.jpeg)
 
-![Messages](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/messages.jpeg)
+![Messages](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/messages.jpeg)
 
-![Telegram](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/telegram.jpeg)
+![Telegram](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/telegram.jpeg)
 
 There is only one template involved. It lives at `/layouts/partials/twitter-open-graph-cards.html` and looks like this:
 
@@ -129,12 +129,12 @@ There is only one template involved. It lives at `/layouts/partials/twitter-open
 
 Open Graph audio meta tags are created when an audio file is detected. 
 
-![Audo Card](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/audio.jpeg)
+![Audo Card](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/audio.jpeg)
 
 
 ## Plugin Parameters
 
-![](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/plugin_parameters.jpeg)
+![](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/plugin_parameters.jpeg)
 
 The `Twitter Username` parameter establishes the content creator for Twitter cards. If you leave this empty, the plugin will fall back to `site.Params.twitter_username`, if that has been set. Without one of these two variables holding a value, Twitter cards will not be generated.
 
@@ -179,10 +179,10 @@ Soooo … when I leave a link like this: `https://moondeer.blog/gallery/`
 
 I get a Twitter card like this:
 
-![Gallery Card](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/gallery.jpeg)
+![Gallery Card](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/gallery.jpeg)
 
 Orrrr … say I leave a link like this: `https://moondeer.blog/categories/perspectives/`
 
 Then I get a Twitter card like this:
 
-![Perspectives Card](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/perspectives.jpeg)
+![Perspectives Card](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/perspectives.jpeg)
