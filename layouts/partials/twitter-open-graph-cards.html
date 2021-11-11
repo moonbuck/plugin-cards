@@ -20,7 +20,7 @@
   
   {{- /* Check whether card data is available */}}
   {{- $card_data := false }}
-  {{- with (site.Data.plugin_cards_data | default site.Data.plugin_cards.card_data) }}
+  {{- with ((site.Data.plugin_cards_data | default site.Data.plugin_cards.card_data) | default site.Data.plugin_cards.data) }}
   {{- $card_data = . }}
   {{- else }}
   {{- with site.Params.card_data }}{{ $card_data = . }}{{ end }}
