@@ -13,7 +13,7 @@
         },
         {
           "field": "params.card_data",
-          "label": "Card Data",
+          "label": "Card Data (JSON)",
           "placeholder": ""
         }
     ]
