@@ -115,3 +115,6 @@
 {{- end }}
 <meta name="twitter:description" content="{{ $description }}" />
 {{- with $image }}<meta property="twitter:image" content="{{ . }}" />{{ end }}
+
+{{- /* Add custom tags */ -}}
+<meta name="article:reading_time" content="{{ .ReadingTime }}" />
