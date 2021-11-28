@@ -4,12 +4,13 @@
 {{- $host_match_cards := $params.cards_host_match_cards | default $data.HostMatchCards -}}
 
 {{- if (or $query_match_cards $host_match_cards) -}}
-{{- $template := resources.Get "js/cardify.js" -}}
-{{- $script := $template | resources.ExecuteAsTemplate "cardify.js" . | resources.Fingerprint -}}
+{{- $script_template := resources.Get "js/cardify.js" -}}
+{{- $script := $script_template | resources.ExecuteAsTemplate "cardify.js" . | resources.Fingerprint -}}
 
 <script type="text/javascript" src="{{ $script.Permalink }}"></script>
 
-{{- $style := resources.Get "sass/cardify.scss" | toCSS | fingerprint -}}
+{{- $style_template := resources.Get "sass/cardify.scss" -}}
+{{- $style := $style_template | resources.ExecuteAsTemplate "cardify.scss" . | toCSS | fingerprint -}}
 
 <link rel="stylesheet" href="{{ $style.Permalink }}">
 

@@ -1,12 +1,23 @@
-$cardify-card-spacer-y:             1rem;
-$cardify-card-spacer-x:             1rem;
-$cardify-card-title-spacer-y:       1rem * 0.5;
-$cardify-card-bg:                   white;
-$cardify-card-border-width:         1px;
-$cardify-card-border-color:         rgba(black, .125);
-$cardify-card-border-radius:        0.25rem;
-$cardify-card-border-width:         1px;
-$cardify-card-inner-border-radius:  0.25rem;
+{{- $params := site.Params -}}
+{{- $data := site.Data.plugin_cards_data -}}
+{{- $CardifyCardSpacerY := $params.cards_cardify_card_spacer_y | default $data.CardifyCardSpacerY | default "1rem" -}}
+{{- $CardifyCardSpacerX := $params.cards_cardify_card_spacer_x | default $data.CardifyCardSpacerX | default "1rem" -}}
+{{- $CardifyCardTitleSpacerY := $params.cards_cardify_card_title_spacer_y | default $data.CardifyCardTitleSpacerY | default "1rem * 0.5" -}}
+{{- $CardifyCardBG := $params.cards_cardify_card_bg | default $data.CardifyCardBG | default "white" -}}
+{{- $CardifyCardBorderWidth := $params.cards_cardify_card_border_width | default $data.CardifyCardBorderWidth | default "1px" -}}
+{{- $CardifyCardBorderColor := $params.cards_cardify_card_border_color | default $data.CardifyCardBorderColor | default "rgba(black, .125)" -}}
+{{- $CardifyCardBorderRadius := $params.cards_cardify_card_border_radius | default $data.CardifyCardBorderRadius | default "0.25rem" -}}
+{{- $CardifyCardInnerBorderRadius := $params.cards_cardify_card_inner_border_radius | default $data.CardifyCardInnerBorderRadius | default "0.25rem" -}}
+
+
+$cardify-card-spacer-y:             {{ $CardifyCardSpacerY }};
+$cardify-card-spacer-x:             {{ $CardifyCardSpacerX }};
+$cardify-card-title-spacer-y:       {{ $CardifyCardTitleSpacerY }};
+$cardify-card-bg:                   {{ $CardifyCardBG }};
+$cardify-card-border-width:         {{ $CardifyCardBorderWidth }};
+$cardify-card-border-color:         {{ $CardifyCardBorderColor }};
+$cardify-card-border-radius:        {{ $CardifyCardBorderRadius }};
+$cardify-card-inner-border-radius:  {{ $CardifyCardInnerBorderRadius }};
 
 .cardify-card {
   position: relative;
