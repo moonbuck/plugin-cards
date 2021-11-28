@@ -1,0 +1,17 @@
+{{- $params := site.Params -}}
+{{- $data := site.Data.plugin_cards_data -}}
+{{- $query_match_cards := $params.cards_query_match_cards | default $data.QueryMatchCards | default true -}}
+{{- $host_match_cards := $params.cards_host_match_cards | default $data.HostMatchCards -}}
+
+{{- if (or $query_match_cards $host_match_cards) -}}
+{{- $template := resources.Get "js/cardify.js" -}}
+{{- $script := $template | resources.ExecuteAsTemplate "cardify.js" . | resources.Fingerprint -}}
+
+<script type="text/javascript" src="{{ $script.Permalink }}"></script>
+
+{{- $style := resources.Get "sass/cardify.scss" | toCSS | fingerprint -}}
+
+<link rel="stylesheet" href="{{ $style.Permalink }}">
+
+
+{{- end -}}

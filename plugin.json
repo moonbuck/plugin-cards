@@ -1,9 +1,10 @@
 {
-    "version": "2.0.0",
+    "version": "3.0.0",
     "title": "Moondeer's Cards",
     "description": "Injects Twitter/Open Graph card meta data.",
     "includes": [
-        "twitter-open-graph-cards.html"
+        "twitter-open-graph-cards.html",
+        "cardify-script-injection.html"
     ],
     "fields": [
         {
@@ -15,6 +16,16 @@
           "field": "params.card_data",
           "label": "Card Data (JSON)",
           "placeholder": ""
+        },
+        {
+          "field": "params.card_query_match_cards",
+          "label": "Query Match Cards",
+          "placeholder": "true"
+        },
+        {
+          "field": "params.card_host_match_cards",
+          "label": "Host Match Cards",
+          "placeholder": "false"
         }
     ]
   }
