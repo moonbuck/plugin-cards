@@ -12,27 +12,48 @@ publish-date?    article:publish_date
 
 {{- $params := site.Params -}}
 {{- $data := site.Data.plugin_cards_data -}}
-{{- $query_match_cards := $params.cards_query_match_cards | default $data.QueryMatchCards | default true -}}
-{{- $host_match_cards := $params.cards_host_match_cards | default $data.HostMatchCards | default false -}}
+
+{{- $QueryMatchCards := $params.cards_query_match_cards -}}
+{{- $QueryMatchCards =  $QueryMatchCards | default $data.QueryMatchCards -}}
+{{- $QueryMatchCards =  $QueryMatchCards | default true -}}
+
+{{- $HostMatchCards := $params.cards_host_match_cards -}}
+{{- $HostMatchCards  = $HostMatchCards | default $data.HostMatchCards -}}
+{{- $HostMatchCards  = $HostMatchCards | default false -}}
+
+{{- $ReadMoreLinkSelector := $params.cards_read_more_link_selector -}}
+{{- $ReadMoreLinkSelector  = $ReadMoreLinkSelector | default $data.ReadMoreLinkSelector -}}
+{{- $ReadMoreLinkSelector  = $ReadMoreLinkSelector | default ".read-more" -}}
+
+{{- $ListSandboxSelector := $params.cards_host_match_list_sandbox_selector -}}
+{{- $ListSandboxSelector  = $ListSandboxSelector | default $data.HostMatchListSandboxSelector -}}
+{{- $ListSandboxSelector  = $ListSandboxSelector | default ".post-body" -}}
+
+{{- $PageSandboxSelector := $params.cards_host_match_page_sandbox_selector -}}
+{{- $PageSandboxSelector  = $PageSandboxSelector -}}
+{{- $PageSandboxSelector  = $PageSandboxSelector | default "#post-body" -}}
+
+{{- $CustomHostMatchSelector := $params.cards_custom_host_match_selector -}}
+{{- $CustomHostMatchSelector  = $CustomHostMatchSelector | default $data.CustomHostMatchSelector -}}
 
 // Whether to cardify links with the custom query string set
-const queryMatchCards = {{ $query_match_cards }}
+const queryMatchCards = {{ $QueryMatchCards }}
 
 // Select links inside a list of posts
-const listAnchor = 'main .post-body a'
+const listAnchor = '{{ $ListSandboxSelector }} a'
 
 // Select links inside a post page
-const pageAnchor = 'main #post-body a'
+const pageAnchor = '{{ $PageSandboxSelector }} a'
 
 // Match the custom query string
 const matchQuery = `href$="cardify"`
 
 // The full selector for query string candidates
-const querySel   = `${listAnchor}[${matchQuery}],
+const queryMatchSel   = `${listAnchor}[${matchQuery}],
                     ${pageAnchor}[${matchQuery}]`
 
 // Whether to cardify links that match the site hostname                    
-const hostMatchCards = {{ $host_match_cards }}
+const hostMatchCards = {{ $HostMatchCards }}
 
 // The site hostname
 const hostname = "{{ (urls.Parse site.BaseURL).Host }}"
@@ -47,13 +68,21 @@ const matchLowerHost = `href*="${hostname.toLowerCase()}"`
 const notCard        = ':not(.cardify-card-link)'
 
 // Match links that do not include the read-more class
-const notSummary     = ':not(.read-more)'
+const notSummary     = ':not({{ $ReadMoreLinkSelector }})'
+
+{{- with $CustomHostMatchSelector -}}
+
+const hostMatchSel = '{{ . }}'
+
+{{- else -}}
 
 // The full selector for host match candidates
 const hostMatchSel = `${pageAnchor}[${matchHost}]${notCard}, 
                       ${pageAnchor}[${matchLowerHost}]${notCard},
                       ${listAnchor}[${matchHost}]${notSummary}${notCard}, 
                       ${listAnchor}[${matchLowerHost}]${notSummary}${notCard}`
+                      
+{{- end -}}                      
 
 // Add the event listener for a loaded DOM
 document.addEventListener('DOMContentLoaded',() => {
@@ -66,7 +95,7 @@ document.addEventListener('DOMContentLoaded',() => {
   // Check whether we're only processing query tagged links
   if (queryMatchCards && !hostMatchCards) {
 
-    document.querySelectorAll(querySel)
+    document.querySelectorAll(queryMatchSel)
             .forEach(link => processLink(link))
           
   }
@@ -81,7 +110,7 @@ document.addEventListener('DOMContentLoaded',() => {
   // Fetch query tagged and host matched links
   else {
 
-    document.querySelectorAll(`${querySel}, ${hostMatchSel}`)
+    document.querySelectorAll(`${queryMatchSel}, ${hostMatchSel}`)
             .forEach(link => processLink(link))
 
   }

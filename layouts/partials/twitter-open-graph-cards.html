@@ -1,3 +1,9 @@
+{{- $params := site.Params -}}
+{{- $data := site.Data.plugin_cards_data -}}
+{{- $enable_twitter_og_cards := $params.cards_enable_twitter_og_cards | default $data.EnableTwitterOGCards | default true -}}
+
+{{- if $enable_twitter_og_cards -}}
+
 {{- /* Determine site name */}}
 {{- $site_name := site.Title }}
 
@@ -118,3 +124,5 @@
 
 {{- /* Add custom tags */ -}}
 <meta name="article:reading_time" content="{{ .ReadingTime }}" />
+
+{{- end -}}

@@ -1,31 +1,72 @@
 {
-    "version": "3.0.0",
+    "version": "4.0.0",
     "title": "Moondeer's Cards",
-    "description": "Injects Twitter/Open Graph card meta data.",
+    "description": "Injects Twitter/Open Graph card meta data, structured data for search engines, and contains Javascript for generating preview cards for links inside list and post pages.",
     "includes": [
         "twitter-open-graph-cards.html",
+        "structured-data-injection.html",
         "cardify-script-injection.html"
     ],
     "fields": [
         {
-          "field": "params.card_twitter_username",
+          "field": "params.cards_enable_twitter_og_cards",
+          "label": "Enable Twitter / Open Graph Cards",
+          "placeholder": "true"
+        },
+        {
+          "field": "params.cards_twitter_username",
           "label": "Twitter Username",
           "placeholder": ""
         },
         {
-          "field": "params.card_data",
+          "field": "params.cards_data",
           "label": "Card Data (JSON)",
           "placeholder": ""
         },
         {
-          "field": "params.card_query_match_cards",
+          "field": "params.cards_query_match_cards",
           "label": "Query Match Cards",
           "placeholder": "true"
         },
         {
-          "field": "params.card_host_match_cards",
+          "field": "params.cards_host_match_cards",
           "label": "Host Match Cards",
           "placeholder": "false"
-        }
+        },
+        {
+          "field": "params.cards_read_more_link_selector",
+          "label": "CSS Selector for 'Read more' links",
+          "placeholder": ".read-more"
+        },
+        {
+          "field": "params.cards_host_match_list_sandbox_selector",
+          "label": "CSS Selector for Location of Host Match Cardification in List Pages",
+          "placeholder": ".post-body"
+        },
+        {
+          "field": "params.cards_host_match_page_sandbox_selector",
+          "label": "CSS Selector for Location of Host Match Cardification in Post Pages",
+          "placeholder": "#post-body"
+        },
+        {          
+          "field": "params.cards_custom_host_match_selector",
+          "label": "Custom CSS Selector for Host Match Cardification",
+          "placeholder": ""
+        },
+        {
+          "field": "params.cards_enable_structured_data",
+          "label": "Enable Structured Data",
+          "placeholder": "true"
+        },
+        {
+          "field": "params.cards_structured_data_author_name",
+          "label": "Author Name",
+          "placeholder": "[FULLNAME]"
+        },
+        {
+          "field": "params.cards_structured_data_author_profile_url",
+          "label": "Author Profile URL",
+          "placeholder": "[SCHEME]://[HOSTNAME]/about/"
+        }        
     ]
   }
