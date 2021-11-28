@@ -118,11 +118,10 @@ document.addEventListener('DOMContentLoaded',() => {
 }) // document.addEventListener
 
 // Fetches page text and feeds it to scrapePage(html, link)
-function processLink(link) {  
+function processLink(link) { 
   fetch(link)
     .then(response => response.text())
     .then(html => scrapePage(html, link))
-    .catch(err => printToConsole(err, 'error'))
 }
 
 // Selectors used to match meta tags
