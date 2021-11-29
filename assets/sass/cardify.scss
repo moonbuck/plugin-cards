@@ -31,14 +31,40 @@
 {{- $BorderRadius  = $BorderRadius | default $config.Card.Style.BorderRadius -}}
 {{- $BorderRadius  = $BorderRadius | default "0.25rem" -}}
 
-{{- $InnerBorderRadius := index $params "cards.card.style.innerborderradius" -}}
-{{- $InnerBorderRadius  = $InnerBorderRadius | default $config.Card.Style.InnerBorderRadius -}}
-{{- $InnerBorderRadius  = $InnerBorderRadius | default "0.25rem" -}}
-
 {{- $TimeDateColor := index $params "cards.card.style.timedatecolor" -}}
 {{- $TimeDateColor  = $TimeDateColor | default $config.Card.Style.TimeDateColor -}}
 {{- $TimeDateColor  = $TimeDateColor | default "#666666" -}}
 
+@function subtract($value1, $value2, $return-calc: true) {
+  
+  @if $value1 == null and $value2 == null {
+    @return null;
+  }
+
+  @if $value1 == null {
+    @return -$value2;
+  }
+
+  @if $value2 == null {
+    @return $value1;
+  }
+
+  @if type-of($value1) == number 
+  and type-of($value2) == number 
+  and comparable($value1, $value2) 
+  {
+    @return $value1 - $value2;
+  }
+
+  @if type-of($value2) != number 
+  {
+    $value2: unquote("(") + $value2 + unquote(")");
+  }
+
+  @return if($return-calc == true, 
+             calc(#{$value1} - #{$value2}),
+                  $value1 + unquote(" - ") + $value2);
+}
 
 $spacer-y:             {{ $SpacerY }};
 $spacer-x:             {{ $SpacerX }};
@@ -47,7 +73,7 @@ $bg:                   {{ $BG }};
 $border-width:         {{ $BorderWidth }};
 $border-color:         {{ $BorderColor }};
 $border-radius:        {{ $BorderRadius }};
-$inner-border-radius:  {{ $InnerBorderRadius }};
+$inner-border-radius:  subtract($border-radius, $border-width);
 $time-date-color:      {{ $TimeDateColor }};
 
 .cardify-card {

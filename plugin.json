@@ -109,11 +109,6 @@
           "placeholder": "0.25rem"
         },
         {
-          "field": "params.Cards.Card.Style.InnerBorderRadius",
-          "label": "Card Inner Border Radius",
-          "placeholder": "0.25rem"
-        },
-        {
           "field": "params.Cards.Card.Style.TimeDateColor",
           "label": "Card Publish Date and Reading Time Color",
           "placeholder": "#666666"
