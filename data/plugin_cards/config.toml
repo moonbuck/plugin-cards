@@ -1,0 +1,24 @@
+EnableTwitterOGCards = true
+# TwitterUsername = ''
+
+EnableStructuredData = true
+# StructuredDataAuthorName = '[FULLNAME]'
+# StructuredDataAuthorProfileURL = '[SCHEME]://[HOSTNAME]/about/'
+
+QueryMatchCards = true
+HostMatchCards = false
+ReadMoreLinkSelector = '.read-more'
+HostMatchListSandboxSelector = '.post-body'
+HostMatchPageSandboxSelector = '#post-body'
+# HostMatchURLFilter = '.*.html'
+# CustomHostMatchSelector = 'my-selector-to-use-instead'
+
+[CardifyCard]
+SpacerY = '1rem'
+SpacerX = '1rem'
+TitleSpacerY = '1rem * 0.5'
+BG = 'white'
+BorderWidth = '1px'
+BorderColor = 'rgba(black, .125)'
+BorderRadius = '0.25rem'
+InnerBorderRadius = '0.25rem'

@@ -1,9 +1,9 @@
 {{- $params := site.Params -}}
-{{- $data := site.Data.plugin_cards_data -}}
-{{- $query_match_cards := $params.cards_query_match_cards | default $data.QueryMatchCards | default true -}}
-{{- $host_match_cards := $params.cards_host_match_cards | default $data.HostMatchCards -}}
+{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
+{{- $QueryMatchCards := $params.cards_QueryMatchCards | default $config.QueryMatchCards | default true -}}
+{{- $HostMatchCards := $params.cards_HostMatchCards | default $config.HostMatchCards | default false -}}
 
-{{- if (or $query_match_cards $host_match_cards) -}}
+{{- if (or $QueryMatchCards $HostMatchCards) -}}
 {{- $script_template := resources.Get "js/cardify.js" -}}
 {{- $script := $script_template | resources.ExecuteAsTemplate "cardify.js" . | resources.Fingerprint -}}
 

@@ -1,9 +1,13 @@
 {{- $params := site.Params -}}
-{{- $data := site.Data.plugin_cards_data -}}
+{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
 
-{{- $enable_structured_data := $params.cards_enable_structured_data | default $data.EnableStructuredData | default true -}}
+{{- $EnableStructuredData := $params.cards_EnableStructuredData | default $config.EnableStructuredData | default true -}}
+{{- $AuthorName := $params.cards_StructuredDataAuthorName | default $config.StructuredDataAuthorName -}}
+{{- $AuthorName = $AuthorName | default site.Author.name | default $params.Author.name -}}
+{{- $AuthorProfileURL := $params.cards_StructuredDataAuthorProfileURL | default $config.StructuredDataAuthorProfileURL -}}
+{{- $AuthorProfileURL = $AuthorProfileURL | default site.Author.profileurl -}}
 
-{{- if (and $enable_structured_data (eq .Type "post")) -}}
+{{- if (and $EnableStructuredData (eq .Type "post")) -}}
 
 {{- /* Create a Scratch instance to gather data */ -}}
 {{- $data := newScratch -}}
@@ -13,11 +17,10 @@
 {{- $data.SetInMap "data" "@type" "BlogPosting" -}}
 
 {{- /* Add the author */ -}}
-{{- $author_name := (site.Author.name | default site.Params.Author.name) | default site.Params.cards_structured_data_author_name -}}
-{{- with $author_name -}}
+{{- with $AuthorName -}}
 {{- $data.SetInMap "author" "@type" "Person" -}}
 {{- $data.SetInMap "author" "name" . -}}
-{{- with site.Author.profileurl | default site.Params.cards_structured_data_author_profile_url -}}
+{{- with $AuthorProfileURL -}}
 {{- $data.SetInMap "author" "url" . -}}
 {{- end -}}
 {{- end -}}
@@ -26,7 +29,7 @@
 {{- end -}}
 
 {{- /* Add the published and modified times */ -}}
-{{- $iso8601 := site.Params.Theme.Date.ISO8601 -}}
+{{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
 {{- $date_published := cond .PublishDate.IsZero .Date .PublishDate -}}
 {{- if not $date_published.IsZero -}}
 {{- $date_published = $date_published.Format $iso8601 -}}

@@ -1,0 +1,5 @@
+# Default image when the page has no image and there is not another match
+#default = 'path-to-my-default-image'
+
+# Path entries for non-post pages
+# '/category/my-category/' = 'path-to-my-image'

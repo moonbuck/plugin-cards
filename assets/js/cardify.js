@@ -11,68 +11,71 @@ publish-date?    article:publish_date
 */
 
 {{- $params := site.Params -}}
-{{- $data := site.Data.plugin_cards_data -}}
+{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
 
-{{- $QueryMatchCards := $params.cards_query_match_cards -}}
-{{- $QueryMatchCards =  $QueryMatchCards | default $data.QueryMatchCards -}}
+{{- $QueryMatchCards := $params.cards_QueryMatchCards -}}
+{{- $QueryMatchCards =  $QueryMatchCards | default $config.QueryMatchCards -}}
 {{- $QueryMatchCards =  $QueryMatchCards | default true -}}
 
-{{- $HostMatchCards := $params.cards_host_match_cards -}}
-{{- $HostMatchCards  = $HostMatchCards | default $data.HostMatchCards -}}
+{{- $HostMatchCards := $params.cards_HostMatchCards -}}
+{{- $HostMatchCards  = $HostMatchCards | default $config.HostMatchCards -}}
 {{- $HostMatchCards  = $HostMatchCards | default false -}}
 
-{{- $ReadMoreLinkSelector := $params.cards_read_more_link_selector -}}
-{{- $ReadMoreLinkSelector  = $ReadMoreLinkSelector | default $data.ReadMoreLinkSelector -}}
+{{- $HostMatchURLFilter := $params.cards_HostMatchURLFilter -}}
+{{- $HostMatchURLFilter  = $HostMatchURLFilter | default $config.HostMatchURLFilter -}}
+
+{{- $ReadMoreLinkSelector := $params.cards_ReadMoreLinkSelector -}}
+{{- $ReadMoreLinkSelector  = $ReadMoreLinkSelector | default $config.ReadMoreLinkSelector -}}
 {{- $ReadMoreLinkSelector  = $ReadMoreLinkSelector | default ".read-more" -}}
 
-{{- $ListSandboxSelector := $params.cards_host_match_list_sandbox_selector -}}
-{{- $ListSandboxSelector  = $ListSandboxSelector | default $data.HostMatchListSandboxSelector -}}
-{{- $ListSandboxSelector  = $ListSandboxSelector | default ".post-body" -}}
+{{- $HostMatchListSandboxSelector := $params.cards_HostMatchListSandboxSelector -}}
+{{- $HostMatchListSandboxSelector  = $HostMatchListSandboxSelector | default $config.HostMatchListSandboxSelector -}}
+{{- $HostMatchListSandboxSelector  = $HostMatchListSandboxSelector | default ".post-body" -}}
 
-{{- $PageSandboxSelector := $params.cards_host_match_page_sandbox_selector -}}
-{{- $PageSandboxSelector  = $PageSandboxSelector -}}
-{{- $PageSandboxSelector  = $PageSandboxSelector | default "#post-body" -}}
+{{- $HostMatchPageSandboxSelector := $params.cards_HostMatchPageSandboxSelector -}}
+{{- $HostMatchPageSandboxSelector  = $HostMatchPageSandboxSelector | default $config.HostMatchPageSandboxSelector -}}
+{{- $HostMatchPageSandboxSelector  = $HostMatchPageSandboxSelector | default "#post-body" -}}
 
-{{- $CustomHostMatchSelector := $params.cards_custom_host_match_selector -}}
-{{- $CustomHostMatchSelector  = $CustomHostMatchSelector | default $data.CustomHostMatchSelector -}}
+{{- $CustomHostMatchSelector := $params.cards_CustomHostMatchSelector -}}
+{{- $CustomHostMatchSelector  = $CustomHostMatchSelector | default $config.CustomHostMatchSelector -}}
 
 // Whether to cardify links with the custom query string set
-const queryMatchCards = {{ $QueryMatchCards }}
+const queryMatchCards = {{ $QueryMatchCards }};
 
 // Select links inside a list of posts
-const listAnchor = '{{ $ListSandboxSelector }} a'
+const listAnchor = '{{ $HostMatchListSandboxSelector }} a';
 
 // Select links inside a post page
-const pageAnchor = '{{ $PageSandboxSelector }} a'
+const pageAnchor = '{{ $HostMatchPageSandboxSelector }} a';
 
 // Match the custom query string
-const matchQuery = `href$="cardify"`
+const matchQuery = `href$="cardify"`;
 
 // The full selector for query string candidates
 const queryMatchSel   = `${listAnchor}[${matchQuery}],
-                    ${pageAnchor}[${matchQuery}]`
+                         ${pageAnchor}[${matchQuery}]`;
 
 // Whether to cardify links that match the site hostname                    
-const hostMatchCards = {{ $HostMatchCards }}
+const hostMatchCards = {{ $HostMatchCards }};
 
 // The site hostname
-const hostname = "{{ (urls.Parse site.BaseURL).Host }}"
+const hostname = "{{ (urls.Parse site.BaseURL).Host }}";
 
 // Match the hostname as it is configured in Hugo
-const matchHost      = `href*="${hostname}"`
+const matchHost      = `href*="${hostname}"`;
 
 // Match the hostname converted to all lowercase
-const matchLowerHost = `href*="${hostname.toLowerCase()}"`
+const matchLowerHost = `href*="${hostname.toLowerCase()}"`;
 
 // Match links that do not include the cardify-link class
-const notCard        = ':not(.cardify-card-link)'
+const notCard        = ':not(.cardify-card-link)';
 
 // Match links that do not include the read-more class
-const notSummary     = ':not({{ $ReadMoreLinkSelector }})'
+const notSummary     = ':not({{ $ReadMoreLinkSelector }})';
 
 {{- with $CustomHostMatchSelector -}}
 
-const hostMatchSel = '{{ . }}'
+const hostMatchSel = '{{ . }}';
 
 {{- else -}}
 
@@ -80,7 +83,7 @@ const hostMatchSel = '{{ . }}'
 const hostMatchSel = `${pageAnchor}[${matchHost}]${notCard}, 
                       ${pageAnchor}[${matchLowerHost}]${notCard},
                       ${listAnchor}[${matchHost}]${notSummary}${notCard}, 
-                      ${listAnchor}[${matchLowerHost}]${notSummary}${notCard}`
+                      ${listAnchor}[${matchLowerHost}]${notSummary}${notCard}`;
                       
 {{- end -}}                      
 
@@ -88,9 +91,7 @@ const hostMatchSel = `${pageAnchor}[${matchHost}]${notCard},
 document.addEventListener('DOMContentLoaded',() => {
   
  // Return if we aren't meant to be generating cards
-  if (!(queryMatchCards || hostMatchCards)) { 
-    return
-  }
+ if (!(queryMatchCards || hostMatchCards)) {  return }
   
   // Check whether we're only processing query tagged links
   if (queryMatchCards && !hostMatchCards) {
@@ -118,10 +119,21 @@ document.addEventListener('DOMContentLoaded',() => {
 }) // document.addEventListener
 
 // Fetches page text and feeds it to scrapePage(html, link)
-function processLink(link) { 
+function processLink(link) {
+  
+{{- with $HostMatchURLFilter }}
+
+  if ((new URL(link)).pathname.match(/{{ . }}/)) {
+  
+{{- end }}
+  
   fetch(link)
     .then(response => response.text())
     .then(html => scrapePage(html, link))
+    
+{{- if $HostMatchURLFilter -}}
+  }
+{{- end -}}
 }
 
 // Selectors used to match meta tags

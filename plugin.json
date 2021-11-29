@@ -9,14 +9,29 @@
     ],
     "fields": [
         {
-          "field": "params.cards_enable_twitter_og_cards",
+          "field": "params.cards_EnableTwitterOGCards",
           "label": "Enable Twitter / Open Graph Cards",
           "placeholder": "true"
         },
         {
-          "field": "params.cards_twitter_username",
+          "field": "params.cards_TwitterUsername",
           "label": "Twitter Username",
           "placeholder": ""
+        },
+        {
+          "field": "params.cards_EnableStructuredData",
+          "label": "Enable Structured Data",
+          "placeholder": "true"
+        },
+        {
+          "field": "params.cards_StructuredDataAuthorName",
+          "label": "Author Name",
+          "placeholder": "[FULLNAME]"
+        },
+        {
+          "field": "params.cards_StructuredDataAuthorProfileURL",
+          "label": "Author Profile URL",
+          "placeholder": "[SCHEME]://[HOSTNAME]/about/"
         },
         {
           "field": "params.cards_data",
@@ -24,87 +39,77 @@
           "placeholder": ""
         },
         {
-          "field": "params.cards_query_match_cards",
+          "field": "params.cards_QueryMatchCards",
           "label": "Query Match Cards",
           "placeholder": "true"
         },
         {
-          "field": "params.cards_host_match_cards",
+          "field": "params.cards_HostMatchCards",
           "label": "Host Match Cards",
           "placeholder": "false"
         },
         {
-          "field": "params.cards_read_more_link_selector",
+          "field": "params.cards_ReadMoreLinkSelector",
           "label": "CSS Selector for 'Read more' links",
           "placeholder": ".read-more"
         },
         {
-          "field": "params.cards_host_match_list_sandbox_selector",
+          "field": "params.cards_HostMatchListSandboxSelector",
           "label": "CSS Selector for Location of Host Match Cardification in List Pages",
           "placeholder": ".post-body"
         },
         {
-          "field": "params.cards_host_match_page_sandbox_selector",
+          "field": "params.cards_HostMatchPageSandboxSelector",
           "label": "CSS Selector for Location of Host Match Cardification in Post Pages",
           "placeholder": "#post-body"
         },
+        {
+          "field": "params.cards_HostMatchURLFilter",
+          "label": "Host Match URL Filter",
+          "placeholder": ".*.html"
+        },
         {          
-          "field": "params.cards_custom_host_match_selector",
+          "field": "params.cards_CustomHostMatchSelector",
           "label": "Custom CSS Selector for Host Match Cardification",
           "placeholder": ""
         },
         {
-          "field": "params.cards_enable_structured_data",
-          "label": "Enable Structured Data",
-          "placeholder": "true"
-        },
-        {
-          "field": "params.cards_structured_data_author_name",
-          "label": "Author Name",
-          "placeholder": "[FULLNAME]"
-        },
-        {
-          "field": "params.cards_structured_data_author_profile_url",
-          "label": "Author Profile URL",
-          "placeholder": "[SCHEME]://[HOSTNAME]/about/"
-        },
-        {
-          "field": "params.cards_cardify_card_spacer_y",
+          "field": "params.cards_CardifyCard.SpacerY",
           "label": "Card Spacer (Vertical)",
           "placeholder": "1rem"
         },
         {
-          "field": "params.cards_cardify_card_spacer_x",
+          "field": "params.cards_CardifyCard.SpacerX",
           "label": "Card Spacer (Horizontal)",
           "placeholder": "1rem"
         },
         {
-          "field": "params.cards_cardify_card_title_spacer_y",
+          "field": "params.cards_CardifyCard.TitleSpacerY",
           "label": "Card Title Spacer (Vertical)",
           "placeholder": "1rem * 0.5"
         },
         {
-          "field": "params.cards_cardify_card_bg",
+          "field": "params.cards_CardifyCard.BG",
           "label": "Card Background Color",
           "placeholder": "white"
         },
         {
-          "field": "params.cards_cardify_card_border_width",
+          "field": "params.cards_CardifyCard.BorderWidth",
           "label": "Card Border Width",
           "placeholder": "1px"
         },
         {
-          "field": "params.cards_cardify_card_border_color",
+          "field": "params.cards_CardifyCard.BorderColor",
           "label": "Card Border Color",
           "placeholder": "rgba(black, .125)"
         },
         {
-          "field": "params.cards_cardify_card_border_radius",
+          "field": "params.cards_CardifyCard.BorderRadius",
           "label": "Card Border Radius",
           "placeholder": "0.25rem"
         },
         {
-          "field": "params.cards_cardify_card_inner_border_radius",
+          "field": "params.cards_CardifyCard.InnerBorderRadius",
           "label": "Card Inner Border Radius",
           "placeholder": "0.25rem"
         }       

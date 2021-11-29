@@ -1,13 +1,13 @@
 {{- $params := site.Params -}}
-{{- $data := site.Data.plugin_cards_data -}}
-{{- $CardifyCardSpacerY := $params.cards_cardify_card_spacer_y | default $data.CardifyCardSpacerY | default "1rem" -}}
-{{- $CardifyCardSpacerX := $params.cards_cardify_card_spacer_x | default $data.CardifyCardSpacerX | default "1rem" -}}
-{{- $CardifyCardTitleSpacerY := $params.cards_cardify_card_title_spacer_y | default $data.CardifyCardTitleSpacerY | default "1rem * 0.5" -}}
-{{- $CardifyCardBG := $params.cards_cardify_card_bg | default $data.CardifyCardBG | default "white" -}}
-{{- $CardifyCardBorderWidth := $params.cards_cardify_card_border_width | default $data.CardifyCardBorderWidth | default "1px" -}}
-{{- $CardifyCardBorderColor := $params.cards_cardify_card_border_color | default $data.CardifyCardBorderColor | default "rgba(black, .125)" -}}
-{{- $CardifyCardBorderRadius := $params.cards_cardify_card_border_radius | default $data.CardifyCardBorderRadius | default "0.25rem" -}}
-{{- $CardifyCardInnerBorderRadius := $params.cards_cardify_card_inner_border_radius | default $data.CardifyCardInnerBorderRadius | default "0.25rem" -}}
+{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
+{{- $CardifyCardSpacerY := $params.cards_CardifyCard.SpacerY | default $config.CardifyCard.SpacerY | default "1rem" -}}
+{{- $CardifyCardSpacerX := $params.cards_CardifyCard.SpacerX | default $config.CardifyCard.SpacerX | default "1rem" -}}
+{{- $CardifyCardTitleSpacerY := $params.cards_CardifyCard.TitleSpacerY | default $config.CardifyCard.TitleSpacerY | default "1rem * 0.5" -}}
+{{- $CardifyCardBG := $params.cards_CardifyCard.BG | default $config.CardifyCard.BG | default "white" -}}
+{{- $CardifyCardBorderWidth := $params.cards_CardifyCard.BorderWidth | default $config.CardifyCard.BorderWidth | default "1px" -}}
+{{- $CardifyCardBorderColor := $params.cards_CardifyCard.BorderColor | default $config.CardifyCard.BorderColor | default "rgba(black, .125)" -}}
+{{- $CardifyCardBorderRadius := $params.cards_CardifyCard.BorderRadius | default $config.CardifyCard.BorderRadius | default "0.25rem" -}}
+{{- $CardifyCardInnerBorderRadius := $params.cards_CardifyCard.InnerBorderRadius | default $config.CardifyCard.InnerBorderRadius | default "0.25rem" -}}
 
 
 $cardify-card-spacer-y:             {{ $CardifyCardSpacerY }};

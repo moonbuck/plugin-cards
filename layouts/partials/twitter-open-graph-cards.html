@@ -1,8 +1,11 @@
 {{- $params := site.Params -}}
-{{- $data := site.Data.plugin_cards_data -}}
-{{- $enable_twitter_og_cards := $params.cards_enable_twitter_og_cards | default $data.EnableTwitterOGCards | default true -}}
+{{- $data := site.Data.plugin_cards_data | default site.Data.plugin_cards.data | default $params.cards_data -}}
+{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
 
-{{- if $enable_twitter_og_cards -}}
+{{- $EnableTwitterOGCards := $params.cards_EnableTwitterOGCards | default $config.EnableTwitterOGCards | default true -}}
+{{- $TwitterUsername := $params.card_TwitterUsername | default $config.TwitterUsername | default $params.twitter_username -}}
+
+{{- if $EnableTwitterOGCards -}}
 
 {{- /* Determine site name */}}
 {{- $site_name := site.Title }}
@@ -26,17 +29,15 @@
   
   {{- /* Check whether card data is available */}}
   {{- $card_data := false }}
-  {{- with ((site.Data.plugin_cards_data | default site.Data.plugin_cards.card_data) | default site.Data.plugin_cards.data) }}
+  {{- with $data }}
   {{- $card_data = . }}
-  {{- else }}
-  {{- with site.Params.card_data }}{{ $card_data = . }}{{ end }}
-  {{- end }}
   
   {{- if (and $card_data (not ($card_data | reflect.IsMap))) }}
   {{- with transform.Unmarshal $card_data }}
   {{- $card_data = . }}
   {{- end }}
   {{- end }}
+  {{- end -}}
   
   {{- with $card_data }}
 
@@ -108,7 +109,7 @@
 {{- else }}
 <meta name="twitter:card" content="summary"/>
 {{- end }}
-{{- with (site.Params.card_twitter_username | default site.Params.twitter_username) }}
+{{- with $TwitterUsername }}
 <meta name="twitter:site" content="@{{ . }}" />
 <meta name="twitter:creator" content="@{{ . }}" />
 {{- end }}
