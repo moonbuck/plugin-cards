@@ -11,42 +11,44 @@ publish-date?    article:publish_date
 */
 
 {{- $params := site.Params -}}
-{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
 
-{{- $QueryMatchCards := $params.cards_QueryMatchCards -}}
-{{- $QueryMatchCards =  $QueryMatchCards | default $config.QueryMatchCards -}}
-{{- $QueryMatchCards =  $QueryMatchCards | default true -}}
+{{- $config := site.Data.plugin_cards_config -}}
+{{- $config  = $config | default site.Data.plugin_cards.config -}}
 
-{{- $HostMatchCards := $params.cards_HostMatchCards -}}
-{{- $HostMatchCards  = $HostMatchCards | default $config.HostMatchCards -}}
-{{- $HostMatchCards  = $HostMatchCards | default false -}}
+{{- $QueryMatch := index $params "cards.card.creation.querymatch" -}}
+{{- $QueryMatch =  $QueryMatch | default $config.Card.Creation.QueryMatch -}}
+{{- $QueryMatch =  $QueryMatch | default true -}}
 
-{{- $HostMatchURLFilter := $params.cards_HostMatchURLFilter -}}
-{{- $HostMatchURLFilter  = $HostMatchURLFilter | default $config.HostMatchURLFilter -}}
+{{- $HostMatch := index $params "cards.card.creation.hostmatch" -}}
+{{- $HostMatch  = $HostMatch | default $config.Card.Creation.HostMatch -}}
+{{- $HostMatch  = $HostMatch | default false -}}
 
-{{- $ReadMoreLinkSelector := $params.cards_ReadMoreLinkSelector -}}
-{{- $ReadMoreLinkSelector  = $ReadMoreLinkSelector | default $config.ReadMoreLinkSelector -}}
-{{- $ReadMoreLinkSelector  = $ReadMoreLinkSelector | default ".read-more" -}}
+{{- $URLFilter := index $params "cards.card.hostmatch.urlfilter" -}}
+{{- $URLFilter  = $URLFilter | default $config.Card.HostMatch.URLFilter -}}
 
-{{- $HostMatchListSandboxSelector := $params.cards_HostMatchListSandboxSelector -}}
-{{- $HostMatchListSandboxSelector  = $HostMatchListSandboxSelector | default $config.HostMatchListSandboxSelector -}}
-{{- $HostMatchListSandboxSelector  = $HostMatchListSandboxSelector | default ".post-body" -}}
+{{- $ReadMoreLink := index $params "cards.card.hostmatch.readmorelink" -}}
+{{- $ReadMoreLink  = $ReadMoreLink | default $config.Card.HostMatch.ReadMoreLink -}}
+{{- $ReadMoreLink  = $ReadMoreLink | default ".read-more" -}}
 
-{{- $HostMatchPageSandboxSelector := $params.cards_HostMatchPageSandboxSelector -}}
-{{- $HostMatchPageSandboxSelector  = $HostMatchPageSandboxSelector | default $config.HostMatchPageSandboxSelector -}}
-{{- $HostMatchPageSandboxSelector  = $HostMatchPageSandboxSelector | default "#post-body" -}}
+{{- $ListSandbox := index $params "cards.card.hostmatch.listsandbox" -}}
+{{- $ListSandbox  = $ListSandbox | default $config.Card.HostMatch.ListSandbox -}}
+{{- $ListSandbox  = $ListSandbox | default ".post-body" -}}
 
-{{- $CustomHostMatchSelector := $params.cards_CustomHostMatchSelector -}}
-{{- $CustomHostMatchSelector  = $CustomHostMatchSelector | default $config.CustomHostMatchSelector -}}
+{{- $PageSandbox := index $params "cards.card.hostmatch.pagesandbox" -}}
+{{- $PageSandbox  = $PageSandbox | default $config.Card.HostMatch.PageSandbox -}}
+{{- $PageSandbox  = $PageSandbox | default "#post-body" -}}
+
+{{- $CustomSelector := index $params "cards.card.hostmatch.customselector" -}}
+{{- $CustomSelector  = $CustomSelector | default $config.Card.HostMatch.CustomSelector -}}
 
 // Whether to cardify links with the custom query string set
-const queryMatchCards = {{ $QueryMatchCards }};
+const queryMatchCards = {{ $QueryMatch }};
 
 // Select links inside a list of posts
-const listAnchor = '{{ $HostMatchListSandboxSelector }} a';
+const listAnchor = '{{ $ListSandbox }} a';
 
 // Select links inside a post page
-const pageAnchor = '{{ $HostMatchPageSandboxSelector }} a';
+const pageAnchor = '{{ $PageSandbox }} a';
 
 // Match the custom query string
 const matchQuery = `href$="cardify"`;
@@ -56,41 +58,44 @@ const queryMatchSel   = `${listAnchor}[${matchQuery}],
                          ${pageAnchor}[${matchQuery}]`;
 
 // Whether to cardify links that match the site hostname                    
-const hostMatchCards = {{ $HostMatchCards }};
+const hostMatchCards = {{ $HostMatch }};
 
 // The site hostname
 const hostname = "{{ (urls.Parse site.BaseURL).Host }}";
 
 // Match the hostname as it is configured in Hugo
-const matchHost      = `href*="${hostname}"`;
+const matchHost = `href*="${hostname}"`;
 
 // Match the hostname converted to all lowercase
 const matchLowerHost = `href*="${hostname.toLowerCase()}"`;
 
 // Match links that do not include the cardify-link class
-const notCard        = ':not(.cardify-card-link)';
+const notCard = ':not(.cardify-card-link)';
 
 // Match links that do not include the read-more class
-const notSummary     = ':not({{ $ReadMoreLinkSelector }})';
+const notSummary = ':not({{ $ReadMoreLink }})';
 
-{{- with $CustomHostMatchSelector -}}
+// Match links that do not match the query string
+const notQuery = `:not([${matchQuery}])`;
+
+{{- with $CustomSelector -}}
 
 const hostMatchSel = '{{ . }}';
 
 {{- else -}}
 
 // The full selector for host match candidates
-const hostMatchSel = `${pageAnchor}[${matchHost}]${notCard}, 
-                      ${pageAnchor}[${matchLowerHost}]${notCard},
-                      ${listAnchor}[${matchHost}]${notSummary}${notCard}, 
-                      ${listAnchor}[${matchLowerHost}]${notSummary}${notCard}`;
+const hostMatchSel = `${pageAnchor}[${matchHost}]${notCard}${notQuery}, 
+                      ${pageAnchor}[${matchLowerHost}]${notCard}${notQuery},
+                      ${listAnchor}[${matchHost}]${notSummary}${notCard}${notQuery}, 
+                      ${listAnchor}[${matchLowerHost}]${notSummary}${notCard}${notQuery}`;
                       
 {{- end -}}                      
 
 // Add the event listener for a loaded DOM
 document.addEventListener('DOMContentLoaded',() => {
   
- // Return if we aren't meant to be generating cards
+  // Return if we aren't meant to be generating cards
  if (!(queryMatchCards || hostMatchCards)) {  return }
   
   // Check whether we're only processing query tagged links
@@ -121,7 +126,7 @@ document.addEventListener('DOMContentLoaded',() => {
 // Fetches page text and feeds it to scrapePage(html, link)
 function processLink(link) {
   
-{{- with $HostMatchURLFilter }}
+{{- with $URLFilter }}
 
   if ((new URL(link)).pathname.match(/{{ . }}/)) {
   
@@ -131,7 +136,7 @@ function processLink(link) {
     .then(response => response.text())
     .then(html => scrapePage(html, link))
     
-{{- if $HostMatchURLFilter -}}
+{{- if $URLFilter -}}
   }
 {{- end -}}
 }
@@ -171,7 +176,7 @@ function scrapePage(html, link) {
   var url = null, img = null, title = null, desc = null
   var readingTime = null, publishDate = null
   
-  if (publishDateTag) { publishDate = publishDateTag.content }
+  if (publishDateTag) { publishDate = new Date(publishDateTag.content) }
   if (readingTimeTag) { readingTime = readingTimeTag.content }
   if (descTag) { desc = descTag.content.trim() }
   if (titleTag) { title = titleTag.content.trim() }
@@ -211,26 +216,37 @@ function scrapePage(html, link) {
     
     if (readingTime || publishDate) {
       
-      let cardMutedText = document.createElement("P")
-      cardMutedText.className = "cardify-card-text"
-      cardBody.appendChild(cardMutedText)
+      let timeDateReadingTime = document.createElement("P")
+      timeDateReadingTime.className = "cardify-card-text"
+      cardBody.appendChild(timeDateReadingTime)
       
+      if (publishDate) {
+        let timeFormatter = new Intl.DateTimeFormat('en-US', { 
+          hour: 'numeric', 
+          minute: '2-digit'
+        })
+        let time = timeFormatter.format(publishDate)
+        let dateFormatter = new Intl.DateTimeFormat('en-US', {
+          month: 'short', 
+          day: 'numeric', 
+          year: 'numeric' 
+        })
+        let date = dateFormatter.format(publishDate)
+        let publishDateElement = document.createElement("SMALL")
+        publishDateElement.className = "publish-date"
+        publishDateElement.innerText = `${time} • ${date}`
+        timeDateReadingTime.appendChild(publishDateElement)
+      }
+  
       if (readingTime) {
         let readingTimeElement = document.createElement("SMALL")
         readingTimeElement.className = "reading-time text-muted"
         let value = parseInt(readingTime)
         let units = `minute${value > 1 ? 's' : ''}`
         readingTimeElement.innerText = `${value} ${units}`
-        cardMutedText.appendChild(readingTimeElement)      
+        timeDateReadingTime.appendChild(readingTimeElement)      
       }
       
-      if (publishDate) {
-        let publishDateElement = document.createElement("SMALL")
-        publishDateElement.className = "publish-date"
-        publishDateElement.innerText = publishDate
-        cardMutedText.appendChild(publishDateElement)
-      }
-  
     }
   
     let parentNode = link.parentNode

@@ -1,23 +1,54 @@
 {{- $params := site.Params -}}
-{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
-{{- $CardifyCardSpacerY := $params.cards_CardifyCard.SpacerY | default $config.CardifyCard.SpacerY | default "1rem" -}}
-{{- $CardifyCardSpacerX := $params.cards_CardifyCard.SpacerX | default $config.CardifyCard.SpacerX | default "1rem" -}}
-{{- $CardifyCardTitleSpacerY := $params.cards_CardifyCard.TitleSpacerY | default $config.CardifyCard.TitleSpacerY | default "1rem * 0.5" -}}
-{{- $CardifyCardBG := $params.cards_CardifyCard.BG | default $config.CardifyCard.BG | default "white" -}}
-{{- $CardifyCardBorderWidth := $params.cards_CardifyCard.BorderWidth | default $config.CardifyCard.BorderWidth | default "1px" -}}
-{{- $CardifyCardBorderColor := $params.cards_CardifyCard.BorderColor | default $config.CardifyCard.BorderColor | default "rgba(black, .125)" -}}
-{{- $CardifyCardBorderRadius := $params.cards_CardifyCard.BorderRadius | default $config.CardifyCard.BorderRadius | default "0.25rem" -}}
-{{- $CardifyCardInnerBorderRadius := $params.cards_CardifyCard.InnerBorderRadius | default $config.CardifyCard.InnerBorderRadius | default "0.25rem" -}}
+
+{{- $config := site.Data.plugin_cards_config -}}
+{{- $config  = $config | default site.Data.plugin_cards.config -}}
+
+{{- $SpacerY := index $params "cards.card.style.spacery" -}}
+{{- $SpacerY  = $SpacerY | default $config.Card.Style.SpacerY -}}
+{{- $SpacerY  = $SpacerY | default "1rem" -}}
+
+{{- $SpacerX := index $params "cards.card.style.spacerx" -}}
+{{- $SpacerX  = $SpacerX | default $config.Card.Style.SpacerX -}}
+{{- $SpacerX  = $SpacerX | default "1rem" -}}
+
+{{- $TitleSpacerY := index $params "cards.card.style.titlespacery" -}}
+{{- $TitleSpacerY  = $TitleSpacerY | default $config.Card.Style.TitleSpacerY -}}
+{{- $TitleSpacerY  = $TitleSpacerY | default "1rem * 0.5" -}}
+
+{{- $BG := index $params "cards.card.style.bg" -}}
+{{- $BG  = $BG | default $config.Card.Style.BG -}}
+{{- $BG  = $BG | default "white" -}}
+
+{{- $BorderWidth := index $params "cards.card.style.borderwidth" -}}
+{{- $BorderWidth  = $BorderWidth | default $config.Card.Style.BorderWidth -}}
+{{- $BorderWidth  = $BorderWidth | default "1px" -}}
+
+{{- $BorderColor := index $params "cards.card.style.bordercolor" -}}
+{{- $BorderColor  = $BorderColor | default $config.Card.Style.BorderColor -}}
+{{- $BorderColor  = $BorderColor | default "rgba(black, .125)" -}}
+
+{{- $BorderRadius := index $params "cards.card.style.borderradius" -}}
+{{- $BorderRadius  = $BorderRadius | default $config.Card.Style.BorderRadius -}}
+{{- $BorderRadius  = $BorderRadius | default "0.25rem" -}}
+
+{{- $InnerBorderRadius := index $params "cards.card.style.innerborderradius" -}}
+{{- $InnerBorderRadius  = $InnerBorderRadius | default $config.Card.Style.InnerBorderRadius -}}
+{{- $InnerBorderRadius  = $InnerBorderRadius | default "0.25rem" -}}
+
+{{- $TimeDateColor := index $params "cards.card.style.timedatecolor" -}}
+{{- $TimeDateColor  = $TimeDateColor | default $config.Card.Style.TimeDateColor -}}
+{{- $TimeDateColor  = $TimeDateColor | default "#666666" -}}
 
 
-$cardify-card-spacer-y:             {{ $CardifyCardSpacerY }};
-$cardify-card-spacer-x:             {{ $CardifyCardSpacerX }};
-$cardify-card-title-spacer-y:       {{ $CardifyCardTitleSpacerY }};
-$cardify-card-bg:                   {{ $CardifyCardBG }};
-$cardify-card-border-width:         {{ $CardifyCardBorderWidth }};
-$cardify-card-border-color:         {{ $CardifyCardBorderColor }};
-$cardify-card-border-radius:        {{ $CardifyCardBorderRadius }};
-$cardify-card-inner-border-radius:  {{ $CardifyCardInnerBorderRadius }};
+$spacer-y:             {{ $SpacerY }};
+$spacer-x:             {{ $SpacerX }};
+$title-spacer-y:       {{ $TitleSpacerY }};
+$bg:                   {{ $BG }};
+$border-width:         {{ $BorderWidth }};
+$border-color:         {{ $BorderColor }};
+$border-radius:        {{ $BorderRadius }};
+$inner-border-radius:  {{ $InnerBorderRadius }};
+$time-date-color:      {{ $TimeDateColor }};
 
 .cardify-card {
   position: relative;
@@ -25,21 +56,21 @@ $cardify-card-inner-border-radius:  {{ $CardifyCardInnerBorderRadius }};
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: $cardify-card-bg;
+  background-color: $bg;
   background-clip: border-box;
-  border: $cardify-card-border-width solid $cardify-card-border-color;
-  border-radius: $cardify-card-border-radius;
+  border: $border-width solid $border-color;
+  border-radius: $border-radius;
   
   
 }
 
 .cardify-card-body {
   flex: 1 1 auto;
-  padding: $cardify-card-spacer-y $cardify-card-spacer-x;
+  padding: $spacer-y $spacer-x;
 }
 
 .cardify-card-title {
-  margin-bottom: $cardify-card-title-spacer-y;
+  margin-bottom: $title-spacer-y;
 }
 
 .cardify-card-text {
@@ -49,19 +80,15 @@ $cardify-card-inner-border-radius:  {{ $CardifyCardInnerBorderRadius }};
     justify-content: space-between;
     align-content: stretch;
     margin-bottom: 0;
-    
-    .publish-date {
-      display: none;
-      @media (min-width:576px) { display: initial; }
-    }
+    color: $time-date-color;
   }
   
 }
 
 .cardify-card-img {
   width: 100%;
-  border-top-left-radius: $cardify-card-inner-border-radius;
-  border-top-right-radius: $cardify-card-inner-border-radius;
+  border-top-left-radius: $inner-border-radius;
+  border-top-right-radius: $inner-border-radius;
 }
 
 .cardify-card-link {

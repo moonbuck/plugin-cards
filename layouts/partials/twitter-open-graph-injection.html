@@ -1,11 +1,24 @@
 {{- $params := site.Params -}}
-{{- $data := site.Data.plugin_cards_data | default site.Data.plugin_cards.data | default $params.cards_data -}}
-{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
 
-{{- $EnableTwitterOGCards := $params.cards_EnableTwitterOGCards | default $config.EnableTwitterOGCards | default true -}}
-{{- $TwitterUsername := $params.card_TwitterUsername | default $config.TwitterUsername | default $params.twitter_username -}}
+{{- $config := site.Data.plugin_cards_config -}}
+{{- $config  = $config | default site.Data.plugin_cards.config -}}
 
-{{- if $EnableTwitterOGCards -}}
+{{- $Enable := index $params "cards.twitterog.enable" -}}
+{{- $Enable  = $Enable | default $config.TwitterOG.Enable -}}
+{{- $Enable  = $Enable | default true -}}
+
+{{- if $Enable -}}
+
+{{- $TwitterUsername := index $params "cards.twitterog.twitterusername" -}}
+{{- $TwitterUsername  = $TwitterUsername | default $config.TwitterOG.TwitterUsername -}}
+{{- $TwitterUsername  = $TwitterUsername | default $params.twitter_username -}}
+
+{{- $Data := site.Data.plugin_cards_data -}} 
+{{- $Data  = $Data | default site.Data.plugin_cards.data -}}
+
+{{- if (and (not $Data) (isset $params "cards_data")) -}}
+{{- $Data = transform.Unmarshal $params.cards_data -}}
+{{- end -}}
 
 {{- /* Determine site name */}}
 {{- $site_name := site.Title }}
@@ -27,19 +40,8 @@
   {{- /* Capture the path for the page */}}
   {{- $page_path := (urls.Parse .Permalink).Path }}
   
-  {{- /* Check whether card data is available */}}
-  {{- $card_data := false }}
-  {{- with $data }}
-  {{- $card_data = . }}
   
-  {{- if (and $card_data (not ($card_data | reflect.IsMap))) }}
-  {{- with transform.Unmarshal $card_data }}
-  {{- $card_data = . }}
-  {{- end }}
-  {{- end }}
-  {{- end -}}
-  
-  {{- with $card_data }}
+  {{- with $Data }}
 
     {{- /* Check whether the data has an entry for this page */}}
     {{- with (index . $page_path) }}{{ $image = . }}{{ end }}

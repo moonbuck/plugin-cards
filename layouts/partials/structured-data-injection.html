@@ -1,13 +1,22 @@
 {{- $params := site.Params -}}
-{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
 
-{{- $EnableStructuredData := $params.cards_EnableStructuredData | default $config.EnableStructuredData | default true -}}
-{{- $AuthorName := $params.cards_StructuredDataAuthorName | default $config.StructuredDataAuthorName -}}
-{{- $AuthorName = $AuthorName | default site.Author.name | default $params.Author.name -}}
-{{- $AuthorProfileURL := $params.cards_StructuredDataAuthorProfileURL | default $config.StructuredDataAuthorProfileURL -}}
-{{- $AuthorProfileURL = $AuthorProfileURL | default site.Author.profileurl -}}
+{{- $config := site.Data.plugin_cards_config -}}
+{{- $config  = $config | default site.Data.plugin_cards.config -}}
 
-{{- if (and $EnableStructuredData (eq .Type "post")) -}}
+{{- $Enable := index $params "cards.structureddata.enable" -}}
+{{- $Enable  = $Enable | default $config.StructuredData.Enable -}}
+{{- $Enable  = $Enable | default true -}}
+
+{{- if (and $Enable (eq .Type "post")) -}}
+
+{{- $AuthorName := index $params "cards.structureddata.authorname" -}}
+{{- $AuthorName  = $AuthorName | default $config.StructuredData.AuthorName -}}
+{{- $AuthorName = $AuthorName | default site.Author.name -}}
+{{- $AuthorName = $AuthorName | default $params.Author.name -}}
+
+{{- $ProfileURL := index $params "cards.structureddata.profileurl" -}}
+{{- $ProfileURL  = $ProfileURL | default $config.StructuredData.ProfileURL -}}
+{{- $ProfileURL = $ProfileURL | default site.Author.profileurl -}}
 
 {{- /* Create a Scratch instance to gather data */ -}}
 {{- $data := newScratch -}}
@@ -20,7 +29,7 @@
 {{- with $AuthorName -}}
 {{- $data.SetInMap "author" "@type" "Person" -}}
 {{- $data.SetInMap "author" "name" . -}}
-{{- with $AuthorProfileURL -}}
+{{- with $ProfileURL -}}
 {{- $data.SetInMap "author" "url" . -}}
 {{- end -}}
 {{- end -}}

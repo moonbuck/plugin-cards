@@ -3,115 +3,135 @@
     "title": "Moondeer's Cards",
     "description": "Injects Twitter/Open Graph card meta data, structured data for search engines, and contains Javascript for generating preview cards for links inside list and post pages.",
     "includes": [
-        "twitter-open-graph-cards.html",
+        "twitter-open-graph-injection.html",
         "structured-data-injection.html",
         "cardify-script-injection.html"
     ],
     "fields": [
         {
-          "field": "params.cards_EnableTwitterOGCards",
+          "field": "params.Cards.TwitterOG.Enable",
           "label": "Enable Twitter / Open Graph Cards",
           "placeholder": "true"
         },
         {
-          "field": "params.cards_TwitterUsername",
+          "field": "params.Cards.TwitterOG.TwitterUsername",
           "label": "Twitter Username",
           "placeholder": ""
         },
         {
-          "field": "params.cards_EnableStructuredData",
+          "field": "params.Cards.StructuredData.Enable",
           "label": "Enable Structured Data",
           "placeholder": "true"
         },
         {
-          "field": "params.cards_StructuredDataAuthorName",
+          "field": "params.Cards.StructuredData.AuthorName",
           "label": "Author Name",
           "placeholder": "[FULLNAME]"
         },
         {
-          "field": "params.cards_StructuredDataAuthorProfileURL",
-          "label": "Author Profile URL",
+          "field": "params.Cards.StructuredData.ProfileURL",
+          "label": "Profile URL",
           "placeholder": "[SCHEME]://[HOSTNAME]/about/"
         },
         {
           "field": "params.cards_data",
           "label": "Card Data (JSON)",
-          "placeholder": ""
+          "placeholder": "use of data file recommmended (see README for instruction)"
         },
         {
-          "field": "params.cards_QueryMatchCards",
-          "label": "Query Match Cards",
+          "field": "params.Cards.Card.Creation.QueryMatch",
+          "label": "Query Match",
           "placeholder": "true"
         },
         {
-          "field": "params.cards_HostMatchCards",
-          "label": "Host Match Cards",
+          "field": "params.Cards.Card.Creation.HostMatch",
+          "label": "Host Match",
           "placeholder": "false"
         },
         {
-          "field": "params.cards_ReadMoreLinkSelector",
+          "field": "params.Cards.Card.HostMatch.ReadMoreLink",
           "label": "CSS Selector for 'Read more' links",
           "placeholder": ".read-more"
         },
         {
-          "field": "params.cards_HostMatchListSandboxSelector",
+          "field": "params.Cards.Card.HostMatch.ListSandbox",
           "label": "CSS Selector for Location of Host Match Cardification in List Pages",
           "placeholder": ".post-body"
         },
         {
-          "field": "params.cards_HostMatchPageSandboxSelector",
+          "field": "params.Cards.Card.HostMatch.PageSandbox",
           "label": "CSS Selector for Location of Host Match Cardification in Post Pages",
           "placeholder": "#post-body"
         },
         {
-          "field": "params.cards_HostMatchURLFilter",
+          "field": "params.Cards.Card.HostMatch.URLFilter",
           "label": "Host Match URL Filter",
           "placeholder": ".*.html"
         },
         {          
-          "field": "params.cards_CustomHostMatchSelector",
+          "field": "params.Cards.Card.HostMatch.CustomSelector",
           "label": "Custom CSS Selector for Host Match Cardification",
           "placeholder": ""
         },
         {
-          "field": "params.cards_CardifyCard.SpacerY",
+          "field": "params.Cards.Card.Style.SpacerY",
           "label": "Card Spacer (Vertical)",
           "placeholder": "1rem"
         },
         {
-          "field": "params.cards_CardifyCard.SpacerX",
+          "field": "params.Cards.Card.Style.SpacerX",
           "label": "Card Spacer (Horizontal)",
           "placeholder": "1rem"
         },
         {
-          "field": "params.cards_CardifyCard.TitleSpacerY",
+          "field": "params.Cards.Card.Style.TitleSpacerY",
           "label": "Card Title Spacer (Vertical)",
           "placeholder": "1rem * 0.5"
         },
         {
-          "field": "params.cards_CardifyCard.BG",
+          "field": "params.Cards.Card.Style.BG",
           "label": "Card Background Color",
           "placeholder": "white"
         },
         {
-          "field": "params.cards_CardifyCard.BorderWidth",
+          "field": "params.Cards.Card.Style.BorderWidth",
           "label": "Card Border Width",
           "placeholder": "1px"
         },
         {
-          "field": "params.cards_CardifyCard.BorderColor",
+          "field": "params.Cards.Card.Style.BorderColor",
           "label": "Card Border Color",
           "placeholder": "rgba(black, .125)"
         },
         {
-          "field": "params.cards_CardifyCard.BorderRadius",
+          "field": "params.Cards.Card.Style.BorderRadius",
           "label": "Card Border Radius",
           "placeholder": "0.25rem"
         },
         {
-          "field": "params.cards_CardifyCard.InnerBorderRadius",
+          "field": "params.Cards.Card.Style.InnerBorderRadius",
           "label": "Card Inner Border Radius",
           "placeholder": "0.25rem"
+        },
+        {
+          "field": "params.Cards.Card.Style.TimeDateColor",
+          "label": "Card Publish Date and Reading Time Color",
+          "placeholder": "#666666"
+        },
+        {
+          "field": "params.Cards.Build.Fingerprint",
+          "label": "Fingerprint Generated Files",
+          "placeholder": "true"
+        },
+        {
+          "field": "params.Cards.Build.SassOutput",
+          "label": "Sass Output Style",
+          "placeholder": "compressed"
+        },
+        {
+          "field": "params.Cards.Build.MinifyScript",
+          "label": "Minify Javascript File",
+          "placeholder": "true"
         }       
     ]
-  }
+}

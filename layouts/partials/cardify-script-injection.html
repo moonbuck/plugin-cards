@@ -1,17 +1,52 @@
 {{- $params := site.Params -}}
-{{- $config := site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
-{{- $QueryMatchCards := $params.cards_QueryMatchCards | default $config.QueryMatchCards | default true -}}
-{{- $HostMatchCards := $params.cards_HostMatchCards | default $config.HostMatchCards | default false -}}
 
-{{- if (or $QueryMatchCards $HostMatchCards) -}}
+{{- $config := site.Data.plugin_cards_config -}}
+{{- $config  = $config | default site.Data.plugin_cards.config -}}
+
+{{- $QueryMatch := index $params "cards.card.creation.querymatch" -}}
+{{- $QueryMatch  = $QueryMatch | default $config.Card.Creation.QueryMatch -}}
+{{- $QueryMatch  = $QueryMatch | default true -}}
+
+{{- $HostMatch := index $params "cards.card.creation.hostmatch" -}}
+{{- $HostMatch  = $HostMatch | default $config.Card.Creation.HostMatch -}}
+{{- $HostMatch  = $HostMatch | default false -}}
+
+{{- if (or $QueryMatch $HostMatch) -}}
+
+{{- $Fingerprint := index $params "cards.build.fingerprint" -}}
+{{- $Fingerprint  = $Fingerprint | default $config.Build.Fingerprint -}}
+{{- $Fingerprint  = $Fingerprint | default true -}}
+
+{{- $MinifyScript := index $params "cards.build.minifyscript" -}}
+{{- $MinifyScript  = $MinifyScript | default $config.Build.MinifyScript -}}
+{{- $MinifyScript  = $MinifyScript | default true -}}
+
 {{- $script_template := resources.Get "js/cardify.js" -}}
-{{- $script := $script_template | resources.ExecuteAsTemplate "cardify.js" . | resources.Fingerprint -}}
+{{- $script := $script_template | resources.ExecuteAsTemplate "cardify.js" . -}}
 
-<script type="text/javascript" src="{{ $script.Permalink }}"></script>
+{{- if $MinifyScript -}}
+{{- $script = $script | minify -}}
+{{- end -}}
+
+{{- if $Fingerprint -}}
+{{- $script = $script | fingerprint -}}
+{{- end -}}
+
+{{- $SassOutput := index $params "cards.build.sassoutput" -}}
+{{- $SassOutput  = $SassOutput | default $config.Build.SassOutput -}}
+{{- $SassOutput  = $SassOutput | default "compressed" -}}
+
+{{- $opts := dict "targetPath" "assets/css"  "outputStyle" $SassOutput -}}
 
 {{- $style_template := resources.Get "sass/cardify.scss" -}}
-{{- $style := $style_template | resources.ExecuteAsTemplate "cardify.scss" . | toCSS | fingerprint -}}
+{{- $style := $style_template | resources.ExecuteAsTemplate "cardify.scss" . -}} 
+{{- $style  = $style | toCSS $opts -}}
 
+{{- if $Fingerprint -}}
+{{- $style = $style | fingerprint -}}
+{{- end -}}
+
+<script type="text/javascript" src="{{ $script.Permalink }}"></script>
 <link rel="stylesheet" href="{{ $style.Permalink }}">
 
 
