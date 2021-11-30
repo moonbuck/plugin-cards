@@ -1,8 +1,6 @@
 # plugin-cards
 A [Micro.blog](https://micro.blog "Micro.blog") plugin for adding [Twitter](https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards "Twitter Cards") and [Open Graph](https://ogp.me "Open Graph Protocol") <code>&lt;meta></code> tags, which are used to generate link preview cards all over the g0dd@mn place.  As of version 4, the plugin will also generate [structured data](https://developers.google.com/search/docs/advanced/structured-data/intro-structured-data "Structured Data Intro") for posts, which is utilized by search engines. The plugin can also generate card previews of its own to drop into your blog.
 
-## Twitter / Open Graph Cards
-
 ![Facebook](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/facebook.jpeg)
 
 ![Twitter](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/twitter.jpeg)
