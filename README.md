@@ -30,14 +30,14 @@ Twitter and Open Graph Parameters
 <dl>
 <dt>Enable</dt><dd>Whether to inject Twitter and Open Graph <code><meta></code> tags into the page <code><head></code>. The default value is <code>true</code>.</dd>
 
-<dt>TwitterUsername</dt><dd>Username for Twitter <code><meta></code> tags. Defaults to <code>site.Params.twitter_username</code> when empty.</dd>
+<dt>TwitterUsername</dt><dd>Username for Twitter <code>&lt;meta></code> tags. Defaults to <code>site.Params.twitter_username</code> when empty.</dd>
 </dl>
 
 ### StructuredData
 Structured Data Parameters
 
 <dl>
-<dt>Enable</dt><dd> Whether to inject an <code>application/ld+json</code> script in the page <code><head></code> with structured data for search engines</dd>
+<dt>Enable</dt><dd> Whether to inject an <code>application/ld+json</code> script in the page <code>&lt;head></code> with structured data for search engines</dd>
 
 <dt>AuthorName</dt><dd>The value to set for <code>author.name</code> within the JSON object. Defaults to <code>site.Author.name</code> or <code>site.Params.Author.name</code> when empty.</dd>
 
@@ -59,18 +59,18 @@ Parameters for preview cards created automatically when the link points to anoth
 <dl>
 <dt>ReadMoreLink</dt><dd>A CSS selector specifying the links used by post summaries. This is used to exclude such links from generating preview cards. Default is <code>.read-more</code>.</dd>
 
-<dt>ListSandbox</dt><dd>A CSS selector that leads right up to the <code><a></code> tags that should be eligible for automatic replacement in post lists. This becomes part of the final host match selector. Default is <code>.post-body</code>.</dd>
+<dt>ListSandbox</dt><dd>A CSS selector that leads right up to the <code>&lt;a></code> tags that should be eligible for automatic replacement in post lists. This becomes part of the final host match selector. Default is <code>.post-body</code>.</dd>
 
-<dt>PageSandbox</dt><dd>A CSS selector that leads right up to the <code><a></code> tags that should be eligible for automatic replacement in post pages. This becomes part of the final host match selector. Default is <code>#post-body</code>.</dd>
+<dt>PageSandbox</dt><dd>A CSS selector that leads right up to the <code>&lt;a></code> tags that should be eligible for automatic replacement in post pages. This becomes part of the final host match selector. Default is <code>#post-body</code>.</dd>
 
 <dt>CustomSelector</dt><dd>A custom CSS selector to use in place of the that which would be generated using the three parameter values above. Given the default values:
-```TOML
+<pre><code>
 ReadMoreLink = '.read-more'
 ListSandbox = '.post-body'
 PageSandbox = '#post-body'
-```
+</code></pre>
 and a <code>site.BaseURL</code> equal to <code>https://My.blog</code> the default value of the host match selector (shown split across multiple lines in invalid CSS syntax for clarity) would be:
-```css
+<pre><code>
   #post-body a[href*="My.blog"]
       :not(.cardify-card-link)
       :not([href$="cardify"]),
@@ -88,7 +88,7 @@ and a <code>site.BaseURL</code> equal to <code>https://My.blog</code> the defaul
       :not(.read-more)
       :not(.cardify-card-link)
       :not([href$="cardify"])
-```
+</code></pre>
 Setting this value to a non-empty string will completely replace the default selector with the custom selector value.</dd>
 
 <dt>URLFilter</dt><dd>A regular expression for whitelisting which links are eligible for automatic replacement. This is applied on top of the CSS selection. The default value, <code>.*.html</code>, excludes category pages, for example.</dd>
