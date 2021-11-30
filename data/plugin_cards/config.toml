@@ -11,7 +11,8 @@ Enable = true
 #
 TwitterUsername = ''
 
-#Structured Data Parameters
+# Structured Data Parameters
+#
 [StructuredData]
 
 # Whether to inject an application/ld+json script in the page <head>
@@ -19,12 +20,12 @@ TwitterUsername = ''
 #
 Enable = true
 
-# The value to set for author.name within the json object.
+# The value to set for author.name within the JSON object.
 # Defaults to site.Author.name or site.Params.Author.name when empty
 #
 AuthorName = ''
 
-# The value to set for author.url within the json object.
+# The value to set for author.url within the JSON object.
 # Defaults to site.Author.profileurl when empty
 #
 ProfileURL = ''
@@ -150,7 +151,7 @@ BorderColor = 'rgba(black, .125)'
 
 # border-radius value for .cardify-card
 #
-BorderRadius = '0.25rem'
+BorderRadius = '0.5rem'
 
 # Color applied to the last .cardify-card-text element (containing
 # the publish date and estimated reading time).

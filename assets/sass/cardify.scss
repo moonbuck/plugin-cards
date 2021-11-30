@@ -29,7 +29,7 @@
 
 {{- $BorderRadius := index $params "cards.card.style.borderradius" -}}
 {{- $BorderRadius  = $BorderRadius | default $config.Card.Style.BorderRadius -}}
-{{- $BorderRadius  = $BorderRadius | default "0.25rem" -}}
+{{- $BorderRadius  = $BorderRadius | default "0.5rem" -}}
 
 {{- $TimeDateColor := index $params "cards.card.style.timedatecolor" -}}
 {{- $TimeDateColor  = $TimeDateColor | default $config.Card.Style.TimeDateColor -}}
