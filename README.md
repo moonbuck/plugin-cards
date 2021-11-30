@@ -1,5 +1,7 @@
 # plugin-cards
-A [Micro.blog](https://micro.blog "Micro.blog") plugin for adding [Twitter](https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards "Twitter Cards") and [Open Graph](https://ogp.me "Open Graph Protocol") `<meta>` tags, which are used to generate link preview cards all over the g0dd@mn place. As of version 4, the plugin will also generate [structured data](https://developers.google.com/search/docs/advanced/structured-data/intro-structured-data) for posts, which is utilized by search engines. The plugin can also generate card previews of its own to drop into your blog.
+A [Micro.blog](https://micro.blog "Micro.blog") plugin for adding [Twitter](https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards "Twitter Cards") and [Open Graph](https://ogp.me "Open Graph Protocol") `<meta>` tags, which are used to generate link preview cards all over the g0dd@mn place.  As of version 4, the plugin will also generate [structured data](https://developers.google.com/search/docs/advanced/structured-data/intro-structured-data "Structured Data Intro") for posts, which is utilized by search engines. The plugin can also generate card previews of its own to drop into your blog.
+
+## Twitter / Open Graph Cards
 
 ![Facebook](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/facebook.jpeg)
 
@@ -15,118 +17,6 @@ A [Micro.blog](https://micro.blog "Micro.blog") plugin for adding [Twitter](http
 
 ![Telegram](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/telegram.jpeg)
 
-There is only one template involved. It lives at `/layouts/partials/twitter-open-graph-cards.html` and looks like this:
-
-```go
-{{/* Determine site name */}}
-{{ $site_name := site.Title }}
-
-{{/* Determine the title */}}
-{{ $title := .Title }}
-
-{{/* Determine description */}}
-{{ $description := .Summary | default (.Description | default .Site.Params.description )  }}
-
-{{/* Create a variable for the card image */}}
-{{ $image := false }}
-
-{{/* Check whether the page as an image */}}
-{{ with .Params.images }}{{ $image = (index . 0 | absURL) }}{{ end }}
-
-{{ if not $image }}
-
-  {{/* Capture the path for the page */}}
-  {{ $page_path := (urls.Parse .Permalink).Path }}
-  
-  {{/* Check whether card data is available */}}
-  {{ with site.Params.card_data_json }}
-    {{ with transform.Unmarshal . }}
-    
-      {{/* Check whether the data has an entry for this page */}}
-      {{ with (index . $page_path) }}{{ $image = . }}{{ end }}
-      
-      {{/* Otherwise check for a default image */}}
-      {{ if not $image }}
-        {{ with index . "default" }}{{ $image = . }}{{ end }}
-      {{ end }}
-    
-    {{ end }}
-    
-  {{ end }}
-  
-{{ end }}
-
-{{/* Grab section and categories */}}
-{{ $section := false }}
-{{ $categories := false }}
-{{ if .IsPage }}
-  {{ if ne (len .Section) 0 }}{{ $section = .Section }}{{ end }}
-  {{ if .Page.Params.categories }}{{ $categories = .Page.Params.categories }}{{ end }}
-{{ end }}
-
-{{/* Grab times */}}
-{{ $iso8601 := "2006-01-02T15:04:05-07:00" }}
-{{ $published_time := false }}
-{{ $modified_time := false }}
-{{ $updated_time := false }}
-{{ if .IsPage }}
-  {{ if not .PublishDate.IsZero }}
-    {{ $published_time = (.PublishDate.Format $iso8601 | safeHTML) }}
-  {{ else if not .Date.IsZero }}
-    {{ $published_time = (.Date.Format $iso8601 | safeHTML) }}
-  {{ end }}
-  {{ if not .Lastmod.IsZero }}{{ $modified_time = (.Lastmod.Format $iso8601 | safeHTML) }}{{ end }}
-{{ else if not .Date.IsZero }}
-  {{ $updated_time = (.Date.Format $iso8601 | safeHTML) }}
-{{ end }}
-
-{{/* Determine type */}}
-{{ $type := "website" }}
-{{ $audio := false }}
-{{ with .Params.audio }}
-{{ $audio = (index . 0 | absURL) }}
-{{ $type = "music.song" }}
-{{ else }}
-{{ if .Title }}{{ $type = "article" }}{{ end }}
-{{ end }}
-
-{{/* Create meta tags using the variable values. */}}
-<meta property="og:url" content="{{ .Permalink }}" />
-<meta property="og:site_name" content="{{ $site_name }}" />
-{{ if $title }}
-<meta property="og:title" content="{{ $title }}" />
-{{ else }}
-<meta property="og:title" content="{{ $description }}" />
-{{ end }}
-<meta property="og:description" content="{{ $description }}" />
-{{ with $image }}<meta property="og:image" content="{{ . }}" />{{ end }}
-{{ with $published_time }}<meta property="article:published_time" content="{{ . }}" />{{ end }}
-{{ with $modified_time }}<meta property="article:modified_time" content="{{ . }}" />{{ end }}
-{{ with $section }}<meta property="article:section" content="{{ . }}" />{{ end }}
-{{ with $categories }}{{ range first 6 . }}<meta property="article:tag" content="{{ . }}" />{{ end }}{{ end }}
-{{ with $updated_time }}<meta property="og:updated_time" content="{{ . }}" />{{ end }}
-{{ with $audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
-<meta property="og:type" content="{{ $type }}" />
-{{ if $image }}
-<meta name="twitter:card" content="summary_large_image"/>
-{{ else }}
-<meta name="twitter:card" content="summary"/>
-{{ end }}
-{{ with site.Params.twitter_username }}
-<meta name="twitter:site" content="@{{ . }}" />
-<meta name="twitter:creator" content="@{{ . }}" />
-{{ end }}
-<meta property="twitter:domain" content="{{ (urls.Parse site.BaseURL).Host }}">
-<meta property="twitter:url" content="{{ .Permalink }}">
-{{ if $title }}
-<meta name="twitter:title" content="{{ $title }}" />
-{{ else }}
-<meta name="twitter:title" content="{{ $description }}" />
-{{ end }}
-<meta name="twitter:description" content="{{ $description }}" />
-{{ with $image }}<meta property="twitter:image" content="{{ . }}" />{{ end }}
-```
-
 Open Graph audio meta tags are created when an audio file is detected. 
 
 ![Audo Card](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/audio.jpeg)
@@ -134,11 +24,129 @@ Open Graph audio meta tags are created when an audio file is detected.
 
 ## Plugin Parameters
 
-![](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/plugin_parameters.jpeg)
+The plugin parameters are grouped by the functionality they target. They are all reachable from the plugin parameters interface, however, I am going to describe them using the logic they hold in the template data file (which may be used as an alternative to the plugin parameter interface) that lives at `/data/plugin_cards/config.toml`.
 
-The `Twitter Username` parameter establishes the content creator for Twitter cards. If you leave this empty, the plugin will fall back to `site.Params.twitter_username`, if that has been set. Without one of these two variables holding a value, Twitter cards will not be generated.
+### TwitterOG
+Twitter and Open Graph Parameters
 
-The `Card Data` parameter is optional. To understand why it is there, let’s talk about card images. 
+Enable
+: Whether to inject Twitter and Open Graph `<meta>` tags into the page `<head>`. The default value is `true`.
+
+TwitterUsername
+: Username for Twitter `<meta>` tags. Defaults to `site.Params.twitter_username` when empty.
+
+### StructuredData
+Structured Data Parameters
+
+Enable
+:  Whether to inject an `application/ld+json` script in the page `<head>` with structured data for search engines
+
+AuthorName
+: The value to set for `author.name` within the JSON object. Defaults to `site.Author.name` or `site.Params.Author.name` when empty.
+
+ProfileURL
+: The value to set for `author.url` within the JSON object. Defaults to `site.Author.profileurl` when empty.
+
+### Card.Creation
+Preview Card Creation Parameters
+
+QueryMatch
+:  Whether to replace links ending with *cardify* with a preview card 
+generated by scraping the linked page for Twitter / Open Graph tags.
+When set to true, a link like `<a href="https://my.blog/2021/11/29/my-post.html?cardify">whatever</a>` would be replaced with a preview card by the `cardify.js` script.
+
+HostMatch
+:  Whether to automatically replace any link for a site page with a 
+preview card generated by scraping the linked page for Twitter / Open Graph tags. Exactly which links are replaced withcards may be controlled via the Card.HostMatch parameters. When set to true, a link like `<a href="https://my.blog/2021/11/29/my-post.html>whatever</a>` may be eligible for preview card replacement depending on how the `Card.HostMatch` parameters have been configured.
+
+### Card.HostMatch
+Parameters for preview cards created automatically when the link points to another page of the Hugo generated site.
+
+ReadMoreLink
+: A CSS selector specifying the links used by post summaries. This is used to exclude such links from generating preview cards. Default is `.read-more`.
+
+ListSandbox
+: A CSS selector that leads right up to the `<a>` tags that should be eligible for automatic replacement in post lists. This becomes part of the final host match selector. Default is `.post-body`.
+
+PageSandbox
+: A CSS selector that leads right up to the `<a>` tags that should be eligible for automatic replacement in post pages. This becomes part of the final host match selector. Default is `#post-body`.
+
+CustomSelector
+: A custom CSS selector to use in place of the that which would be generated using the three parameter values above. Given the default values:
+```TOML
+ReadMoreLink = '.read-more'
+ListSandbox = '.post-body'
+PageSandbox = '#post-body'
+```
+and a `site.BaseURL` equal to `https://My.blog` the default value of the host match selector (shown split across multiple lines in invalid CSS syntax for clarity) would be:
+```css
+  #post-body a[href*="My.blog"]
+      :not(.cardify-card-link)
+      :not([href$="cardify"]),
+
+   #post-body a[href*="my.blog"]
+      :not(.cardify-card-link)
+      :not([href$="cardify"]),
+
+   .post-body a[href*="My.blog"]
+      :not(.read-more)
+      :not(.cardify-card-link)
+      :not([href$="cardify"]),
+
+   .post-body a[href*="my.blog"]
+      :not(.read-more)
+      :not(.cardify-card-link)
+      :not([href$="cardify"])
+```
+Setting this value to a non-empty string will completely replace the default selector with the custom selector value.
+
+URLFilter
+: A regular expression for whitelisting which links are eligible for automatic replacement. This is applied on top of the CSS selection. The default value, `.*.html`, excludes category pages, for example.
+
+### Card.Style
+![Generated Card Preview](https://raw.githubusercontent.com/moonbuck/plugin-cards/main/images/cardify.jpeg)
+Parameters for styling preview cards
+
+SpacerY
+: Vertical padding applied to `.cardify-card-body`. Default is `1rem`.
+
+SpacerX
+: Horizontal padding applied to `.cardify-card-body`. Default is `1rem`.
+
+TitleSpacerY
+: Bottom margin applied to `.cardify-card-title`. Default is `1rem * 0.5`.
+
+BG
+: Background color applied to `.cardify-card`. Default is `white`.
+
+BorderWidth
+: Width value for the border applied to `.cardify-card`. Default is `1px`.
+
+BorderColor
+: Color value for the border applied to `.cardify-card`. Default is `rgba(black, .125)`.
+
+BorderRadius
+: `border-radius` value for `.cardify-card`. Default is `0.5rem`.
+
+TimeDateColor
+: Color applied to the last `.cardify-card-text` element (containing the publish date and estimated reading time). Default is `#666666`
+
+### Build
+Parameters for controlling the generated css and js files
+
+Fingerprint
+: Whether to provide subresource integrity by generating a base64-encoded cryptographic hash and attaching a `.Data.Integrity` property containing an integrity string, which is made up of the name of the hash function, one hyphen and the base64-encoded hash sum. Default is `true`.
+
+SassOutput
+: Output style for `/assets/sass/cardify.scss`. Valid options are `nested`, `expanded`, `compact` and `compressed`. Default is `compressed`.
+
+MinfiyScript
+: Whether to minify the Javascript file generated from `/assets/js/cardify.js`. Default is `true`.
+
+### Card Data
+
+The `Card Data` parameter is optional. I highly recommend using the data template provided at `/data/plugin_cards/data.toml` or creating a template in your custom theme at `/data/plugin_cards_data.toml` as an alternative to storying a *stringified* version of the data via the plugin paramters interface. All three locations are acceptable. The next section discusses how the entries are used to provide images for Twitter / Open Graph cards for pages without an image.
+
 
 ## Card Image
 The first image found gets priority. The large summary Twitter card will be generated when there is an image available; otherwise, the smaller summary card is generated.
