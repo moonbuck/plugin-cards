@@ -64,31 +64,28 @@ Parameters for preview cards created automatically when the link points to anoth
 <dt>PageSandbox</dt><dd>A CSS selector that leads right up to the <code>&lt;a></code> tags that should be eligible for automatic replacement in post pages. This becomes part of the final host match selector. Default is <code>#post-body</code>.</dd>
 
 <dt>CustomSelector</dt><dd>A custom CSS selector to use in place of the that which would be generated using the three parameter values above. Given the default values:
-<pre><code>
-ReadMoreLink = '.read-more'
+<pre><code>ReadMoreLink = '.read-more'
 ListSandbox = '.post-body'
 PageSandbox = '#post-body'
 </code></pre>
 and a <code>site.BaseURL</code> equal to <code>https://My.blog</code> the default value of the host match selector (shown split across multiple lines in invalid CSS syntax for clarity) would be:
-<pre><code>
-  #post-body a[href*="My.blog"]
+<pre><code>#post-body a[href*="My.blog"]
       :not(.cardify-card-link)
       :not([href$="cardify"]),
 
-   #post-body a[href*="my.blog"]
+#post-body a[href*="my.blog"]
       :not(.cardify-card-link)
       :not([href$="cardify"]),
 
-   .post-body a[href*="My.blog"]
+.post-body a[href*="My.blog"]
       :not(.read-more)
       :not(.cardify-card-link)
       :not([href$="cardify"]),
 
-   .post-body a[href*="my.blog"]
+.post-body a[href*="my.blog"]
       :not(.read-more)
       :not(.cardify-card-link)
-      :not([href$="cardify"])
-</code></pre>
+      :not([href$="cardify"])</code></pre>
 Setting this value to a non-empty string will completely replace the default selector with the custom selector value.</dd>
 
 <dt>URLFilter</dt><dd>A regular expression for whitelisting which links are eligible for automatic replacement. This is applied on top of the CSS selection. The default value, <code>.*.html</code>, excludes category pages, for example.</dd>
