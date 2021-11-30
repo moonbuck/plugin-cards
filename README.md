@@ -72,16 +72,13 @@ and a <code>site.BaseURL</code> equal to <code>https://My.blog</code> the defaul
 <pre><code>#post-body a[href*="My.blog"]
       :not(.cardify-card-link)
       :not([href$="cardify"]),
-
 #post-body a[href*="my.blog"]
       :not(.cardify-card-link)
       :not([href$="cardify"]),
-
 .post-body a[href*="My.blog"]
       :not(.read-more)
       :not(.cardify-card-link)
       :not([href$="cardify"]),
-
 .post-body a[href*="my.blog"]
       :not(.read-more)
       :not(.cardify-card-link)
