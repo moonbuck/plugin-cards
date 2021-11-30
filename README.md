@@ -68,21 +68,11 @@ Parameters for preview cards created automatically when the link points to anoth
 ListSandbox = '.post-body'
 PageSandbox = '#post-body'
 </code></pre>
-and a <code>site.BaseURL</code> equal to <code>https://My.blog</code> the default value of the host match selector (shown split across multiple lines in invalid CSS syntax for clarity) would be:
-<pre><code>#post-body a[href*="My.blog"]
-      :not(.cardify-card-link)
-      :not([href$="cardify"]),
-#post-body a[href*="my.blog"]
-      :not(.cardify-card-link)
-      :not([href$="cardify"]),
-.post-body a[href*="My.blog"]
-      :not(.read-more)
-      :not(.cardify-card-link)
-      :not([href$="cardify"]),
-.post-body a[href*="my.blog"]
-      :not(.read-more)
-      :not(.cardify-card-link)
-      :not([href$="cardify"])</code></pre>
+and a <code>site.BaseURL</code> equal to <code>https://My.blog</code> the default value of the host match selector would be:
+<pre><code>#post-body a[href*="My.blog"]:not(.cardify-card-link):not([href$="cardify"]),
+#post-body a[href*="my.blog"]:not(.cardify-card-link):not([href$="cardify"]),
+.post-body a[href*="My.blog"]:not(.read-more):not(.cardify-card-link):not([href$="cardify"]),
+.post-body a[href*="my.blog"]:not(.read-more):not(.cardify-card-link):not([href$="cardify"])</code></pre>
 Setting this value to a non-empty string will completely replace the default selector with the custom selector value.</dd>
 
 <dt>URLFilter</dt><dd>A regular expression for whitelisting which links are eligible for automatic replacement. This is applied on top of the CSS selection. The default value, <code>.*.html</code>, excludes category pages, for example.</dd>
