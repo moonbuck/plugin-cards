@@ -36,7 +36,7 @@
 {{- $SassOutput  = $SassOutput | default $config.Build.SassOutput -}}
 {{- $SassOutput  = $SassOutput | default "compressed" -}}
 
-{{- $opts := dict "targetPath" "assets/css"  "outputStyle" $SassOutput -}}
+{{- $opts := dict "targetPath" "assets/css/cardify.css"  "outputStyle" $SassOutput -}}
 
 {{- $style_template := resources.Get "sass/cardify.scss" -}}
 {{- $style := $style_template | resources.ExecuteAsTemplate "cardify.scss" . -}} 
