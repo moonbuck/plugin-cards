@@ -20,7 +20,10 @@
   {{- with .Scratch.Get "Data" -}}
 
     {{- /* Capture the path for the page */}}
-    {{- $page_path := (urls.Parse .Permalink).Path }}
+    {{- $page_path := (urls.Parse $.Permalink).Path }}
+    
+    {{- /* Trim off any query parameters present */ -}}
+    {{- $page_path = replaceRE "^([^?]+)(?:[?].+)?" "$1" $page_path -}}
     
     
     {{- /* Check whether the data has an entry for this page */}}
