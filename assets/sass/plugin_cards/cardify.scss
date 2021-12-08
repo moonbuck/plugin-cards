@@ -1,34 +1,4 @@
-@function subtract($value1, $value2, $return-calc: true) {
-  
-  @if $value1 == null and $value2 == null {
-    @return null;
-  }
-
-  @if $value1 == null {
-    @return -$value2;
-  }
-
-  @if $value2 == null {
-    @return $value1;
-  }
-
-  @if type-of($value1) == number 
-  and type-of($value2) == number 
-  and comparable($value1, $value2) 
-  {
-    @return $value1 - $value2;
-  }
-
-  @if type-of($value2) != number 
-  {
-    $value2: unquote("(") + $value2 + unquote(")");
-  }
-
-  @return if($return-calc == true, 
-             calc(#{$value1} - #{$value2}),
-                  $value1 + unquote(" - ") + $value2);
-}
-
+/// Plugin parameter values
 $spacer-y:             {{ .Scratch.Get "Card.Style.SpacerY" }};
 $spacer-x:             {{ .Scratch.Get "Card.Style.SpacerX" }};
 $title-spacer-y:       {{ .Scratch.Get "Card.Style.TitleSpacerY" }};
@@ -36,10 +6,22 @@ $bg:                   {{ .Scratch.Get "Card.Style.BG" }};
 $border-width:         {{ .Scratch.Get "Card.Style.BorderWidth" }};
 $border-color:         {{ .Scratch.Get "Card.Style.BorderColor" }};
 $border-radius:        {{ .Scratch.Get "Card.Style.BorderRadius" }};
-$inner-border-radius:  subtract($border-radius, $border-width);
+$inner-border-radius:  calc($border-radius - $border-width);
 $time-date-color:      {{ .Scratch.Get "Card.Style.TimeDateColor" }};
 
-.cardify-card {
+/// Hugo variable values
+{{ with .Scratch.Get "Specifiers" -}}
+$cardify-card-class: {{ .Card }};
+$cardify-card-img-class: {{ .Image }};
+$cardify-card-body-class: {{ .Body }};
+$cardify-card-title-class: {{ .Title }};
+$cardify-card-text-class: {{ .Text }};
+$cardify-card-link-class: {{ .Link }};
+$cardify-card-publish-date-class: {{ .PublishDate }};
+$cardify-card-reading-time-class: {{ .ReadingTime }};
+{{- end }}
+
+.#{$cardify-card-class} {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -53,16 +35,16 @@ $time-date-color:      {{ .Scratch.Get "Card.Style.TimeDateColor" }};
   
 }
 
-.cardify-card-body {
+.#{$cardify-card-body-class} {
   flex: 1 1 auto;
   padding: $spacer-y $spacer-x;
 }
 
-.cardify-card-title {
+.#{$cardify-card-title-class} {
   margin-bottom: $title-spacer-y;
 }
 
-.cardify-card-text {
+.#{$cardify-card-text-class} {
 
   &:last-child {
     display: flex;
@@ -74,13 +56,17 @@ $time-date-color:      {{ .Scratch.Get "Card.Style.TimeDateColor" }};
   
 }
 
-.cardify-card-img {
+.#{$cardify-card-img-class} {
   width: 100%;
   border-top-left-radius: $inner-border-radius;
   border-top-right-radius: $inner-border-radius;
 }
 
-.cardify-card-link {
+.#{$cardify-card-reading-time-class} {
+  color: #9091AB;
+}
+
+.#{$cardify-card-link-class} {
   &::after {
     position: absolute;
     top: 0;
