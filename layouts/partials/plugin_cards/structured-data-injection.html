@@ -1,22 +1,4 @@
-{{- $params := site.Params -}}
-
-{{- $config := site.Data.plugin_cards_config -}}
-{{- $config  = $config | default site.Data.plugin_cards.config -}}
-
-{{- $Enable := index $params "cards.structureddata.enable" -}}
-{{- $Enable  = $Enable | default $config.StructuredData.Enable -}}
-{{- $Enable  = $Enable | default true -}}
-
-{{- if (and $Enable (eq .Type "post")) -}}
-
-{{- $AuthorName := index $params "cards.structureddata.authorname" -}}
-{{- $AuthorName  = $AuthorName | default $config.StructuredData.AuthorName -}}
-{{- $AuthorName = $AuthorName | default site.Author.name -}}
-{{- $AuthorName = $AuthorName | default $params.Author.name -}}
-
-{{- $ProfileURL := index $params "cards.structureddata.profileurl" -}}
-{{- $ProfileURL  = $ProfileURL | default $config.StructuredData.ProfileURL -}}
-{{- $ProfileURL = $ProfileURL | default site.Author.profileurl -}}
+{{- if (and (.Scratch.Get "StructuredData.Enable") (eq .Type "post")) -}}
 
 {{- /* Create a Scratch instance to gather data */ -}}
 {{- $data := newScratch -}}
@@ -26,10 +8,10 @@
 {{- $data.SetInMap "data" "@type" "BlogPosting" -}}
 
 {{- /* Add the author */ -}}
-{{- with $AuthorName -}}
+{{- with .Scratch.Get "StructuredData.AuthorName" -}}
 {{- $data.SetInMap "author" "@type" "Person" -}}
 {{- $data.SetInMap "author" "name" . -}}
-{{- with $ProfileURL -}}
+{{- with .Scratch.Get "StructuredData.ProfileURL" -}}
 {{- $data.SetInMap "author" "url" . -}}
 {{- end -}}
 {{- end -}}

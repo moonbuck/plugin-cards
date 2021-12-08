@@ -1,24 +1,4 @@
-{{- $params := site.Params -}}
-
-{{- $config := site.Data.plugin_cards_config -}}
-{{- $config  = $config | default site.Data.plugin_cards.config -}}
-
-{{- $Enable := index $params "cards.twitterog.enable" -}}
-{{- $Enable  = $Enable | default $config.TwitterOG.Enable -}}
-{{- $Enable  = $Enable | default true -}}
-
-{{- if $Enable -}}
-
-{{- $TwitterUsername := index $params "cards.twitterog.twitterusername" -}}
-{{- $TwitterUsername  = $TwitterUsername | default $config.TwitterOG.TwitterUsername -}}
-{{- $TwitterUsername  = $TwitterUsername | default $params.twitter_username -}}
-
-{{- $Data := site.Data.plugin_cards_data -}} 
-{{- $Data  = $Data | default site.Data.plugin_cards.data -}}
-
-{{- if (and (not $Data) (isset $params "cards_data")) -}}
-{{- $Data = transform.Unmarshal $params.cards_data -}}
-{{- end -}}
+{{- if .Scratch.Get "TwitterOG.Enable" -}}
 
 {{- /* Determine site name */}}
 {{- $site_name := site.Title }}
@@ -37,12 +17,12 @@
 
 {{- if not $image }}
 
-  {{- /* Capture the path for the page */}}
-  {{- $page_path := (urls.Parse .Permalink).Path }}
-  
-  
-  {{- with $Data }}
+  {{- with .Scratch.Get "Data" -}}
 
+    {{- /* Capture the path for the page */}}
+    {{- $page_path := (urls.Parse .Permalink).Path }}
+    
+    
     {{- /* Check whether the data has an entry for this page */}}
     {{- with (index . $page_path) }}{{ $image = . }}{{ end }}
     
@@ -50,11 +30,11 @@
     {{- if not $image }}
       {{- with index . "default" }}{{ $image = . }}{{ end }}
     {{- end }}
-  
-  {{- end }}
-  
-{{- end }}
+    
+    {{- end -}}
 
+{{- end }}
+  
 {{- /* Grab section and categories */}}
 {{- $section := false }}
 {{- $categories := false }}
@@ -111,7 +91,7 @@
 {{- else }}
 <meta name="twitter:card" content="summary"/>
 {{- end }}
-{{- with $TwitterUsername }}
+{{- with .Scratch.Get "TwitterOG.TwitterUsername" }}
 <meta name="twitter:site" content="@{{ . }}" />
 <meta name="twitter:creator" content="@{{ . }}" />
 {{- end }}

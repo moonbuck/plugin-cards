@@ -1,12 +1,8 @@
 {
-    "version": "4.0.0",
+    "version": "4.0.1",
     "title": "Moondeer's Cards",
     "description": "Injects Twitter/Open Graph card meta data, structured data for search engines, and contains Javascript for generating preview cards for links inside list and post pages.",
-    "includes": [
-        "twitter-open-graph-injection.html",
-        "structured-data-injection.html",
-        "cardify-script-injection.html"
-    ],
+    "includes": ["plugin_cards/injection.html"],
     "fields": [
         {
           "field": "params.Cards.TwitterOG.Enable",
@@ -34,13 +30,23 @@
           "placeholder": "[SCHEME]://[HOSTNAME]/about/"
         },
         {
-          "field": "params.cards_data",
+          "field": "params.Cards.Data",
           "label": "Card Data (JSON)",
           "placeholder": "use of data file recommmended (see README for instruction)"
         },
         {
           "field": "params.Cards.Card.Creation.QueryMatch",
           "label": "Query Match",
+          "placeholder": "true"
+        },
+        {
+          "field": "params.Cards.Card.Creation.QueryParameter",
+          "label": "Query Parameter",
+          "placeholder": "cardify"
+        },
+        {
+          "field": "params.Cards.Card.Creation.QueryMatchOverridesFilter",
+          "label": "Query Match Overrides Filter",
           "placeholder": "true"
         },
         {

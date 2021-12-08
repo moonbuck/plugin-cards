@@ -10,85 +10,60 @@ publish-date?    article:publish_date
 
 */
 
-{{- $params := site.Params -}}
-
-{{- $config := site.Data.plugin_cards_config -}}
-{{- $config  = $config | default site.Data.plugin_cards.config -}}
-
-{{- $QueryMatch := index $params "cards.card.creation.querymatch" -}}
-{{- $QueryMatch =  $QueryMatch | default $config.Card.Creation.QueryMatch -}}
-{{- $QueryMatch =  $QueryMatch | default true -}}
-
-{{- $HostMatch := index $params "cards.card.creation.hostmatch" -}}
-{{- $HostMatch  = $HostMatch | default $config.Card.Creation.HostMatch -}}
-{{- $HostMatch  = $HostMatch | default false -}}
-
-{{- $URLFilter := index $params "cards.card.hostmatch.urlfilter" -}}
-{{- $URLFilter  = $URLFilter | default $config.Card.HostMatch.URLFilter -}}
-
-{{- $ReadMoreLink := index $params "cards.card.hostmatch.readmorelink" -}}
-{{- $ReadMoreLink  = $ReadMoreLink | default $config.Card.HostMatch.ReadMoreLink -}}
-{{- $ReadMoreLink  = $ReadMoreLink | default ".read-more" -}}
-
-{{- $ListSandbox := index $params "cards.card.hostmatch.listsandbox" -}}
-{{- $ListSandbox  = $ListSandbox | default $config.Card.HostMatch.ListSandbox -}}
-{{- $ListSandbox  = $ListSandbox | default ".post-body" -}}
-
-{{- $PageSandbox := index $params "cards.card.hostmatch.pagesandbox" -}}
-{{- $PageSandbox  = $PageSandbox | default $config.Card.HostMatch.PageSandbox -}}
-{{- $PageSandbox  = $PageSandbox | default "#post-body" -}}
-
-{{- $CustomSelector := index $params "cards.card.hostmatch.customselector" -}}
-{{- $CustomSelector  = $CustomSelector | default $config.Card.HostMatch.CustomSelector -}}
-
 // Whether to cardify links with the custom query string set
-const queryMatchCards = {{ $QueryMatch }};
+const QUERY_MATCH_CARDS = {{ .Scratch.Get "Card.Creation.QueryMatch" }}
+
+// The query parameter to match
+const QUERY_PARAMETER = '{{ .Scratch.Get "Card.Creation.QueryParameter" }}'
+
+// Whether matching the query parameter overrides failing the url filter
+const QUERY_MATCH_OVERRIDES_FILTER = {{ .Scratch.Get "Card.Creation.QueryMatchOverridesFilter" }}
 
 // Select links inside a list of posts
-const listAnchor = '{{ $ListSandbox }} a';
+const LIST_ANCHOR = '{{ .Scratch.Get "Card.HostMatch.ListSandbox" }} a';
 
 // Select links inside a post page
-const pageAnchor = '{{ $PageSandbox }} a';
+const PAGE_ANCHOR = '{{ .Scratch.Get "Card.HostMatch.PageSandbox" }} a';
 
 // Match the custom query string
-const matchQuery = `href$="cardify"`;
+const MATCH_QUERY = `href$="${QUERY_PARAMETER}"`;
 
 // The full selector for query string candidates
-const queryMatchSel   = `${listAnchor}[${matchQuery}],
-                         ${pageAnchor}[${matchQuery}]`;
+const QUERY_MATCH_SEL   = `${LIST_ANCHOR}[${MATCH_QUERY}],
+                         ${PAGE_ANCHOR}[${MATCH_QUERY}]`;
 
 // Whether to cardify links that match the site hostname                    
-const hostMatchCards = {{ $HostMatch }};
+const HOST_MATCH_CARDS = {{ .Scratch.Get "Card.Creation.HostMatch" }};
 
 // The site hostname
-const hostname = "{{ (urls.Parse site.BaseURL).Host }}";
+const HOSTNAME = "{{ (urls.Parse site.BaseURL).Host }}";
 
 // Match the hostname as it is configured in Hugo
-const matchHost = `href*="${hostname}"`;
+const MATCH_HOST = `href*="${HOSTNAME}"`;
 
 // Match the hostname converted to all lowercase
-const matchLowerHost = `href*="${hostname.toLowerCase()}"`;
+const MATCH_LOWER_HOST = `href*="${HOSTNAME.toLowerCase()}"`;
 
 // Match links that do not include the cardify-link class
-const notCard = ':not(.cardify-card-link)';
+const NOT_CARD = ':not(.cardify-card-link)';
 
 // Match links that do not include the read-more class
-const notSummary = ':not({{ $ReadMoreLink }})';
+const NOT_SUMMARY = ':not({{ .Scratch.Get "Card.HostMatch.ReadMoreLink" }})';
 
 // Match links that do not match the query string
-const notQuery = `:not([${matchQuery}])`;
+const NOT_QUERY = `:not([${MATCH_QUERY}])`;
 
-{{- with $CustomSelector -}}
+{{- with .Scratch.Get "Card.HostMatch.CustomSelector" -}}
 
-const hostMatchSel = '{{ . }}';
+const HOST_MATCH_SEL = '{{ . }}';
 
 {{- else -}}
 
 // The full selector for host match candidates
-const hostMatchSel = `${pageAnchor}[${matchHost}]${notCard}${notQuery}, 
-                      ${pageAnchor}[${matchLowerHost}]${notCard}${notQuery},
-                      ${listAnchor}[${matchHost}]${notSummary}${notCard}${notQuery}, 
-                      ${listAnchor}[${matchLowerHost}]${notSummary}${notCard}${notQuery}`;
+const HOST_MATCH_SEL = `${PAGE_ANCHOR}[${MATCH_HOST}]${NOT_CARD}${NOT_QUERY}, 
+                      ${PAGE_ANCHOR}[${MATCH_LOWER_HOST}]${NOT_CARD}${NOT_QUERY},
+                      ${LIST_ANCHOR}[${MATCH_HOST}]${NOT_SUMMARY}${NOT_CARD}${NOT_QUERY}, 
+                      ${LIST_ANCHOR}[${MATCH_LOWER_HOST}]${NOT_SUMMARY}${NOT_CARD}${NOT_QUERY}`;
                       
 {{- end -}}                      
 
@@ -96,27 +71,27 @@ const hostMatchSel = `${pageAnchor}[${matchHost}]${notCard}${notQuery},
 document.addEventListener('DOMContentLoaded',() => {
   
   // Return if we aren't meant to be generating cards
- if (!(queryMatchCards || hostMatchCards)) {  return }
+ if (!(QUERY_MATCH_CARDS || HOST_MATCH_CARDS)) {  return }
   
   // Check whether we're only processing query tagged links
-  if (queryMatchCards && !hostMatchCards) {
+  if (QUERY_MATCH_CARDS && !HOST_MATCH_CARDS) {
 
-    document.querySelectorAll(queryMatchSel)
+    document.querySelectorAll(QUERY_MATCH_SEL)
             .forEach(link => processLink(link))
           
   }
   
   // Check whether we're only processing host matches
-  else if (!queryMatchCards && hostMatchCards) {
+  else if (!QUERY_MATCH_CARDS && HOST_MATCH_CARDS) {
 
-    document.querySelectorAll(hostMatchSel)
+    document.querySelectorAll(HOST_MATCH_SEL)
             .forEach(link => processLink(link))
   }
     
   // Fetch query tagged and host matched links
   else {
 
-    document.querySelectorAll(`${queryMatchSel}, ${hostMatchSel}`)
+    document.querySelectorAll(`${QUERY_MATCH_SEL}, ${HOST_MATCH_SEL}`)
             .forEach(link => processLink(link))
 
   }
@@ -126,37 +101,43 @@ document.addEventListener('DOMContentLoaded',() => {
 // Fetches page text and feeds it to scrapePage(html, link)
 function processLink(link) {
   
-{{- with $URLFilter }}
+{{- with .Scratch.Get "Card.HostMatch.URLFilter" }}
 
-  if ((new URL(link)).pathname.match(/{{ . }}/)) {
+  let url = new URL(link)
   
+  if (   url.pathname.match(/{{ . }}/)
+      || (QUERY_MATCH_OVERRIDES_FILTER && url.searchParams.has(QUERY_PARAMETER))) {
+     
 {{- end }}
   
   fetch(link)
     .then(response => response.text())
     .then(html => scrapePage(html, link))
     
-{{- if $URLFilter -}}
+{{- if .Scratch.Get "Card.HostMatch.URLFilter" }}
+
   }
-{{- end -}}
+
+{{- end }}
+    
 }
 
 // Selectors used to match meta tags
-const urlSel = `meta[property="og:url"],
+const URL_SEL = `meta[property="og:url"],
                 meta[name="twitter:url"]`
                 
-const imgSel = `meta[property="og:image"],
+const IMG_SEL = `meta[property="og:image"],
                 meta[name="twitter:image"]`
                 
-const titleSel = `meta[property="og:title"],
+const TITLE_SEL = `meta[property="og:title"],
                   meta[name="twitter:title"]`
 
-const descSel = `meta[property="og:description"],
+const DESC_SEL = `meta[property="og:description"],
                  meta[name="twitter:description"]`
                  
-const readingTimeSel = 'meta[name="article:reading_time"]'
+const READING_TIME_SEL = 'meta[name="article:reading_time"]'
 
-const publishDateSel = 'meta[property="article:published_time"]'
+const PUBLISH_DATE_SEL = 'meta[property="article:published_time"]'
 
 // Creates a DOM from the provided HTML text, 
 // queries for meta tags, and replaces the provided link
@@ -166,12 +147,12 @@ function scrapePage(html, link) {
   
   var parser = new DOMParser()
   var page = parser.parseFromString(html, 'text/html')
-  let urlTag = page.querySelector(urlSel)
-  let imgTag = page.querySelector(imgSel)
-  let titleTag = page.querySelector(titleSel)
-  let descTag = page.querySelector(descSel)
-  let readingTimeTag = page.querySelector(readingTimeSel)
-  let publishDateTag = page.querySelector(publishDateSel)
+  let urlTag = page.querySelector(URL_SEL)
+  let imgTag = page.querySelector(IMG_SEL)
+  let titleTag = page.querySelector(TITLE_SEL)
+  let descTag = page.querySelector(DESC_SEL)
+  let readingTimeTag = page.querySelector(READING_TIME_SEL)
+  let publishDateTag = page.querySelector(PUBLISH_DATE_SEL)
   
   var url = null, img = null, title = null, desc = null
   var readingTime = null, publishDate = null
