@@ -1,0 +1,167 @@
+{{/* Load page resources used by Twitter / OG meta tags */}}
+
+{{ .Scratch.SetInMap "Attributes" "url" .Permalink }}
+{{ .Scratch.SetInMap "Attributes" "site_name" site.Title }}
+
+{{ $domain := (urls.Parse site.BaseURL).Host }}
+{{ .Scratch.SetInMap "Attributes" "domain" $domain }}
+
+{{/* Determine content for description and truncate */}}
+
+{{ $description := "" }}
+
+{{ with .Summary | default .Description | default site.Params.description }}
+
+{{ $description = . | markdownify | plainify | truncate 200 }}  
+
+{{ end }}
+
+{{ .Scratch.SetInMap "Attributes" "description" $description }}
+
+{{/* Determine content for title and truncate */}}
+
+{{ $title := "" }}
+
+{{ with .Title }}
+
+{{ $title = . | markdownify | plainify | truncate 70 }}
+
+{{ else }}
+
+{{ $title = $description | truncate 70 }}
+
+{{ end }}
+
+{{ .Scratch.SetInMap "Attributes" "title" $title }}
+
+{{/* Resolve the image */}}
+
+{{ with .Params.images }}
+
+{{ $image := index . 0 | absURL }}
+{{ $.Scratch.SetInMap "Attributes" "image" $image }}
+
+{{ else }}
+
+  {{ with .Scratch.Get "Data" }}
+
+    {{/* Capture the path for the page */}}
+    {{ $page_path := (urls.Parse $.Permalink).Path }}
+    
+    {{/* Trim off any query parameters present */}}
+    {{ $page_path = replaceRE "^([^?]+)(?:[?].+)?" "$1" $page_path }}
+    
+    
+    {{/* Check whether the data has an entry for this page */}}
+    {{ with (index . $page_path) }}
+    
+      {{ $.Scratch.SetInMap "Attributes" "image" . }}
+    
+    {{ else }}
+    
+      {{ with index . "default" }}
+    
+        {{ $.Scratch.SetInMap "Attributes" "image" . }}
+    
+      {{ end }} {{/* with index . "default" */}}
+    
+    {{ end }} {{/* with (index . $page_path) */}}
+    
+  {{ end }} {{/* with .Scratch.Get "Data" */}}
+    
+{{ end }} {{/* with .Params.images */}}
+
+{{ with .Section }}
+{{ $.Scratch.SetInMap "Attributes" "section" . }}
+{{ end }}
+
+{{ with .Params.categories }}
+{{ $.Scratch.SetInMap "Attributes" "tag" . }}
+{{ end }}
+
+{{/* Grab times */}}
+{{ $iso8601 := "2006-01-02T15:04:05-07:00" }}
+
+{{ if (and .IsPage (not .PublishDate.IsZero)) }}
+
+{{ $time := .PublishDate.Format $iso8601 }}
+{{ $.Scratch.SetInMap "Attributes" "published_time" $time }}
+
+{{ else if (and .IsPage (not .Date.IsZero)) }}
+
+{{ $time := .Date.Format $iso8601 }}
+{{ $.Scratch.SetInMap "Attributes" "published_time" $time }}
+
+{{ end }}
+
+{{ if (and .IsPage (not .Lastmod.IsZero)) }}
+
+{{ $time := .Lastmod.Format $iso8601 }}
+{{ $.Scratch.SetInMap "Attributes" "modified_time" $time }}
+
+{{ end }}
+
+{{ if (and (not .IsPage) (not .Date.IsZero)) }}
+
+{{ $time := .Date.Format $iso8601 }}
+{{ $.Scratch.SetInMap "Attributes" "updated_time" $time }}
+
+{{ end }}
+
+{{/* 
+
+  Determine the type  
+  
+*/}}
+
+{{/* Check for audio */}}
+{{ with .Params.audio }}
+
+{{ $audio := index . 0 | absURL }}
+{{ $.Scratch.SetInMap "Attributes" "audio" $audio }}
+{{ $.Scratch.SetInMap "Attributes" "type" "music.song" }}
+
+{{ $.Scratch.SetInMap "Attributes" "card" "summary" }}
+
+{{/* Check for video */}}
+{{/* else if false */}}
+
+{{/* 
+{{ .Scratch.SetInMap "Attributes" "card" "player" }}
+{{ .Scratch.SetInMap "Attributes" "player" "" }}
+{{ .Scratch.SetInMap "Attributes" "player:width" "600" }}
+{{ .Scratch.SetInMap "Attributes" "player:height" "338" }}
+*/}}
+
+{{/* Handle non-media oriented types */}}
+{{ else }}
+
+  {{/* Determine Twitter card summary size */}}
+  {{ if (isset (.Scratch.Get "Attributes") "image") }}
+    {{ $.Scratch.SetInMap "Attributes" "card" "summary_large_image" }}
+  {{ else }}
+    {{ $.Scratch.SetInMap "Attributes" "card" "summary" }}
+  {{ end }}
+
+  {{/* Check for post */}}
+  {{ if .IsPage }}
+  
+  {{ $.Scratch.SetInMap "Attributes" "type" "article" }}
+  {{ $.Scratch.SetInMap "Attributes" "reading_time" .ReadingTime }}
+  
+  {{ else }}
+  
+  {{ $.Scratch.SetInMap "Attributes" "type" "website" }}
+  
+  {{ end }}
+  
+{{ end }}
+
+{{/* Twitter username attributes */}}
+{{ with .Scratch.Get "TwitterOG.TwitterUsername" }}
+
+{{ $handle := printf "@%s" . }}
+{{ $.Scratch.SetInMap "Attributes" "site" $handle }}
+{{ $.Scratch.SetInMap "Attributes" "creator" $handle }}
+
+{{ end }}
