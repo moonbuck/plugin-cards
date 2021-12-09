@@ -1,0 +1,68 @@
+{{- /*
+ 
+  Expects the address of a post for which a card shall be generated.
+ 
+  */ -}}
+{{- with .Get 0 -}}
+
+{{/* Retrieve the page from the provided path */}}
+  {{ with site.GetPage . }}
+  
+  {{/* Grab the first available image */}}
+  {{- $image := false -}}
+  {{- with .Params.images }}{{ $image = index . 0 }}{{ end -}}
+
+  {{/* Grab the page title */}}
+  {{- $title := .LinkTitle -}}
+  
+  {{/* Generate a summary */}}
+  {{- $summary := false -}}
+  {{- if (findRE "<!--more-->" .Content) -}}
+  {{- $summary = index (split .Content "<!--more-->") 0 -}}
+  {{- else -}}
+  {{- $summary = .Summary -}}
+  {{- end -}}
+  
+  {{/* If we have an image, make sure it isn't in the summary */}}
+  {{- if (and $image $summary) -}}
+  
+    {{- $pattern := printf "<img src=\"%s\"[^>]*>" $image -}}
+    {{- $image_tag := findRE $pattern $summary -}}
+  
+    {{- if $image_tag -}}
+      {{- $image_tag = index $image_tag 0 -}}
+      {{- $summary = replaceRE $image_tag "" $summary -}}
+    {{- end -}}
+  
+  {{- end -}}
+  
+  {{/* Insert the card-text class into summary p tags */}}
+  {{- if $summary -}}
+    {{- $summary = replace $summary "<p>" "<p class=\"card-text\">" -}}
+  {{- end -}}
+  
+  {{/* Grab the estimated reading time for the post */}}
+  {{- $reading_time := printf "%v minute" .ReadingTime -}}
+  {{- if (gt .ReadingTime 1) -}}
+  {{- $reading_time = printf "%ss" $reading_time -}}
+  {{- end -}}
+  
+  {{/* Grab the publish date for the post */}}
+  {{- $publish_date := .PublishDate.Format site.Params.Theme.Date.Card -}}
+ 
+  <div class="cardify-card">
+    {{ with $image }}<img src="{{ . }}" class="cardify-card-img" />{{ end }}
+    <div class="cardify-card-body">
+      {{ with $title }}<h3 class="cardify-card-title">{{ . }}</h3>{{ end }}
+      {{ $summary | safeHTML }}
+      <a href="{{ .Permalink }}" class="cardify-card-link"></a>
+      <p class="cardify-card-text">
+        <small><span class="cardify-card-publish-date">{{ $publish_date }}</span></small>
+        <small class="cardify-card-reading-time">reading time <span>{{ $reading_time }}</span></small>
+      </p>
+    </div>
+  </div>
+  
+  {{- end -}}
+  
+{{- end -}}

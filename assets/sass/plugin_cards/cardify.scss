@@ -6,7 +6,7 @@ $bg:                   {{ .Scratch.Get "Card.Style.BG" }};
 $border-width:         {{ .Scratch.Get "Card.Style.BorderWidth" }};
 $border-color:         {{ .Scratch.Get "Card.Style.BorderColor" }};
 $border-radius:        {{ .Scratch.Get "Card.Style.BorderRadius" }};
-$inner-border-radius:  calc($border-radius - $border-width);
+$inner-border-radius:  calc(#{$border-radius} - #{$border-width});
 $time-date-color:      {{ .Scratch.Get "Card.Style.TimeDateColor" }};
 
 /// Hugo variable values
@@ -31,8 +31,6 @@ $cardify-card-reading-time-class: {{ .ReadingTime }};
   background-clip: border-box;
   border: $border-width solid $border-color;
   border-radius: $border-radius;
-  
-  
 }
 
 .#{$cardify-card-body-class} {
@@ -60,6 +58,13 @@ $cardify-card-reading-time-class: {{ .ReadingTime }};
   width: 100%;
   border-top-left-radius: $inner-border-radius;
   border-top-right-radius: $inner-border-radius;
+  
+  &.left {
+    width: 30%;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: $inner-border-radius;
+  }
+  
 }
 
 .#{$cardify-card-reading-time-class} {
@@ -75,5 +80,19 @@ $cardify-card-reading-time-class: {{ .ReadingTime }};
     left: 0;
     z-index: 1;
     content: "";
+  }
+}
+
+.#{$cardify-card-class}.horizontal {
+  
+  flex-direction: row;
+  
+  
+  .#{$cardify-card-img-class} {
+    width: 30%;
+    height: auto;
+    object-fit: cover;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: $inner-border-radius;
   }
 }

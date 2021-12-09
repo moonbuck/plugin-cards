@@ -176,6 +176,9 @@ function scrapePage(html, link) {
     let cardDiv = document.createElement("DIV");
     cardDiv.className = CARDIFY_CARD_CLASS;
     
+    let queryValue = (new URL(link)).searchParams.get(QUERY_PARAMETER)
+    if (queryValue) { cardDiv.classList.add(queryValue) }
+    
     if (img) {
       let cardImg = document.createElement("IMG");
       cardImg.src = img;
