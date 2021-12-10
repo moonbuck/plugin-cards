@@ -1,0 +1,5 @@
+{{- with .Get "src" -}}
+
+<img src="{{ . }}?card-image"{{ with $.Get "hidden" }} style="display: none"{{ end }} />
+
+{{- end -}}

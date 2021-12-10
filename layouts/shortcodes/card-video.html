@@ -1,0 +1,5 @@
+{{- with .Get "src" -}}
+
+<video src="{{ . }}?card-video" playsinline {{ with $.Get "autoplay" }} autoplay muted{{ end }} {{ with $.Get "loop" }} loop{{ end }} {{ with $.Get "controls" }} controls{{ end }}></video>
+
+{{- end -}}
