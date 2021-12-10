@@ -6,37 +6,16 @@
 {{- $domain := (urls.Parse site.BaseURL).Host -}}
 {{- .Scratch.SetInMap "Attributes" "domain" $domain -}}
 
-{{/* Determine content for description and truncate */}}
-
-{{- $description := "" -}}
-
-{{- with .Summary | default .Description | default site.Params.description -}}
-
-{{- $description = . | markdownify | plainify | truncate 200 | chomp -}}  
-
-{{- end -}}
-
-{{- .Scratch.SetInMap "Attributes" "description" $description -}}
-
-{{/* Determine content for title and truncate */}}
-
-{{- $title := "" -}}
-
-{{- with .Title -}}
-
-{{- $title = . | markdownify | plainify | truncate 70 | chomp -}}
-
-{{- else -}}
-
-{{- $title = $description | truncate 70 -}}
-
-{{- end -}}
-
-{{- .Scratch.SetInMap "Attributes" "title" $title -}}
-
 {{/* Resolve registered resources */}}
 
 {{- $content := .Content | markdownify -}}
+
+{{- $title_re := `<h1[^>]+data-card-title="([^"]+)"` -}}
+{{- $registered_title := false -}}
+{{- with findRE $title_re $content -}}
+{{- $registered_title = replaceRE $title_re "$1" (index . 0) -}}
+{{- end -}}
+
 {{- $image_re := `<img[^>]+src="([^"]+)\?[^"]*card-image[^"]*"` -}}
 {{- $registered_images := slice -}}
 {{- range findRE $image_re $content -}}
@@ -54,6 +33,35 @@
 {{- range findRE $video_re $content -}}
 {{- $registered_video = $registered_video | append (replaceRE $video_re "$1" .) -}}
 {{- end -}}
+
+{{/* Determine content for description and truncate */}}
+
+{{- $description := "" -}}
+
+{{- with .Summary | default .Description | default site.Params.description -}}
+
+{{- $description = . | markdownify | plainify | truncate 200 | chomp -}}  
+
+{{- end -}}
+
+{{- .Scratch.SetInMap "Attributes" "description" $description -}}
+
+{{/* Determine content for title and truncate */}}
+
+{{- $title := "" -}}
+
+{{- with $registered_title | default .Title -}}
+
+{{- $title = . | markdownify | plainify | truncate 70 | chomp -}}
+
+{{- else -}}
+
+{{- $title = $description | truncate 70 -}}
+
+{{- end -}}
+
+{{- .Scratch.SetInMap "Attributes" "title" $title -}}
+
 
 {{/* Resolve the image */}}
 
