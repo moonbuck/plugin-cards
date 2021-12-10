@@ -1,22 +1,19 @@
 {{- if (and (.Scratch.Get "StructuredData.Enable") (eq .Type "post")) -}}
 
-{{- /* Create a Scratch instance to gather data */ -}}
-{{- $data := newScratch -}}
-
 {{- /* Set the context and type */ -}}
-{{- $data.SetInMap "data" "@context" "https://schema.org" -}}
-{{- $data.SetInMap "data" "@type" "BlogPosting" -}}
+{{- .Scratch.SetInMap "data" "@context" "https://schema.org" -}}
+{{- .Scratch.SetInMap "data" "@type" "BlogPosting" -}}
 
 {{- /* Add the author */ -}}
 {{- with .Scratch.Get "StructuredData.AuthorName" -}}
-{{- $data.SetInMap "author" "@type" "Person" -}}
-{{- $data.SetInMap "author" "name" . -}}
+{{- $.Scratch.SetInMap "author" "@type" "Person" -}}
+{{- $.Scratch.SetInMap "author" "name" . -}}
 {{- with .Scratch.Get "StructuredData.ProfileURL" -}}
-{{- $data.SetInMap "author" "url" . -}}
+{{- $.Scratch.SetInMap "author" "url" . -}}
 {{- end -}}
 {{- end -}}
-{{- with $data.Get "author" -}}
-{{- $data.SetInMap "data" "author" . -}}
+{{- with .Scratch.Get "author" -}}
+{{- $.Scratch.SetInMap "data" "author" . -}}
 {{- end -}}
 
 {{- /* Add the published and modified times */ -}}
@@ -28,7 +25,7 @@
 {{- $date_published = nil -}}
 {{- end -}}
 {{- with $date_published -}}
-{{- $data.SetInMap "data" "datePublished" . -}}
+{{- $.Scratch.SetInMap "data" "datePublished" . -}}
 {{- end -}}
 {{- $date_modified := .Lastmod -}}
 {{- if not $date_modified.IsZero -}}
@@ -37,31 +34,29 @@
 {{- $date_modified = nil -}}
 {{- end -}}
 {{- with $date_modified -}}
-{{- $data.SetInMap "data" "dateModified" . -}}
+{{- $.Scratch.SetInMap "data" "dateModified" . -}}
 {{- end -}}
 
 {{- /* Add the title */ -}}
 {{- with .Title -}}
-{{- $data.SetInMap "data" "headline" . -}}
+{{- $.Scratch.SetInMap "data" "headline" . -}}
 {{- end -}}
 
 {{- /* Add any images */ -}}
 {{- with .Params.images -}}
-{{- $data.SetInMap "data" "image" (apply . "absURL" ".") -}}
+{{- $.Scratch.SetInMap "data" "image" (apply . "absURL" ".") -}}
 {{- end -}}
 
 {{- /* Add description */ -}}
 {{- with .Summary -}}
-{{- $data.SetInMap "data" "description" (. | plainify | chomp) -}}
+{{- $.Scratch.SetInMap "data" "description" (. | plainify | chomp) -}}
 {{- end -}}
 
 {{- /* Add the word count */ -}}
 {{- with .WordCount -}}
-{{- $data.SetInMap "data" "wordcount" . -}}
+{{- $.Scratch.SetInMap "data" "wordcount" . -}}
 {{- end -}}
 
-{{- $data = $data.Get "data" -}}
-
-<script type="application/ld+json">{{ $data | jsonify | safeHTML }}</script>
+<script type="application/ld+json">{{ .Scratch.Get "data" | jsonify | safeHTML }}</script>
 
 {{- end -}}

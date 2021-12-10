@@ -146,6 +146,10 @@
 {{- end -}}
 {{- with index site.Params "cards.twitterog.twitterusername" -}}
 {{- $.Scratch.Set "TwitterOG.TwitterUsername" . -}}
+{{- else -}}
+{{- with index site.Params.twitter_username -}}
+{{- $.Scratch.Set "TwitterOG.TwitterUsername" . -}}
+{{- end -}}
 {{- end -}}
 {{- if (isset site.Params "cards.structureddata.enable") -}}
 {{- with index site.Params "cards.structureddata.enable" -}}

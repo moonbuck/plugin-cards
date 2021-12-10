@@ -1,112 +1,133 @@
 {{/* Load page resources used by Twitter / OG meta tags */}}
 
-{{ .Scratch.SetInMap "Attributes" "url" .Permalink }}
-{{ .Scratch.SetInMap "Attributes" "site_name" site.Title }}
+{{- .Scratch.SetInMap "Attributes" "url" .Permalink -}}
+{{- .Scratch.SetInMap "Attributes" "site_name" site.Title -}}
 
-{{ $domain := (urls.Parse site.BaseURL).Host }}
-{{ .Scratch.SetInMap "Attributes" "domain" $domain }}
+{{- $domain := (urls.Parse site.BaseURL).Host -}}
+{{- .Scratch.SetInMap "Attributes" "domain" $domain -}}
 
 {{/* Determine content for description and truncate */}}
 
-{{ $description := "" }}
+{{- $description := "" -}}
 
-{{ with .Summary | default .Description | default site.Params.description }}
+{{- with .Summary | default .Description | default site.Params.description -}}
 
-{{ $description = . | markdownify | plainify | truncate 200 }}  
+{{- $description = . | markdownify | plainify | truncate 200 | chomp -}}  
 
-{{ end }}
+{{- end -}}
 
-{{ .Scratch.SetInMap "Attributes" "description" $description }}
+{{- .Scratch.SetInMap "Attributes" "description" $description -}}
 
 {{/* Determine content for title and truncate */}}
 
-{{ $title := "" }}
+{{- $title := "" -}}
 
-{{ with .Title }}
+{{- with .Title -}}
 
-{{ $title = . | markdownify | plainify | truncate 70 }}
+{{- $title = . | markdownify | plainify | truncate 70 | chomp -}}
 
-{{ else }}
+{{- else -}}
 
-{{ $title = $description | truncate 70 }}
+{{- $title = $description | truncate 70 -}}
 
-{{ end }}
+{{- end -}}
 
-{{ .Scratch.SetInMap "Attributes" "title" $title }}
+{{- .Scratch.SetInMap "Attributes" "title" $title -}}
+
+{{/* Resolve registered resources */}}
+
+{{- $content := .Content | markdownify -}}
+{{- $image_re := `<img[^>]+src="([^"]+)\?[^"]*card-image[^"]*"` -}}
+{{- $registered_images := slice -}}
+{{- range findRE $image_re $content -}}
+{{- $registered_images = $registered_images | append (replaceRE $image_re "$1" .) -}}
+{{- end -}}
+
+{{- $audio_re := `<audio[^>]+src="([^"]+)\?[^"]*card-audio[^"]*"` -}}
+{{- $registered_audio := slice -}}
+{{- range findRE $audio_re $content -}}
+{{- $registered_audio = $registered_audio | append (replaceRE $audio_re "$1" .) -}}
+{{- end -}}
+
+{{- $video_re := `<video[^>]+src="([^"]+)\?[^"]*card-video[^"]*"` -}}
+{{- $registered_video := slice -}}
+{{- range findRE $video_re $content -}}
+{{- $registered_video = $registered_video | append (replaceRE $video_re "$1" .) -}}
+{{- end -}}
 
 {{/* Resolve the image */}}
 
-{{ with .Params.images }}
+{{- with ($registered_images | default .Params.images) -}}
 
-{{ $image := index . 0 | absURL }}
-{{ $.Scratch.SetInMap "Attributes" "image" $image }}
+{{- $image := index . 0 | absURL -}}
+{{- $.Scratch.SetInMap "Attributes" "image" $image -}}
 
-{{ else }}
+{{- else -}}
 
-  {{ with .Scratch.Get "Data" }}
+  {{- with .Scratch.Get "Data" -}}
 
     {{/* Capture the path for the page */}}
-    {{ $page_path := (urls.Parse $.Permalink).Path }}
+    {{- $page_path := (urls.Parse $.Permalink).Path -}}
     
     {{/* Trim off any query parameters present */}}
-    {{ $page_path = replaceRE "^([^?]+)(?:[?].+)?" "$1" $page_path }}
+    {{- $page_path = replaceRE "^([^?]+)(?:[?].+)?" "$1" $page_path -}}
     
     
     {{/* Check whether the data has an entry for this page */}}
-    {{ with (index . $page_path) }}
+    {{- with (index . $page_path) -}}
     
-      {{ $.Scratch.SetInMap "Attributes" "image" . }}
+      {{- $.Scratch.SetInMap "Attributes" "image" . -}}
     
-    {{ else }}
+    {{- else -}}
     
-      {{ with index . "default" }}
+      {{- with index . "default" -}}
     
-        {{ $.Scratch.SetInMap "Attributes" "image" . }}
+        {{- $.Scratch.SetInMap "Attributes" "image" . -}}
     
-      {{ end }} {{/* with index . "default" */}}
+      {{- end -}} {{/* with index . "default" */}}
     
-    {{ end }} {{/* with (index . $page_path) */}}
+    {{- end -}} {{/* with (index . $page_path) */}}
     
-  {{ end }} {{/* with .Scratch.Get "Data" */}}
+  {{- end -}} {{/* with .Scratch.Get "Data" */}}
     
-{{ end }} {{/* with .Params.images */}}
+{{- end -}} {{/* with .Params.images */}}
 
-{{ with .Section }}
-{{ $.Scratch.SetInMap "Attributes" "section" . }}
-{{ end }}
+{{- with .Section -}}
+{{- $.Scratch.SetInMap "Attributes" "section" . -}}
+{{- end -}}
 
-{{ with .Params.categories }}
-{{ $.Scratch.SetInMap "Attributes" "tag" . }}
-{{ end }}
+{{- with .Params.categories -}}
+{{- $.Scratch.SetInMap "Attributes" "tag" . -}}
+{{- end -}}
 
 {{/* Grab times */}}
-{{ $iso8601 := "2006-01-02T15:04:05-07:00" }}
+{{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
 
-{{ if (and .IsPage (not .PublishDate.IsZero)) }}
+{{- if (and .IsPage (not .PublishDate.IsZero)) -}}
 
-{{ $time := .PublishDate.Format $iso8601 }}
-{{ $.Scratch.SetInMap "Attributes" "published_time" $time }}
+{{- $time := .PublishDate.Format $iso8601 -}}
+{{- $.Scratch.SetInMap "Attributes" "published_time" $time -}}
 
-{{ else if (and .IsPage (not .Date.IsZero)) }}
+{{- else if (and .IsPage (not .Date.IsZero)) -}}
 
-{{ $time := .Date.Format $iso8601 }}
-{{ $.Scratch.SetInMap "Attributes" "published_time" $time }}
+{{- $time := .Date.Format $iso8601 -}}
+{{- $.Scratch.SetInMap "Attributes" "published_time" $time -}}
 
-{{ end }}
+{{- end -}}
 
-{{ if (and .IsPage (not .Lastmod.IsZero)) }}
+{{- if (and .IsPage (not .Lastmod.IsZero)) -}}
 
-{{ $time := .Lastmod.Format $iso8601 }}
-{{ $.Scratch.SetInMap "Attributes" "modified_time" $time }}
+{{- $time := .Lastmod.Format $iso8601 -}}
+{{- $.Scratch.SetInMap "Attributes" "modified_time" $time -}}
 
-{{ end }}
+{{- end -}}
 
-{{ if (and (not .IsPage) (not .Date.IsZero)) }}
+{{- if (and (not .IsPage) (not .Date.IsZero)) -}}
 
-{{ $time := .Date.Format $iso8601 }}
-{{ $.Scratch.SetInMap "Attributes" "updated_time" $time }}
+{{- $time := .Date.Format $iso8601 -}}
+{{- $.Scratch.SetInMap "Attributes" "updated_time" $time -}}
 
-{{ end }}
+{{- end -}}
 
 {{/* 
 
@@ -115,53 +136,56 @@
 */}}
 
 {{/* Check for audio */}}
-{{ with .Params.audio }}
+{{- with ($registered_audio | default .Params.audio) -}}
 
-{{ $audio := index . 0 | absURL }}
-{{ $.Scratch.SetInMap "Attributes" "audio" $audio }}
-{{ $.Scratch.SetInMap "Attributes" "type" "music.song" }}
+{{- $audio := index . 0 | absURL -}}
+{{- $.Scratch.SetInMap "Attributes" "audio" $audio -}}
+{{- $.Scratch.SetInMap "Attributes" "type" "music.song" -}}
 
-{{ $.Scratch.SetInMap "Attributes" "card" "summary" }}
+{{- $.Scratch.SetInMap "Attributes" "card" "summary" -}}
 
 {{/* Check for video */}}
-{{/* else if false */}}
+{{- else -}}
 
-{{/* 
-{{ .Scratch.SetInMap "Attributes" "card" "player" }}
-{{ .Scratch.SetInMap "Attributes" "player" "" }}
-{{ .Scratch.SetInMap "Attributes" "player:width" "600" }}
-{{ .Scratch.SetInMap "Attributes" "player:height" "338" }}
-*/}}
+  {{- with $registered_video -}}
 
-{{/* Handle non-media oriented types */}}
-{{ else }}
-
-  {{/* Determine Twitter card summary size */}}
-  {{ if (isset (.Scratch.Get "Attributes") "image") }}
-    {{ $.Scratch.SetInMap "Attributes" "card" "summary_large_image" }}
-  {{ else }}
-    {{ $.Scratch.SetInMap "Attributes" "card" "summary" }}
-  {{ end }}
-
-  {{/* Check for post */}}
-  {{ if .IsPage }}
+  {{- $video := index . 0 | absURL -}}
+  {{- $.Scratch.SetInMap "Attributes" "card" "player" -}}
+  {{- $.Scratch.SetInMap "Attributes" "player" $video -}}
+  {{- $.Scratch.SetInMap "Attributes" "player:width" "600" -}}
+  {{- $.Scratch.SetInMap "Attributes" "player:height" "338" -}}
   
-  {{ $.Scratch.SetInMap "Attributes" "type" "article" }}
-  {{ $.Scratch.SetInMap "Attributes" "reading_time" .ReadingTime }}
+  {{/* Handle non-media oriented types */}}
+  {{- else -}}
   
-  {{ else }}
+    {{/* Determine Twitter card summary size */}}
+    {{- if (isset (.Scratch.Get "Attributes") "image") -}}
+      {{- $.Scratch.SetInMap "Attributes" "card" "summary_large_image" -}}
+    {{- else -}}
+      {{- $.Scratch.SetInMap "Attributes" "card" "summary" -}}
+    {{- end -}}
   
-  {{ $.Scratch.SetInMap "Attributes" "type" "website" }}
+    {{/* Check for post */}}
+    {{- if .IsPage -}}
+    
+    {{- $.Scratch.SetInMap "Attributes" "type" "article" -}}
+    {{- $.Scratch.SetInMap "Attributes" "reading_time" .ReadingTime -}}
+    
+    {{- else -}}
+    
+    {{- $.Scratch.SetInMap "Attributes" "type" "website" -}}
+    
+    {{- end -}} {{/* if .IsPage */}}
+    
+  {{- end -}} {{/* with $registered_video */}}
   
-  {{ end }}
-  
-{{ end }}
+{{- end -}} {{/* with ($registered_audio | default .Params.audio) */}}
 
 {{/* Twitter username attributes */}}
-{{ with .Scratch.Get "TwitterOG.TwitterUsername" }}
+{{- with .Scratch.Get "TwitterOG.TwitterUsername" -}}
 
-{{ $handle := printf "@%s" . }}
-{{ $.Scratch.SetInMap "Attributes" "site" $handle }}
-{{ $.Scratch.SetInMap "Attributes" "creator" $handle }}
+{{- $handle := printf "@%s" . -}}
+{{- $.Scratch.SetInMap "Attributes" "site" $handle -}}
+{{- $.Scratch.SetInMap "Attributes" "creator" $handle -}}
 
-{{ end }}
+{{- end -}}

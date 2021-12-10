@@ -1,13 +1,14 @@
-{{- $MinifyScript := .Scratch.Get "Build.MinifyScript" -}}
-{{- $Fingerprint := .Scratch.Get "Build.Fingerprint" -}}
-{{- $SassOutput := .Scratch.Get "Build.SassOutput" -}}
 {{- $QueryMatch := .Scratch.Get "Card.Creation.QueryMatch" -}}
 {{- $HostMatch := .Scratch.Get "Card.Creation.HostMatch" -}}
 
 {{- if (or $QueryMatch $HostMatch) -}}
 
+{{- $MinifyScript := .Scratch.Get "Build.MinifyScript" -}}
+{{- $Fingerprint := .Scratch.Get "Build.Fingerprint" -}}
+{{- $SassOutput := .Scratch.Get "Build.SassOutput" -}}
+
 {{- /* Load HTML element specifiers into the page scratch */ -}}
-{{- partial "plugin_cards/load-element-specifiers.html" . -}}
+{{- partial "plugin_cards/load-specifiers.html" . -}}
 
 {{- $source_dir := "js/plugin_cards/" -}}
 {{- $template_name := "cardify.js" -}}

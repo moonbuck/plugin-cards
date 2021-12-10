@@ -1,13 +1,13 @@
 {{- partial "plugin_cards/version.html" . -}}
 
 {{- /* Resolve the plugin parameters into the page scratch */ -}}
-{{- partial "plugin_cards/resolve-parameter-values.html" . -}}
+{{- partial "plugin_cards/load-parameters.html" . -}}
 
 {{- /* Inject the Twitter / Open Graph meta tags */ -}}
-{{- partial "plugin_cards/twitter-open-graph-injection.html" . -}}
+{{- partial "plugin_cards/twitter-og.html" . -}}
 
 {{- /* Inject the structured data meta tags */ -}}
-{{- partial "plugin_cards/structured-data-injection.html" . -}}
+{{- partial "plugin_cards/structured-data.html" . -}}
 
 {{- /* Inject the cardify Javascript and stylesheet */ -}}
-{{- partial "plugin_cards/cardify-script-injection.html" . -}}
+{{- partial "plugin_cards/cardify.html" . -}}
