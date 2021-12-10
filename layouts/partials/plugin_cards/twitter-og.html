@@ -103,18 +103,27 @@
 <meta name="twitter:card" content="{{ . }}"/>
 {{- end }}
 
-{{ with .video -}}
+{{ with .player -}}
 <meta name="twitter:player" content="{{ . }}" />
+{{- end }}
+
+{{ with .video -}}
 <meta property="og:video" content="{{ . }}" />
 {{- end }}
 
-{{ with index . "video:width" -}}
+{{ with index . "player:width" -}}
 <meta name="twitter:player:width" content="{{ . }}" />
+{{- end }}
+
+{{ with index . "video:width" -}}
 <meta name="og:video:width" content="{{ . }}" />
 {{- end }}
 
-{{ with index . "video:height" -}}
+{{ with index . "player:height" -}}
 <meta name="twitter:player:height" content="{{ . }}" />
+{{- end }}
+
+{{ with index . "video:height" -}}
 <meta name="og:video:height" content="{{ . }}" />
 {{- end }}
 

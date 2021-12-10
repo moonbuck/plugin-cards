@@ -1,0 +1,11 @@
+{{ printf "<!--card-config\n" | safeHTML }}
+{{- with .Get "title" }}{{ printf "title=%s\n" . }}{{ end -}}
+{{- with .Get "description" }}{{ printf "description=%s\n" . }}{{ end -}}
+{{- with .Get "card" }}{{ printf "card=%s\n" . }}{{ end -}}
+{{- with .Get "type" }}{{ printf "type=%s\n" . }}{{ end -}}
+{{- with .Get "image" }}{{ printf "image=%s\n" . }}{{ end -}}
+{{- with .Get "audo" }}{{ printf "audio=%s\n" . }}{{ end -}}
+{{- with .Get "video" }}{{ printf "video=%s\n" . }}{{ end -}}
+{{- with .Get "video:width" }}{{ printf "video:width=%s\n" . }}{{ end -}}
+{{- with .Get "video:height" }}{{ printf "video:height=%s\n" . }}{{ end -}}
+{{ printf "-->" | safeHTML }}
