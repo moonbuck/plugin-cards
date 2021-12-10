@@ -159,9 +159,10 @@
 
   {{- $video := index . 0 | absURL -}}
   {{- $.Scratch.SetInMap "Attributes" "card" "player" -}}
-  {{- $.Scratch.SetInMap "Attributes" "player" $video -}}
-  {{- $.Scratch.SetInMap "Attributes" "player:width" "600" -}}
-  {{- $.Scratch.SetInMap "Attributes" "player:height" "338" -}}
+  {{- $.Scratch.SetInMap "Attributes" "video" $video -}}
+  {{- $.Scratch.SetInMap "Attributes" "video:width" "600" -}}
+  {{- $.Scratch.SetInMap "Attributes" "video:height" "338" -}}
+  {{- $.Scratch.SetInMap "Attributes" "type" "video.other" -}}
   
   {{/* Handle non-media oriented types */}}
   {{- else -}}
