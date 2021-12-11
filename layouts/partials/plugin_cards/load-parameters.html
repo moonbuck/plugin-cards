@@ -2,8 +2,8 @@
 {{- .Scratch.Set "TwitterOG.Enable" true -}}
 {{- .Scratch.Set "TwitterOG.TwitterUsername" "" -}}
 {{- .Scratch.Set "StructuredData.Enable" true -}}
-{{- .Scratch.Set "StructuredData.AuthorName" "" -}}
-{{- .Scratch.Set "StructuredData.ProfileURL" "" -}}
+{{- .Scratch.Set "StructuredData.AuthorName" site.Author.name -}}
+{{- .Scratch.Set "StructuredData.ProfileURL" site.Author.profileurl -}}
 {{- .Scratch.Set "Card.Creation.QueryMatch" true -}}
 {{- .Scratch.Set "Card.Creation.QueryParameter" "cardify" -}}
 {{- .Scratch.Set "Card.Creation.QueryMatchOverridesFilter" true -}}

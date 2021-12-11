@@ -8,7 +8,7 @@
 {{- with .Scratch.Get "StructuredData.AuthorName" -}}
 {{- $.Scratch.SetInMap "author" "@type" "Person" -}}
 {{- $.Scratch.SetInMap "author" "name" . -}}
-{{- with .Scratch.Get "StructuredData.ProfileURL" -}}
+{{- with $.Scratch.Get "StructuredData.ProfileURL" -}}
 {{- $.Scratch.SetInMap "author" "url" . -}}
 {{- end -}}
 {{- end -}}

@@ -85,7 +85,7 @@
 <meta property="article:section" content="{{ . }}" />
 {{- end }}
 
-{{ with .categories -}}
+{{ with .tag -}}
 {{- range first 6 . -}}
 <meta property="article:tag" content="{{ . }}" />
 {{- end -}}
