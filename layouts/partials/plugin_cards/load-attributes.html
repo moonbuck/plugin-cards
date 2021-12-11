@@ -171,7 +171,7 @@
   {{- else -}}
   
     {{/* Determine Twitter card summary size */}}
-    {{- if (and (isset (.Scratch.Get "Attributes") "image") (not (eq "summary" (.Scratch.Get "TwitterOG.CardPreference"))) -}}
+    {{- if (and (isset (.Scratch.Get "Attributes") "image") (not (eq "summary" (.Scratch.Get "TwitterOG.CardPreference")))) -}}
       {{- $.Scratch.SetInMap "Attributes" "card" ($registered.card | default "summary_large_image") -}}
     {{- else -}}
       {{- $.Scratch.SetInMap "Attributes" "card" ($registered.card | default "summary") -}}
