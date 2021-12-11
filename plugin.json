@@ -13,7 +13,7 @@
           "field": "params.Cards.TwitterOG.TwitterUsername",
           "label": "Twitter Username",
           "placeholder": ""
-        }},
+        },
         {
           "field": "params.Cards.TwitterOG.CardPreference",
           "label": "Twitter Card Preference",
