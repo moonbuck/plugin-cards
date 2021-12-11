@@ -1,6 +1,7 @@
 {{- /* Load scratch with default values */ -}}
 {{- .Scratch.Set "TwitterOG.Enable" true -}}
 {{- .Scratch.Set "TwitterOG.TwitterUsername" "" -}}
+{{- .Scratch.Set "TwitterOG.CardPreference" "summary_large_image" -}}
 {{- .Scratch.Set "StructuredData.Enable" true -}}
 {{- .Scratch.Set "StructuredData.AuthorName" site.Author.name -}}
 {{- .Scratch.Set "StructuredData.ProfileURL" site.Author.profileurl -}}
@@ -37,6 +38,9 @@
 {{- end -}}
 {{- with .TwitterOG.TwitterUsername -}}
 {{- $.Scratch.Set "TwitterOG.TwitterUsername" . -}}
+{{- end -}}
+{{- with .TwitterOG.CardPreference -}}
+{{- $.Scratch.Set "TwitterOG.CardPreference" . -}}
 {{- end -}}
 {{- if (isset .StructuredData "Enable") -}}
 {{- with .StructuredData.Enable -}}
@@ -150,6 +154,9 @@
 {{- with index site.Params.twitter_username -}}
 {{- $.Scratch.Set "TwitterOG.TwitterUsername" . -}}
 {{- end -}}
+{{- end -}}
+{{- with index site.Params "cards.twitterog.cardpreference" -}}
+{{- $.Scratch.Set "TwitterOG.CardPreference" . -}}
 {{- end -}}
 {{- if (isset site.Params "cards.structureddata.enable") -}}
 {{- with index site.Params "cards.structureddata.enable" -}}

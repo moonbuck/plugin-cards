@@ -11,6 +11,11 @@ Enable = true
 #
 TwitterUsername = ''
 
+# The default summary card to generate.
+# Valid options are summary and summary_large_image
+#
+CardPreference = 'summary_large_image'
+
 # Structured Data Parameters
 #
 [StructuredData]

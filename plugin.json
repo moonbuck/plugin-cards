@@ -1,5 +1,5 @@
 {
-    "version": "4.0.8",
+    "version": "4.0.9",
     "title": "Moondeer's Cards",
     "description": "Injects Twitter/Open Graph card meta data, structured data for search engines, and contains Javascript for generating preview cards for links inside list and post pages.",
     "includes": ["plugin_cards/injection.html"],
@@ -13,6 +13,11 @@
           "field": "params.Cards.TwitterOG.TwitterUsername",
           "label": "Twitter Username",
           "placeholder": ""
+        }},
+        {
+          "field": "params.Cards.TwitterOG.CardPreference",
+          "label": "Twitter Card Preference",
+          "placeholder": "summary_large_image"
         },
         {
           "field": "params.Cards.StructuredData.Enable",
