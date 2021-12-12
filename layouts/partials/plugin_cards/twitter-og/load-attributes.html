@@ -6,6 +6,9 @@
 {{- /* Retrieve the parameter values */ -}}
 {{- $parameters := (.Scratch.Get "TwitterOG").Parameters -}}
 
+{{- /* Retrieve the registration map from the page scratch. */ -}}
+{{- $registered := (.Scratch.Get "TwitterOG").Registered -}}
+
 {{- /* 
   Grab the page's URL.
   */ -}}
@@ -34,20 +37,11 @@
 {{- /*
   Grab the Twitter username for the site and creator attributes.
   */ -}}
-{{- with (.Scratch.Get "TwitterOG").Parameters.Twitter.Username -}}
+{{- with $parameters.Twitter.Username -}}
 {{- $handle := printf "@%s" . -}}
 {{- $scratch.SetInMap "Attributes" "site" $handle -}}
 {{- $scratch.SetInMap "Attributes" "creator" $handle -}}
 {{- end -}}
-
-{{- /* 
-  Parse content for attribute values that have been
-  registered via shortcode or query parameter.
-  */ -}}
-{{- partial "plugin_cards/twitter-og/load-specifications.html" . -}}
-
-{{- /* Retrieve the registration map from the page scratch. */ -}}
-{{- $registered := (.Scratch.Get "TwitterOG").Registered -}}
 
 {{- /* 
   

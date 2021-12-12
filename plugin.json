@@ -1,5 +1,5 @@
 {
-  "version": "4.0.10",
+  "version": "4.0.11",
   "title": "Moondeer's Cards",
   "description": "Injects Twitter/Open Graph card meta data, structured data for search engines, and contains Javascript for generating preview cards for links inside list and post pages.",
   "includes": ["plugin_cards/injection.html"],
@@ -137,7 +137,7 @@
     {
       "field": "params.Cards.Cardify.Card.Style.TitleSpacerY",
       "label": "Card Title Spacer (Vertical)",
-      "placeholder": "1rem * 0.5"
+      "placeholder": "0.5rem"
     },
     {
       "field": "params.Cards.Cardify.Card.Style.BG",
@@ -172,12 +172,12 @@
     {
       "field": "params.Cards.Cardify.Build.SassOutput",
       "label": "Sass Output Style",
-      "placeholder": "compressed"
+      "placeholder": "nested"
     },
     {
       "field": "params.Cards.Cardify.Build.MinifyScript",
       "label": "Minify Javascript File",
-      "placeholder": "true"
+      "placeholder": "false"
     }     
   ]
 }

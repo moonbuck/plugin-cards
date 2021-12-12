@@ -1,93 +1,84 @@
+{{- /* 
+  Resolve the relevant parameter values 
+  */ -}}
+  
+{{- $ConfigFile := (.Scratch.Get "plugin-cards").ConfigFile.TwitterOG -}}
+{{- $Params := (.Scratch.Get "plugin-cards").Params -}}
+{{- $Params  = $Params.TwitterOG -}}
+
+{{- $Enable := $Params.Enable -}}
+{{- $Enable  = $Enable | default $ConfigFile.Enable -}}
+{{- $Enable  = $Enable | default true -}}
+
+{{- $Data := $Params.Data -}}
+{{- $Data  = $Data | default $ConfigFile.Data -}}
+{{- $Data  = $Data | default dict -}}
+
+{{- $VideoWidth := $Params.Video.Width -}}
+{{- $VideoWidth  = $VideoWidth | default $ConfigFile.Video.Width -}}
+{{- $VideoWidth  = $VideoWidth | default 600 -}}
+
+{{- $VideoHeight := $Params.Video.Height -}}
+{{- $VideoHeight  = $VideoHeight | default $ConfigFile.Video.Height -}}
+{{- $VideoHeight  = $VideoHeight | default 338 -}}
+
+{{- $VideoType := $Params.Video.Type -}}
+{{- $VideoType  = $VideoType | default $ConfigFile.Video.Type -}}
+{{- $VideoType  = $VideoType | default "video.other" -}}
+
+{{- $AudioWidth := $Params.Audio.Width -}}
+{{- $AudioWidth  = $AudioWidth | default $ConfigFile.Audio.Width -}}
+{{- $AudioWidth  = $AudioWidth | default 338 -}}
+
+{{- $AudioHeight := $Params.Audio.Height -}}
+{{- $AudioHeight  = $AudioHeight | default $ConfigFile.Audio.Height -}}
+{{- $AudioHeight  = $AudioHeight | default 338 -}}
+
+{{- $AudioType := $Params.Audio.Type -}}
+{{- $AudioType  = $AudioType | default $ConfigFile.Audio.Type -}}
+{{- $AudioType  = $AudioType | default "music.song" -}}
+
+{{- $TwitterUsername := $Params.Twitter.Username -}}
+{{- $TwitterUsername  = $TwitterUsername | default $ConfigFile.Twitter.Username -}}
+{{- $TwitterUsername  = $TwitterUsername | default site.Params.twitter_username -}}
+
+{{- $SinglePage := $Params.Twitter.CardPreference.SinglePage -}}
+{{- $SinglePage  = $SinglePage | default $ConfigFile.Twitter.CardPreference.SinglePage -}}
+{{- $SinglePage  = $SinglePage | default "large" -}}
+
+{{- $ListPage := $Params.Twitter.CardPreference.ListPage -}}
+{{- $ListPage  = $ListPage | default $ConfigFile.Twitter.CardPreference.ListPage -}}
+{{- $ListPage  = $ListPage | default "small" -}}
+
+{{- $RequiresImage := $Params.Twitter.CardPreference.LargeSummaryRequiresImage -}}
+{{- $RequiresImage  = $RequiresImage | default $ConfigFile.Twitter.CardPreference.LargeSummaryRequiresImage -}}
+{{- $RequiresImage  = $RequiresImage | default true -}}
+
+
 {{- /*
-  Create a local scratch for building a nested map.
+  Create a local scratch and load with resolved values.
   */ -}}
 {{- $scratch := newScratch -}}
   
-{{- /* 
-  Load scratch with default values 
-  */ -}}
-{{- $scratch.SetInMap "Parameters" "Enable" true -}}
-{{- $scratch.SetInMap "Parameters" "Data" dict -}}
+{{- $scratch.SetInMap "Parameters" "Enable" $Enable -}}
+{{- $scratch.SetInMap "Parameters" "Data" $Data -}}
 
-{{- $scratch.SetInMap "Video" "Width" 600 -}}
-{{- $scratch.SetInMap "Video" "Height" 338 -}}
-{{- $scratch.SetInMap "Video" "Type" "video.other" -}}
+{{- $scratch.SetInMap "Video" "Width" $VideoWidth -}}
+{{- $scratch.SetInMap "Video" "Height" $VideoHeight -}}
+{{- $scratch.SetInMap "Video" "Type" $VideoType -}}
 
-{{- $scratch.SetInMap "Audio" "Width" 338 -}}
-{{- $scratch.SetInMap "Audio" "Height" 338 -}}
-{{- $scratch.SetInMap "Audio" "Type" "music.song" -}}
+{{- $scratch.SetInMap "Audio" "Width" $AudioWidth -}}
+{{- $scratch.SetInMap "Audio" "Height" $AudioHeight -}}
+{{- $scratch.SetInMap "Audio" "Type" $AudioType -}}
 
-{{- $scratch.SetInMap "Twitter" "Username" site.Params.twitter_username -}}
-{{- $scratch.SetInMap "CardPreference" "SinglePage" "large" -}}
-{{- $scratch.SetInMap "CardPreference" "ListPage" "small" -}}
-{{- $scratch.SetInMap "CardPreference" "LargeSummaryRequiresImage" true -}}
+{{- $scratch.SetInMap "Twitter" "Username" $TwitterUsername -}}
+{{- $scratch.SetInMap "CardPreference" "SinglePage" $SinglePage -}}
+{{- $scratch.SetInMap "CardPreference" "ListPage" $ListPage -}}
+{{- $scratch.SetInMap "CardPreference" "LargeSummaryRequiresImage" $RequiresImage -}}
 
 {{- /* 
-  Overwrite default values with any values found in a config file 
+  Assemble the inner maps 
   */ -}}
-{{- $config := site.Data.plugin_cards_config -}}
-{{- $config  = $config | default site.Data.plugin_cards.config -}}
-{{- with $config -}}
-{{- if (isset .TwitterOG "Enable") -}}
-{{- with .TwitterOG.Enable -}}
-{{- $scratch.SetInMap "TwitterOG" "Enable" true -}}
-{{- else -}}
-{{- $scratch.SetInMap "TwitterOG" "Enable" false -}}
-{{- end -}}
-{{- end -}}
-{{- with .TwitterOG.Twitter.Username -}}
-{{- $scratch.SetInMap "Twitter" "Username" . -}}
-{{- end -}}
-{{- with .TwitterOG.Twitter.CardPreference.SinglePage -}}
-{{- $scratch.SetInMap "CardPreference" "SinglePage" . -}}
-{{- end -}}
-{{- with .TwitterOG.Twitter.CardPreference.ListPage -}}
-{{- $scratch.SetInMap "CardPreference" "ListPage" . -}}
-{{- end -}}
-{{- if (isset .TwitterOG.Twitter.CardPreference "LargeSummaryRequiresImage") -}}
-{{- with .TwitterOG.Twitter.CardPreference.SinglePage -}}
-{{- $scratch.SetInMap "CardPreference" "SinglePage" . -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
-{{- $data := site.Data.plugin_cards_data -}}
-{{- $data  = $data | default site.Data.plugin_cards.data -}}
-{{- with $data -}}
-{{- $scratch.SetInMap "Parameters" "Data" . -}}
-{{- end -}}
-
-{{- /* 
-  Overwrite those values with any values set via the 
-  plugin parameter interface 
-  */ -}}
-{{- if (isset site.Params "cards.twitterog.enable") -}}
-{{- with index site.Params "cards.twitterog.enable" -}}
-{{- $scratch.SetInMap "TwitterOG" "Enable" true -}}
-{{- else -}}
-{{- $scratch.SetInMap "TwitterOG" "Enable" false -}}
-{{- end -}}
-{{- end -}}
-{{- with index site.Params "cards.twitterog.twitter.username" -}}
-{{- $scratch.SetInMap "Twitter" "Username" . -}}
-{{- end -}}
-{{- with index site.Params "cards.twitterog.twitter.cardpreference.singlepage" -}}
-{{- $scratch.SetInMap "CardPreference" "SinglePage" . -}}
-{{- end -}}
-{{- with index site.Params "cards.twitterog.twitter.cardpreference.listpage" -}}
-{{- $scratch.SetInMap "CardPreference" "ListPage" . -}}
-{{- end -}}
-{{- if (isset site.Params "cards.twitterog.twitter.cardpreference.largesummaryrequiresimage") -}}
-{{- with index site.Params "cards.twitterog.twitter.cardpreference.largesummaryrequiresimage" -}}
-{{- $scratch.SetInMap "CardPreference" "LargeSummaryRequiresImage" true -}}
-{{- else -}}
-{{- $scratch.SetInMap "CardPreference" "LargeSummaryRequiresImage" false -}}
-{{- end -}}
-{{- end -}}
-{{- with index site.Params "cards.twitterog.data" | default site.Params.cards_data -}}
-{{- $scratch.SetInMap "Parameters" "Data" (transform.Unmarshal .) -}}
-{{- end -}}
-
-{{- /* Assemble the inner maps */ -}}
 {{- $scratch.SetInMap "Twitter" "CardPreference" ($scratch.Get "CardPreference") -}}
 {{- $scratch.SetInMap "Parameters" "Video" ($scratch.Get "Video") -}}
 {{- $scratch.SetInMap "Parameters" "Audio" ($scratch.Get "Audio") -}}

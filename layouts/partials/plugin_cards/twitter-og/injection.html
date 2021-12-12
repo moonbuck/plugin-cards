@@ -1,15 +1,24 @@
-{{- /* Load Twitter and Open Graph parameters */ -}}
+{{- /* 
+  Load Twitter and Open Graph parameters 
+  */ -}}
 {{- partial "plugin_cards/twitter-og/load-parameters.html" . -}}
 
-{{- partial "plugin_cards/twitter-og/debug-parameters.html" . -}}
+{{- /*partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Parameters" .)*/ -}}
   
-{{- $parameters := (.Scratch.Get "TwitterOG").Parameters -}}
+{{- if (.Scratch.Get "TwitterOG").Parameters.Enable -}}
 
-{{- if $parameters.Enable -}}
+{{- /* 
+  Parse content for attribute values that have been
+  registered via shortcode or query parameter.
+  */ -}}
+{{- partial "plugin_cards/twitter-og/load-registered.html" . -}}
 
+{{- /* 
+  Construct the attribute map from which the <meta> tags will draw.
+  */ -}}
 {{- partial "plugin_cards/twitter-og/load-attributes.html" . -}}
 
-{{- partial "plugin_cards/twitter-og/debug-attributes.html" . -}}
+{{- /*partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Attributes" .)*/ -}}
 
 {{- $attributes := (.Scratch.Get "TwitterOG").Attributes -}}
 

@@ -1,12 +1,16 @@
 {{- /* Load cardify parameters */ -}}
 {{- partial "plugin_cards/cardify/load-parameters.html" . -}}
 
+{{- /*partial "plugin_cards/debug-print.html" (slice "Cardify" "Parameters" .)*/ -}}
+
 {{- with (.Scratch.Get "Cardify").Parameters -}}
 
 {{- if (or .Card.Creation.QueryMatch .Card.Creation.HostMatch) -}}
 
 {{- /* Load HTML element specifiers into the page scratch */ -}}
 {{- partial "plugin_cards/cardify/load-specifiers.html" $ -}}
+
+{{- /*partial "plugin_cards/debug-print.html" (slice "Cardify" "Specifiers" $)*/ -}}
 
 {{- $source_dir := "js/plugin_cards/" -}}
 {{- $template_name := "cardify.js" -}}

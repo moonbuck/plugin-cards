@@ -1,0 +1,25 @@
+{{/* 
+  parameters:
+    module: TwitterOG|StructuredData|Cardify
+    index: The index into `module`
+    context: The page context
+  */}}
+{{- $module := false -}}
+{{- $index := false -}}
+{{- $context := false -}}
+{{- if (reflect.IsMap .) -}}
+{{- $module = .module -}}
+{{- $index = .index -}}
+{{- $context = .context -}}
+{{- else if (and (reflect.IsSlice .) (eq 3 (len .))) -}}
+{{- $module = index . 0 -}}
+{{- $index = index . 1 -}}
+{{- $context = index . 2 -}}
+{{- end -}}
+{{- if (and (and $module $index) $context) -}}
+{{- with (index ($context.Scratch.Get $module) $index) -}}
+{{- printf "\n<!--\n%s.%s: %s\n-->" $module $index (jsonify .) | safeHTML }}
+{{- else -}}
+{{- printf "\n<!--%s.%s: null-->" $module $index | safeHTML -}}
+{{- end -}}
+{{- end -}}

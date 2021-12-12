@@ -206,7 +206,7 @@ SpacerX = '1rem'
 
 # Bottom margin applied to .cardify-card-title
 #
-TitleSpacerY = '1rem * 0.5'
+TitleSpacerY = '0.5rem'
 
 # Background color applied to .cardify-card
 #
@@ -243,9 +243,9 @@ Fingerprint = true
 # Output style for /assets/sass/cardify.scss. 
 # Valid options are nested, expanded, compact and compressed
 #
-SassOutput = 'compressed'
+SassOutput = 'nested'
 
 # Whether to minify the Javascript file generated from
 # /assets/js/cardify.js
 #
-MinifyScript = true
+MinifyScript = false

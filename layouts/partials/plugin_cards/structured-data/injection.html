@@ -1,11 +1,16 @@
 {{- /* Load structured data parameters */ -}}
 {{- partial "plugin_cards/structured-data/load-parameters.html" . -}}
 
+{{- /*partial "plugin_cards/debug-print.html" (slice "StructuredData" "Parameters" .)*/ -}}
+
 {{- if (and ((.Scratch.Get "StructuredData").Parameters.Enable) (eq .Type "post")) -}}
 
 {{- partial "plugin_cards/structured-data/load-ld-json.html" . -}}
-{{- $json := (.Scratch.Get "StructuredData").JSON -}}
 
-<script type="application/ld+json">{{ $json | jsonify | safeHTML }}</script>
+{{- /*partial "plugin_cards/debug-print.html" (slice "StructuredData" "JSON" .)*/ -}}
+
+{{- $JSON := (.Scratch.Get "StructuredData").JSON -}}
+
+<script type="application/ld+json">{{ $JSON | jsonify | safeHTML }}</script>
 
 {{- end -}}
