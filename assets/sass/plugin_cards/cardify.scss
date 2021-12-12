@@ -1,16 +1,20 @@
-/// Plugin parameter values
-$spacer-y:             {{ .Scratch.Get "Card.Style.SpacerY" }};
-$spacer-x:             {{ .Scratch.Get "Card.Style.SpacerX" }};
-$title-spacer-y:       {{ .Scratch.Get "Card.Style.TitleSpacerY" }};
-$bg:                   {{ .Scratch.Get "Card.Style.BG" }};
-$border-width:         {{ .Scratch.Get "Card.Style.BorderWidth" }};
-$border-color:         {{ .Scratch.Get "Card.Style.BorderColor" }};
-$border-radius:        {{ .Scratch.Get "Card.Style.BorderRadius" }};
-$inner-border-radius:  calc(#{$border-radius} - #{$border-width});
-$time-date-color:      {{ .Scratch.Get "Card.Style.TimeDateColor" }};
+{{ with .Scratch.Get "Cardify" }}
 
-/// Hugo variable values
-{{ with .Scratch.Get "Specifiers" -}}
+{{ with .Parameters.Card.Style -}}
+/// Plugin parameter values
+$spacer-y:             {{ .SpacerY }};
+$spacer-x:             {{ .SpacerX }};
+$title-spacer-y:       {{ .TitleSpacerY }};
+$bg:                   {{ .BG }};
+$border-width:         {{ .BorderWidth }};
+$border-color:         {{ .BorderColor }};
+$border-radius:        {{ .BorderRadius }};
+$inner-border-radius:  calc(#{$border-radius} - #{$border-width});
+$time-date-color:      {{ .TimeDateColor }};
+{{ end }}
+
+{{ with .Specifiers }}
+/// Shared variable values
 $cardify-card-class: {{ .Card }};
 $cardify-card-img-class: {{ .Image }};
 $cardify-card-body-class: {{ .Body }};
@@ -19,7 +23,7 @@ $cardify-card-text-class: {{ .Text }};
 $cardify-card-link-class: {{ .Link }};
 $cardify-card-publish-date-class: {{ .PublishDate }};
 $cardify-card-reading-time-class: {{ .ReadingTime }};
-{{- end }}
+{{ end }}
 
 .#{$cardify-card-class} {
   position: relative;
@@ -96,3 +100,4 @@ $cardify-card-reading-time-class: {{ .ReadingTime }};
     border-bottom-left-radius: $inner-border-radius;
   }
 }
+{{ end }}

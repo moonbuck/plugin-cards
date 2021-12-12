@@ -1,3 +1,6 @@
+{{- /* Create a local scratch for assembling the map */ -}}
+{{- $scratch := newScratch -}}
+
 {{/* Resolve registered resources */}}
 
 {{- $content := .Content | markdownify -}}
@@ -19,42 +22,45 @@
 {{- $value := replaceRE $url_re "$1" (index $key_value 1) -}}
 
 {{- /* Load the entry into the map */ -}}
-{{- $.Scratch.SetInMap "Registered" $key $value -}}
+{{- $scratch.SetInMap "Registered" $key $value -}}
 
 {{- end -}} {{/* range $entries */}}
 
 {{- end -}} {{/* with findRE `<!--card-config(.|\n)+-->` $content */}}
 
-{{- if not (isset (.Scratch.Get "Registered") "title") -}}
+{{- if not (isset ($scratch.Get "Registered") "title") -}}
 {{- $title_re := `<h[0-9][^>]+data-card-title="([^"]+)"` -}}
 {{- with findRE $title_re $content -}}
-{{- $.Scratch.SetInMap "Registered" "title" (replaceRE $title_re "$1" (index . 0)) -}}
+{{- $scratch.SetInMap "Registered" "title" (replaceRE $title_re "$1" (index . 0)) -}}
 {{- end -}}
 {{- end -}}
 
-{{- if not (isset (.Scratch.Get "Registered") "image") -}}
+{{- if not (isset ($scratch.Get "Registered") "image") -}}
 {{- $image_re := `<img[^>]+src="([^"]+)\?[^"]*card-image[^"]*"` -}}
 {{- $images := slice -}}
 {{- range findRE $image_re $content -}}
 {{- $images = $images | append (replaceRE $image_re "$1" .) -}}
 {{- end -}}
-{{ .Scratch.SetInMap "Registered" "images" $images }}
+{{ $scratch.SetInMap "Registered" "images" $images }}
 {{- end -}}
 
-{{- if not (isset (.Scratch.Get "Registered") "audio") -}}
+{{- if not (isset ($scratch.Get "Registered") "audio") -}}
 {{- $audio_re := `<audio[^>]+src="([^"]+)\?[^"]*card-audio[^"]*"` -}}
 {{- $audio := slice -}}
 {{- range findRE $audio_re $content -}}
 {{- $audio = $audio | append (replaceRE $audio_re "$1" .) -}}
 {{- end -}}
-{{ .Scratch.SetInMap "Registered" "audio" $audio }}
+{{ $scratch.SetInMap "Registered" "audio" $audio }}
 {{- end -}}
 
-{{- if not (isset (.Scratch.Get "Registered") "video") -}}
+{{- if not (isset ($scratch.Get "Registered") "video") -}}
 {{- $video_re := `<video[^>]+src="([^"]+)\?[^"]*card-video[^"]*"` -}}
 {{- $video := slice -}}
 {{- range findRE $video_re $content -}}
 {{- $video = $video | append (replaceRE $video_re "$1" .) -}}
 {{- end -}}
-{{ .Scratch.SetInMap "Registered" "video" $video }}
+{{ $scratch.SetInMap "Registered" "video" $video }}
 {{- end -}}
+
+{{- /* Insert the Registered map into the page scratch. */ -}}
+{{- .Scratch.SetInMap "TwitterOG" "Registered" ($scratch.Get "Registered") -}}

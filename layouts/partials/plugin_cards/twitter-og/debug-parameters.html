@@ -1,0 +1,11 @@
+{{/* Print page parameters loaded into the page scratch */}}
+
+{{- with (.Scratch.Get "TwitterOG").Parameters -}}
+
+{{- printf "\n<!--\nTwitterOG.Parameters: %s\n-->" (jsonify .) | safeHTML }}
+
+{{- else -}}
+
+{{- printf "\n<!--TwitterOG.Parameters: null-->" | safeHTML -}}
+
+{{- end -}}

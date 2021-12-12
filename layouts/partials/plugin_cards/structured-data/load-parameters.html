@@ -1,0 +1,53 @@
+{{- /* 
+  Create a local scratch for piecing together a nested dictionary.
+  */ -}}
+{{- $scratch := newScratch -}}
+
+{{- /* 
+  Load scratch with default values 
+  */ -}}
+{{- $scratch.SetInMap "Parameters" "Enable" true -}}
+{{- $scratch.SetInMap "Parameters" "AuthorName" site.Author.name -}}
+{{- $scratch.SetInMap "Parameters" "ProfileURL" site.Author.profileurl -}}
+
+{{- /* 
+  Overwrite default values with any values found in a config file 
+  */ -}}
+{{- with site.Data.plugin_cards_config | default site.Data.plugin_cards.config -}}
+{{- if (isset .StructuredData "Enable") -}}
+{{- with .StructuredData.Enable -}}
+{{- $scratch.SetInMap "Parameters" "Enable" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Parameters" "Enable" false -}}
+{{- end -}}
+{{- end -}}
+{{- with .StructuredData.AuthorName -}}
+{{- $scratch.SetInMap "Parameters" "AuthorName" . -}}
+{{- end -}}
+{{- with .StructuredData.ProfileURL -}}
+{{- $scratch.SetInMap "Parameters" "ProfileURL" . -}}
+{{- end -}}
+{{- end -}}
+  
+{{- /* 
+  Overwrite those values with any values set via the 
+  plugin parameter interface.
+  */ -}}
+{{- if (isset site.Params "cards.structureddata.enable") -}}
+{{- with index site.Params "cards.structureddata.enable" -}}
+{{- $scratch.SetInMap "Parameters" "Enable" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Parameters" "Enable" false -}}
+{{- end -}}
+{{- end -}}
+{{- with index site.Params "cards.structureddata.authorname" -}}
+{{- $scratch.SetInMap "Parameters" "AuthorName" . -}}
+{{- end -}}
+{{- with index site.Params "cards.structureddata.profileurl" -}}
+{{- $scratch.SetInMap "Parameters" "ProfileURL" . -}}
+{{- end -}}
+
+{{- /*
+  Load the map into the page scratch.
+  */ -}}
+{{- .Scratch.SetInMap "StructuredData" "Parameters" ($scratch.Get "Parameters") -}}

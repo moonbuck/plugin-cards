@@ -1,42 +1,21 @@
-{{/*
+{{- /* Load Twitter and Open Graph parameters */ -}}
+{{- partial "plugin_cards/twitter-og/load-parameters.html" . -}}
 
- List of possible meta tags:
-
-  og:url
-  og:site_name
-  og:title
-  og:description
-  og:image
-  og:type
-  og:audio
-  og:updated_time
- 
-  article:published_time
-  article:modified_time
-  article:section
-  article:tag
-  article:reading_time (custom)
- 
-  twitter:card
-  twitter:url
-  twitter:creator
-  twitter:domain
-  twitter:title
-  twitter:description
-  twitter:image 
-  twitter:player
-  twitter:player:width
-  twitter:player:height
- 
-*/}}
+{{- partial "plugin_cards/twitter-og/debug-parameters.html" . -}}
   
-{{- if .Scratch.Get "TwitterOG.Enable" -}}
+{{- $parameters := (.Scratch.Get "TwitterOG").Parameters -}}
 
-{{- partial "plugin_cards/load-attributes.html" . -}}
+{{- if $parameters.Enable -}}
+
+{{- partial "plugin_cards/twitter-og/load-attributes.html" . -}}
+
+{{- partial "plugin_cards/twitter-og/debug-attributes.html" . -}}
+
+{{- $attributes := (.Scratch.Get "TwitterOG").Attributes -}}
 
 {{/* Create meta tags using the loaded attributes. */}}
 
-{{- with .Scratch.Get "Attributes" -}}
+{{- with $attributes -}}
 
 {{ with .url -}}
 <meta property="og:url" content="{{ . }}" />
@@ -85,7 +64,7 @@
 <meta property="article:section" content="{{ . }}" />
 {{- end }}
 
-{{ with .tag -}}
+{{ with .tags -}}
 {{- range first 6 . -}}
 <meta property="article:tag" content="{{ . }}" />
 {{- end -}}
@@ -111,20 +90,17 @@
 <meta property="og:video" content="{{ . }}" />
 {{- end }}
 
-{{ with index . "player:width" -}}
+{{ with .width -}}
 <meta name="twitter:player:width" content="{{ . }}" />
-{{- end }}
-
-{{ with index . "video:width" -}}
+{{- if $attributes.video -}}
 <meta name="og:video:width" content="{{ . }}" />
+{{- end -}}
 {{- end }}
-
-{{ with index . "player:height" -}}
+{{ with .height -}}
 <meta name="twitter:player:height" content="{{ . }}" />
-{{- end }}
-
-{{ with index . "video:height" -}}
+{{- if $attributes.video -}}
 <meta name="og:video:height" content="{{ . }}" />
+{{- end -}}
 {{- end }}
 
 {{ with .image -}}
@@ -136,6 +112,6 @@
 <meta property="article:reading_time" content="{{ . }}" />
 {{- end }}
 
-{{- end -}}
+{{- end -}} {{- /* with $attributes */ -}}
 
-{{- end -}}
+{{- end -}} {{- /* if $parameters.Enable */ -}}

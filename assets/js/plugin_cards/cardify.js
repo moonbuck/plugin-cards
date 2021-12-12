@@ -1,36 +1,41 @@
+{{- with .Scratch.Get "Cardify" -}}
 /* Plugin parameter values */
 
+{{- with .Parameters.Card -}}
+
 // Whether to cardify links with the custom query string set
-const QUERY_MATCH_CARDS = {{ .Scratch.Get "Card.Creation.QueryMatch" }};
+const QUERY_MATCH_CARDS = {{ .Creation.QueryMatch }};
 
 // The query parameter to match
-const QUERY_PARAMETER = '{{ .Scratch.Get "Card.Creation.QueryParameter" }}';
+const QUERY_PARAMETER = '{{ .Creation.QueryParameter }}';
 
 // Whether matching the query parameter overrides failing the url filter
-const QUERY_MATCH_OVERRIDES_FILTER = {{ .Scratch.Get "Card.Creation.QueryMatchOverridesFilter" }};
+const QUERY_MATCH_OVERRIDES_FILTER = {{ .Creation.QueryMatchOverridesFilter }};
 
 // Selector for establishing containment of which links are eligible in list pages.
-const LIST_SANDBOX = '{{ .Scratch.Get "Card.HostMatch.ListSandbox" }}';
+const LIST_SANDBOX = '{{ .HostMatch.ListSandbox }}';
 
 // Selector for establishing containment of which links are eligible in post pages.
-const PAGE_SANDBOX = '{{ .Scratch.Get "Card.HostMatch.PageSandbox" }}';
+const PAGE_SANDBOX = '{{ .HostMatch.PageSandbox }}';
 
 // Whether to automatically cardify links that match the site hostname.              
-const HOST_MATCH_CARDS = {{ .Scratch.Get "Card.Creation.HostMatch" }};
+const HOST_MATCH_CARDS = {{ .Creation.HostMatch }};
 
 // Matchable hosts with regard to link cardification.
 const HOSTNAME = '{{ (urls.Parse site.BaseURL).Host }}';
 
 // Selector for identifying post summary item "read more" links.
-const READ_MORE_LINK = '{{ .Scratch.Get "Card.HostMatch.ReadMoreLink" }}';
+const READ_MORE_LINK = '{{ .HostMatch.ReadMoreLink }}';
 
 // Selector to use for site hostname matching in place of 
 // the default selector.
-const CUSTOM_SELECTOR = '{{ .Scratch.Get "Card.HostMatch.CustomSelector" }}';
+const CUSTOM_SELECTOR = '{{ .HostMatch.CustomSelector }}';
+
+{{- end }}
+
+/* Shared variable values */
   
-/* Hugo variable values */
-  
-{{- with .Scratch.Get "Specifiers" }}
+{{- with .Specifiers }}
 const CARDIFY_CARD_CLASS = '{{ .Card }}';
 const CARDIFY_CARD_IMG_CLASS = '{{ .Image }}';
 const CARDIFY_CARD_BODY_CLASS = '{{ .Body }}';
@@ -125,7 +130,7 @@ document.addEventListener('DOMContentLoaded',() => {
 // Fetches page text and feeds it to scrapePage(html, link)
 function processLink(link) {
   
-{{- with .Scratch.Get "Card.HostMatch.URLFilter" }}
+{{- with .Parameters.Card.HostMatch.URLFilter }}
 
   let url = new URL(link);
   
@@ -138,7 +143,7 @@ function processLink(link) {
     .then(response => response.text())
     .then(html => scrapePage(html, link));
     
-{{- if .Scratch.Get "Card.HostMatch.URLFilter" }}
+{{- if .Parameters.Card.HostMatch.URLFilter }}
 
   }
 
@@ -247,3 +252,4 @@ function scrapePage(html, link) {
   }
 
 }
+{{- end -}}

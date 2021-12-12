@@ -1,13 +1,12 @@
-{{- partial "plugin_cards/version.html" . -}}
-
-{{- /* Resolve the plugin parameters into the page scratch */ -}}
-{{- partial "plugin_cards/load-parameters.html" . -}}
+{{- /* Insert the plugin version and build time */ -}}
+{{- $time := now.Format "Jan 2 at 15:04 MST" -}}
+{{ printf "\n<!-- Cards v4.0.10 (built on %s) -->" $time | safeHTML }}
 
 {{- /* Inject the Twitter / Open Graph meta tags */ -}}
-{{- partial "plugin_cards/twitter-og.html" . -}}
+{{- partial "plugin_cards/twitter-og/injection.html" . -}}
 
 {{- /* Inject the structured data meta tags */ -}}
-{{- partial "plugin_cards/structured-data.html" . -}}
+{{- partial "plugin_cards/structured-data/injection.html" . -}}
 
 {{- /* Inject the cardify Javascript and stylesheet */ -}}
-{{- partial "plugin_cards/cardify.html" . -}}
+{{- partial "plugin_cards/cardify/injection.html" . -}}

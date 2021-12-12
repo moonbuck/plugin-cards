@@ -1,0 +1,230 @@
+{{- /* 
+  Create a local scratch for piecing together a nested dictionary.
+  */ -}}
+{{- $scratch := newScratch -}}
+
+{{- /* 
+  Load scratch with default values 
+  */ -}}
+{{- $scratch.SetInMap "Creation" "QueryMatch" true -}}
+{{- $scratch.SetInMap "Creation" "QueryParameter" "cardify" -}}
+{{- $scratch.SetInMap "Creation" "QueryMatchOverridesFilter" true -}}
+{{- $scratch.SetInMap "Creation" "HostMatch" false -}}
+
+{{- $scratch.SetInMap "HostMatch" "ReadMoreLink" ".read-more" -}}
+{{- $scratch.SetInMap "HostMatch" "ListSandbox" ".post-body" -}}
+{{- $scratch.SetInMap "HostMatch" "PageSandbox" "#post-body" -}}
+{{- $scratch.SetInMap "HostMatch" "CustomSelector" "" -}}
+{{- $scratch.SetInMap "HostMatch" "URLFilter" ".*.html" -}}
+
+{{- $scratch.SetInMap "Style" "SpacerY" "1rem" -}}
+{{- $scratch.SetInMap "Style" "SpacerX" "1rem" -}}
+{{- $scratch.SetInMap "Style" "TitleSpacerY" "1rem * 0.5" -}}
+{{- $scratch.SetInMap "Style" "BG" "white" -}}
+{{- $scratch.SetInMap "Style" "BorderWidth" "1px" -}}
+{{- $scratch.SetInMap "Style" "BorderColor" "rgba(0,0,0,0.125)" -}}
+{{- $scratch.SetInMap "Style" "BorderRadius" "0.5rem" -}}
+{{- $scratch.SetInMap "Style" "TimeDateColor" "#666666" -}}
+
+{{- $scratch.SetInMap "Build" "Fingerprint" true -}}
+{{- $scratch.SetInMap "Build" "SassOutput" "compressed" -}}
+{{- $scratch.SetInMap "Build" "MinifyScript" true -}}
+
+{{- /* 
+  Overwrite default values with any values found in a config file 
+  */ -}}
+{{- $config := site.Data.plugin_cards_config -}}
+{{- $config  = $config | default site.Data.plugin_cards.config -}}
+{{- with $config -}}
+
+{{- if (isset .Cardify.Card.Creation "QueryMatch") -}}
+{{- with .Cardify.Card.Creation.QueryMatch -}}
+{{- $scratch.SetInMap "Creation" "QueryMatch" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Creation" "QueryMatch" false -}}
+{{- end -}}
+{{- end -}}
+{{- with .Cardify.Card.Creation.QueryParameter -}}
+{{- $scratch.SetInMap "Creation" "QueryParameter" . -}}
+{{- end -}}
+{{- if (isset .Cardify.Card.Creation "QueryMatchOverridesFilter") -}}
+{{- with .Cardify.Card.Creation.QueryMatchOverridesFilter -}}
+{{- $scratch.SetInMap "Creation" "QueryMatchOverridesFilter" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Creation" "QueryMatchOverridesFilter" false -}}
+{{- end -}}
+{{- end -}}
+{{- if (isset .Cardify.Card.Creation "HostMatch") -}}
+{{- with .Cardify.Card.Creation.HostMatch -}}
+{{- $scratch.SetInMap "Creation" "HostMatch" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Creation" "HostMatch" false -}}
+{{- end -}}
+{{- end -}}
+
+{{- with .Cardify.Card.HostMatch.ReadMoreLink -}}
+{{- $scratch.SetInMap "HostMatch" "ReadMoreLink" . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.ListSandbox -}}
+{{- $scratch.SetInMap "HostMatch" "ListSandbox" . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.PageSandbox -}}
+{{- $scratch.SetInMap "HostMatch" "PageSandbox" . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.CustomSelector -}}
+{{- $scratch.SetInMap "HostMatch" "CustomSelector" . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.URLFilter -}}
+{{- $scratch.SetInMap "HostMatch" "URLFilter" . -}}
+{{- end -}}
+
+{{- with .Cardify.Card.Style.SpacerY -}}
+{{- $scratch.SetInMap "Style" "SpacerY" . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.SpacerX -}}
+{{- $scratch.SetInMap "Style" "SpacerX" . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.TitleSpacerY -}}
+{{- $scratch.SetInMap "Style" "TitleSpacerY" . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.BG -}}
+{{- $scratch.SetInMap "Style" "BG" . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.BorderWidth -}}
+{{- $scratch.SetInMap "Style" "BorderWidth" . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.BorderColor -}}
+{{- $scratch.SetInMap "Style" "BorderColor" . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.BorderRadius -}}
+{{- $scratch.SetInMap "Style" "BorderRadius" . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.TimeDateColor -}}
+{{- $scratch.SetInMap "Style" "TimeDateColor" . -}}
+{{- end -}}
+
+{{- if (isset .Cardify.Build "Fingerprint") -}}
+{{- with .Cardify.Build.Fingerprint -}}
+{{- $scratch.SetInMap "Build" "Fingerprint" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Build" "Fingerprint" false -}}
+{{- end -}}
+{{- end -}}
+{{- with .Cardify.Build.SassOutput -}}
+{{- $scratch.SetInMap "Build" "SassOutput" . -}}
+{{- end -}}
+{{- if (isset .Cardify.Build "MinifyScript") -}}
+{{- with .Cardify.Build.MinifyScript -}}
+{{- $scratch.SetInMap "Build" "MinifyScript" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Build" "MinifyScript" false -}}
+{{- end -}}
+{{- end -}}
+
+{{- end -}}
+
+{{- /* 
+  Overwrite those values with any values set via the 
+  plugin parameter interface 
+  */ -}}
+{{- if (isset site.Params "cards.cardify.card.creation.querymatch") -}}
+{{- with index site.Params "cards.cardify.card.creation.querymatch" -}}
+{{- $scratch.SetInMap "Creation" "QueryMatch" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Creation" "QueryMatch" false -}}
+{{- end -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.creation.queryparameter" -}}
+{{- $scratch.SetInMap "Creation" "QueryParameter" . -}}
+{{- end -}}
+{{- if (isset site.Params "cards.cardify.card.creation.querymatchoverridesfilter") -}}
+{{- with index site.Params "cards.cardify.card.creation.querymatchoverridesfilter" -}}
+{{- $scratch.SetInMap "Creation" "QueryMatchOverridesFilter" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Creation" "QueryMatchOverridesFilter" false -}}
+{{- end -}}
+{{- end -}}
+{{- if (isset site.Params "cards.cardify.card.creation.hostmatch") -}}
+{{- with index site.Params "cards.cardify.card.creation.hostmatch" -}}
+{{- $scratch.SetInMap "Creation" "HostMatch" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Creation" "HostMatch" false -}}
+{{- end -}}
+{{- end -}}
+
+{{- with index site.Params "cards.cardify.card.hostmatch.readmorelink" -}}
+{{- $scratch.SetInMap "HostMatch" "ReadMoreLink" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.hostmatch.listsandbox" -}}
+{{- $scratch.SetInMap "HostMatch" "ListSandbox" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.hostmatch.pagesandbox" -}}
+{{- $scratch.SetInMap "HostMatch" "PageSandbox" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.hostmatch.customselector" -}}
+{{- $scratch.SetInMap "HostMatch" "CustomSelector" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.hostmatch.urlfilter" -}}
+{{- $scratch.SetInMap "HostMatch" "URLFilter" . -}}
+{{- end -}}
+
+{{- with index site.Params "cards.cardify.card.style.spacery" -}}
+{{- $scratch.SetInMap "Style" "SpacerY" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.style.spacerx" -}}
+{{- $scratch.SetInMap "Style" "SpacerX" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.style.titlespacery" -}}
+{{- $scratch.SetInMap "Style" "TitleSpacerY" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.style.bg" -}}
+{{- $scratch.SetInMap "Style" "BG" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.style.borderwidth" -}}
+{{- $scratch.SetInMap "Style" "BorderWidth" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.style.bordercolor" -}}
+{{- $scratch.SetInMap "Style" "BorderColor" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.style.borderradius" -}}
+{{- $scratch.SetInMap "Style" "BorderRadius" . -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.card.style.timedatecolor" -}}
+{{- $scratch.SetInMap "Style" "TimeDateColor" . -}}
+{{- end -}}
+
+{{- if (isset site.Params "cards.cardify.build.fingerprint") -}}
+{{- with index site.Params "cards.cardify.build.fingerprint" -}}
+{{- $scratch.SetInMap "Build" "Fingerprint" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Build" "Fingerprint" false -}}
+{{- end -}}
+{{- end -}}
+{{- with index site.Params "cards.cardify.build.sassoutput" -}}
+{{- $scratch.SetInMap "Build" "SassOutput" . -}}
+{{- end -}}
+{{- if (isset site.Params "cards.cardify.build.minifyscript") -}}
+{{- with index site.Params "cards.cardify.build.minifyscript" -}}
+{{- $scratch.SetInMap "Build" "MinifyScript" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "Build" "MinifyScript" false -}}
+{{- end -}}
+{{- end -}}
+
+{{- /*
+  Nest the card maps under the Card umbrella.
+  */ -}}
+{{- $scratch.SetInMap "Card" "Creation" ($scratch.Get "Creation") -}}
+{{- $scratch.SetInMap "Card" "HostMatch" ($scratch.Get "HostMatch") -}}
+{{- $scratch.SetInMap "Card" "Style" ($scratch.Get "Style") -}}
+
+{{- /*
+  Nest the Card and Build maps under the Parameters umbrella
+  */ -}}
+{{- $scratch.SetInMap "Parameters" "Card" ($scratch.Get "Card") -}}
+{{- $scratch.SetInMap "Parameters" "Build" ($scratch.Get "Build") -}}
+
+{{- /* 
+  Insert the Parameters map into the page scratch under Cardify
+  */ -}}
+{{- .Scratch.SetInMap "Cardify" "Parameters" ($scratch.Get "Parameters") -}}

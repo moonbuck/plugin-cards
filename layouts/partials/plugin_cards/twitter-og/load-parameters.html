@@ -1,0 +1,99 @@
+{{- /*
+  Create a local scratch for building a nested map.
+  */ -}}
+{{- $scratch := newScratch -}}
+  
+{{- /* 
+  Load scratch with default values 
+  */ -}}
+{{- $scratch.SetInMap "Parameters" "Enable" true -}}
+{{- $scratch.SetInMap "Parameters" "Data" dict -}}
+
+{{- $scratch.SetInMap "Video" "Width" 600 -}}
+{{- $scratch.SetInMap "Video" "Height" 338 -}}
+{{- $scratch.SetInMap "Video" "Type" "video.other" -}}
+
+{{- $scratch.SetInMap "Audio" "Width" 338 -}}
+{{- $scratch.SetInMap "Audio" "Height" 338 -}}
+{{- $scratch.SetInMap "Audio" "Type" "music.song" -}}
+
+{{- $scratch.SetInMap "Twitter" "Username" site.Params.twitter_username -}}
+{{- $scratch.SetInMap "CardPreference" "SinglePage" "large" -}}
+{{- $scratch.SetInMap "CardPreference" "ListPage" "small" -}}
+{{- $scratch.SetInMap "CardPreference" "LargeSummaryRequiresImage" true -}}
+
+{{- /* 
+  Overwrite default values with any values found in a config file 
+  */ -}}
+{{- $config := site.Data.plugin_cards_config -}}
+{{- $config  = $config | default site.Data.plugin_cards.config -}}
+{{- with $config -}}
+{{- if (isset .TwitterOG "Enable") -}}
+{{- with .TwitterOG.Enable -}}
+{{- $scratch.SetInMap "TwitterOG" "Enable" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "TwitterOG" "Enable" false -}}
+{{- end -}}
+{{- end -}}
+{{- with .TwitterOG.Twitter.Username -}}
+{{- $scratch.SetInMap "Twitter" "Username" . -}}
+{{- end -}}
+{{- with .TwitterOG.Twitter.CardPreference.SinglePage -}}
+{{- $scratch.SetInMap "CardPreference" "SinglePage" . -}}
+{{- end -}}
+{{- with .TwitterOG.Twitter.CardPreference.ListPage -}}
+{{- $scratch.SetInMap "CardPreference" "ListPage" . -}}
+{{- end -}}
+{{- if (isset .TwitterOG.Twitter.CardPreference "LargeSummaryRequiresImage") -}}
+{{- with .TwitterOG.Twitter.CardPreference.SinglePage -}}
+{{- $scratch.SetInMap "CardPreference" "SinglePage" . -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- $data := site.Data.plugin_cards_data -}}
+{{- $data  = $data | default site.Data.plugin_cards.data -}}
+{{- with $data -}}
+{{- $scratch.SetInMap "Parameters" "Data" . -}}
+{{- end -}}
+
+{{- /* 
+  Overwrite those values with any values set via the 
+  plugin parameter interface 
+  */ -}}
+{{- if (isset site.Params "cards.twitterog.enable") -}}
+{{- with index site.Params "cards.twitterog.enable" -}}
+{{- $scratch.SetInMap "TwitterOG" "Enable" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "TwitterOG" "Enable" false -}}
+{{- end -}}
+{{- end -}}
+{{- with index site.Params "cards.twitterog.twitter.username" -}}
+{{- $scratch.SetInMap "Twitter" "Username" . -}}
+{{- end -}}
+{{- with index site.Params "cards.twitterog.twitter.cardpreference.singlepage" -}}
+{{- $scratch.SetInMap "CardPreference" "SinglePage" . -}}
+{{- end -}}
+{{- with index site.Params "cards.twitterog.twitter.cardpreference.listpage" -}}
+{{- $scratch.SetInMap "CardPreference" "ListPage" . -}}
+{{- end -}}
+{{- if (isset site.Params "cards.twitterog.twitter.cardpreference.largesummaryrequiresimage") -}}
+{{- with index site.Params "cards.twitterog.twitter.cardpreference.largesummaryrequiresimage" -}}
+{{- $scratch.SetInMap "CardPreference" "LargeSummaryRequiresImage" true -}}
+{{- else -}}
+{{- $scratch.SetInMap "CardPreference" "LargeSummaryRequiresImage" false -}}
+{{- end -}}
+{{- end -}}
+{{- with index site.Params "cards.twitterog.data" | default site.Params.cards_data -}}
+{{- $scratch.SetInMap "Parameters" "Data" (transform.Unmarshal .) -}}
+{{- end -}}
+
+{{- /* Assemble the inner maps */ -}}
+{{- $scratch.SetInMap "Twitter" "CardPreference" ($scratch.Get "CardPreference") -}}
+{{- $scratch.SetInMap "Parameters" "Video" ($scratch.Get "Video") -}}
+{{- $scratch.SetInMap "Parameters" "Audio" ($scratch.Get "Audio") -}}
+{{- $scratch.SetInMap "Parameters" "Twitter" ($scratch.Get "Twitter") -}}
+
+{{- /* 
+  Insert the Parameters map into the page scratch under TwitterOG 
+  */ -}}
+{{- .Scratch.SetInMap "TwitterOG" "Parameters" ($scratch.Get "Parameters") -}}

@@ -1,0 +1,40 @@
+{{- /* Load cardify parameters */ -}}
+{{- partial "plugin_cards/cardify/load-parameters.html" . -}}
+
+{{- with (.Scratch.Get "Cardify").Parameters -}}
+
+{{- if (or .Card.Creation.QueryMatch .Card.Creation.HostMatch) -}}
+
+{{- /* Load HTML element specifiers into the page scratch */ -}}
+{{- partial "plugin_cards/cardify/load-specifiers.html" $ -}}
+
+{{- $source_dir := "js/plugin_cards/" -}}
+{{- $template_name := "cardify.js" -}}
+{{- $source := path.Join $source_dir $template_name -}}
+{{- $target := path.Join "assets" $source -}}
+
+{{- $script := resources.Get $source | resources.ExecuteAsTemplate $target $ -}}
+{{- if .Build.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
+{{- if .Build.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
+
+{{- print "\n" -}}
+<script src="{{ $script.Permalink }}"></script>
+
+{{- $source_dir = "sass/plugin_cards/" -}}
+{{- $template_name = "cardify.scss" -}}
+{{- $source = path.Join $source_dir $template_name -}}
+{{- $target := path.Join "assets" $source -}}
+{{- $style := resources.Get $source | resources.ExecuteAsTemplate $target $ -}} 
+
+{{- $target = $target | replaceRE "sass|scss" "css" -}}
+{{- $options := dict "targetPath" $target  "outputStyle" .Build.SassOutput -}}
+{{- $style = $style | toCSS $options -}}
+
+{{- if .Build.Fingerprint }}{{ $style = $style | fingerprint }}{{ end -}}
+
+{{- print "\n" -}}
+<link rel="stylesheet" href="{{ $style.Permalink }}">
+
+{{- end -}}
+
+{{- end -}}

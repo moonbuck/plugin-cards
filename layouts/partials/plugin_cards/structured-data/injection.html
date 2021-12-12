@@ -1,0 +1,11 @@
+{{- /* Load structured data parameters */ -}}
+{{- partial "plugin_cards/structured-data/load-parameters.html" . -}}
+
+{{- if (and ((.Scratch.Get "StructuredData").Parameters.Enable) (eq .Type "post")) -}}
+
+{{- partial "plugin_cards/structured-data/load-ld-json.html" . -}}
+{{- $json := (.Scratch.Get "StructuredData").JSON -}}
+
+<script type="application/ld+json">{{ $json | jsonify | safeHTML }}</script>
+
+{{- end -}}

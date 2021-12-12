@@ -1,0 +1,68 @@
+{{- /*
+  Create a local scratch for building the JSON structure.
+  */ -}}
+  
+{{- $scratch := newScratch -}}
+
+{{- /* 
+  Insert the context and type.
+  */ -}}
+{{- $scratch.SetInMap "JSON" "@context" "https://schema.org" -}}
+{{- $scratch.SetInMap "JSON" "@type" "BlogPosting" -}}
+
+{{- /* 
+  When an author name is available, generate a map for the
+  author with the name and, optionally, the URL.
+  */ -}}
+{{- with (.Scratch.Get "StructuredData").Parameters.AuthorName -}}
+{{- $scratch.SetInMap "Author" "@type" "Person" -}}
+{{- $scratch.SetInMap "Author" "name" . -}}
+{{- with ($.Scratch.Get "StructuredData").Parameters.ProfileURL -}}
+{{- $scratch.SetInMap "StructuredData.Author" "url" . -}}
+{{- end -}}
+{{- end -}}
+{{- with $scratch.Get "Author" -}}
+{{- $scratch.SetInMap "JSON" "author" . -}}
+{{- end -}}
+
+{{- /* 
+  Process the .Date page variable. Ideally we would want
+  to utilize the .Lastmod and .PublishDate page variables;
+  however, these values are not currently set in the page
+  front matter so they resolve to the value of .Date.
+  */ -}}
+{{- if (not .Date.IsZero) -}}
+{{- $date := .Date.Format "2006-01-02T15:04:05-07:00" -}}
+{{- $scratch.SetInMap "JSON" "datePublished" $date -}}
+{{- end -}}
+
+{{- /* 
+  Insert the post title as the headline.
+  */ -}}
+{{- with .Title -}}
+{{- $scratch.SetInMap "JSON" "headline" . -}}
+{{- end -}}
+
+{{- /* 
+  Insert any images found in the page front matter. 
+  */ -}}
+{{- with .Params.images -}}
+{{- $scratch.SetInMap "JSON" "image" (apply . "absURL" ".") -}}
+{{- end -}}
+
+{{- /* 
+  Insert the page summary for a description.
+  */ -}}
+{{- with .Summary -}}
+{{- $scratch.SetInMap "JSON" "description" (. | plainify | chomp) -}}
+{{- end -}}
+
+{{- /* 
+  Insert the page's word count.
+  */ -}}
+{{- with .WordCount -}}
+{{- $scratch.SetInMap "JSON" "wordcount" . -}}
+{{- end -}}
+
+{{- /* Insert the constructed JSON object into the page scratch. */ -}}
+{{- .Scratch.SetInMap "StructuredData" "JSON" ($scratch.Get "JSON") -}}
