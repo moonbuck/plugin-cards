@@ -151,11 +151,6 @@
 {{- end -}}
 {{- $scratch.SetInMap "Attributes" "audio" $audio -}}
 
-{{- with $audio -}}
-{{- $scratch.SetInMap "Attributes" "player" . -}}
-{{- end -}}
-
-
 {{- /*
   Grab the video using the following lookup order:
   1) The first video registered via shortcode or query parameter.
@@ -170,10 +165,6 @@
 {{- $video = index $video 0 }}
 {{- end -}}
 {{- $scratch.SetInMap "Attributes" "video" $video -}}
-
-{{- with $video -}}
-{{- $scratch.SetInMap "Attributes" "player" . -}}
-{{- end -}}
 
 {{- /* 
   Resolve the Open Graph type.
@@ -215,17 +206,19 @@
   configure Twitter summary card.
   */ -}}
 {{- $require_image := $parameters.Twitter.CardPreference.LargeSummaryRequiresImage -}}
-{{- if $registered.video -}}
+{{- if $video -}}
 
 {{- $scratch.SetInMap "Attributes" "width" $parameters.Video.Width -}}
 {{- $scratch.SetInMap "Attributes" "height" $parameters.Video.Height -}}
 {{- $scratch.SetInMap "Attributes" "card" "player" -}}
+{{- $scratch.SetInMap "Attributes" "player" $video -}}
 
-{{- else if $registered.audio -}}
+{{- else if $audio -}}
 
 {{- $scratch.SetInMap "Attributes" "width" $parameters.Audio.Width -}}
 {{- $scratch.SetInMap "Attributes" "height" $parameters.Audio.Height -}}
 {{- $scratch.SetInMap "Attributes" "card" "player" -}}
+{{- $scratch.SetInMap "Attributes" "player" $audio -}}
 
 {{- else -}}
 {{- with $parameters.Twitter.CardPreference -}}

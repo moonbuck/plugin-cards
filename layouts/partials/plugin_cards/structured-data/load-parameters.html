@@ -3,19 +3,14 @@
   */ -}}
   
 {{- $ConfigFile := (.Scratch.Get "plugin-cards").ConfigFile.StructuredData -}}
-{{- $Params := (.Scratch.Get "plugin-cards").Params -}}
-{{- $Params  = $Params.StructuredData -}}
 
-{{- $Enable := $Params.Enable -}}
-{{- $Enable  = $Enable | default $ConfigFile.Enable -}}
+{{- $Enable := $ConfigFile.Enable -}}
 {{- $Enable  = $Enable | default true -}}
 
-{{- $AuthorName := $Params.AuthorName -}}
-{{- $AuthorName  = $AuthorName | default $ConfigFile.AuthorName -}}
+{{- $AuthorName := $ConfigFile.AuthorName -}}
 {{- $AuthorName  = $AuthorName | default site.Author.name -}}
 
-{{- $ProfileURL := $Params.ProfileURL -}}
-{{- $ProfileURL  = $ProfileURL | default $ConfigFile.AuthorName -}}
+{{- $ProfileURL := $ConfigFile.AuthorName -}}
 {{- $ProfileURL  = $ProfileURL | default site.Author.profileurl -}}
 
 {{- /*

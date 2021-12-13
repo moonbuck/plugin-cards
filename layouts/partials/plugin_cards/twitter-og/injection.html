@@ -3,7 +3,7 @@
   */ -}}
 {{- partial "plugin_cards/twitter-og/load-parameters.html" . -}}
 
-{{- /*partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Parameters" .)*/ -}}
+{{- partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Parameters" .) -}}
   
 {{- if (.Scratch.Get "TwitterOG").Parameters.Enable -}}
 
@@ -13,12 +13,14 @@
   */ -}}
 {{- partial "plugin_cards/twitter-og/load-registered.html" . -}}
 
+{{- partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Registered" .) -}}
+
 {{- /* 
   Construct the attribute map from which the <meta> tags will draw.
   */ -}}
 {{- partial "plugin_cards/twitter-og/load-attributes.html" . -}}
 
-{{- /*partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Attributes" .)*/ -}}
+{{- partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Attributes" .) -}}
 
 {{- $attributes := (.Scratch.Get "TwitterOG").Attributes -}}
 
@@ -101,15 +103,15 @@
 
 {{ with .width -}}
 <meta name="twitter:player:width" content="{{ . }}" />
-{{- if $attributes.video -}}
-<meta name="og:video:width" content="{{ . }}" />
-{{- end -}}
+{{- /*if $attributes.video*/ -}}
+<meta property="og:video:width" content="{{ . }}" />
+{{- /*end*/ -}}
 {{- end }}
 {{ with .height -}}
 <meta name="twitter:player:height" content="{{ . }}" />
-{{- if $attributes.video -}}
-<meta name="og:video:height" content="{{ . }}" />
-{{- end -}}
+{{- /*if $attributes.video*/ -}}
+<meta property="og:video:height" content="{{ . }}" />
+{{- /*end*/ -}}
 {{- end }}
 
 {{ with .image -}}

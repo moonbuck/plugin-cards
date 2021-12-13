@@ -2,21 +2,14 @@
   Insert the plugin version and build time 
   */ -}}
 {{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
-{{ printf "\n<!-- Cards v4.0.11 (built on %s) -->" $time | safeHTML }}
+{{ printf "\n<!-- Cards v4.0.12 (built on %s) -->" $time | safeHTML }}
 
 {{- /* 
   Load the config file values into the page scratch 
   */ -}}
 {{- partial "plugin_cards/load-config-file.html" . -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "plugin-cards" "ConfigFile" .) -}}
-
-{{- /* 
-  Load the site.Param values into the page scratch 
-  */ -}}
-{{- partial "plugin_cards/load-site-params.html" . -}}
-
-{{- partial "plugin_cards/debug-print.html" (slice "plugin-cards" "Params" .) -}}
+{{- /*partial "plugin_cards/debug-print.html" (slice "plugin-cards" "ConfigFile" .)*/ -}}
 
 {{- /* 
   Inject the Twitter / Open Graph meta tags 

@@ -3,55 +3,41 @@
   */ -}}
   
 {{- $ConfigFile := (.Scratch.Get "plugin-cards").ConfigFile.TwitterOG -}}
-{{- $Params := (.Scratch.Get "plugin-cards").Params -}}
-{{- $Params  = $Params.TwitterOG -}}
 
-{{- $Enable := $Params.Enable -}}
-{{- $Enable  = $Enable | default $ConfigFile.Enable -}}
+{{- $Enable := $ConfigFile.Enable -}}
 {{- $Enable  = $Enable | default true -}}
 
-{{- $Data := $Params.Data -}}
-{{- $Data  = $Data | default $ConfigFile.Data -}}
+{{- $Data := $ConfigFile.Data -}}
 {{- $Data  = $Data | default dict -}}
 
-{{- $VideoWidth := $Params.Video.Width -}}
-{{- $VideoWidth  = $VideoWidth | default $ConfigFile.Video.Width -}}
+{{- $VideoWidth := $ConfigFile.Video.Width -}}
 {{- $VideoWidth  = $VideoWidth | default 600 -}}
 
-{{- $VideoHeight := $Params.Video.Height -}}
-{{- $VideoHeight  = $VideoHeight | default $ConfigFile.Video.Height -}}
+{{- $VideoHeight := $ConfigFile.Video.Height -}}
 {{- $VideoHeight  = $VideoHeight | default 338 -}}
 
-{{- $VideoType := $Params.Video.Type -}}
-{{- $VideoType  = $VideoType | default $ConfigFile.Video.Type -}}
+{{- $VideoType := $ConfigFile.Video.Type -}}
 {{- $VideoType  = $VideoType | default "video.other" -}}
 
-{{- $AudioWidth := $Params.Audio.Width -}}
-{{- $AudioWidth  = $AudioWidth | default $ConfigFile.Audio.Width -}}
+{{- $AudioWidth := $ConfigFile.Audio.Width -}}
 {{- $AudioWidth  = $AudioWidth | default 338 -}}
 
-{{- $AudioHeight := $Params.Audio.Height -}}
-{{- $AudioHeight  = $AudioHeight | default $ConfigFile.Audio.Height -}}
+{{- $AudioHeight := $ConfigFile.Audio.Height -}}
 {{- $AudioHeight  = $AudioHeight | default 338 -}}
 
-{{- $AudioType := $Params.Audio.Type -}}
-{{- $AudioType  = $AudioType | default $ConfigFile.Audio.Type -}}
+{{- $AudioType := $ConfigFile.Audio.Type -}}
 {{- $AudioType  = $AudioType | default "music.song" -}}
 
-{{- $TwitterUsername := $Params.Twitter.Username -}}
-{{- $TwitterUsername  = $TwitterUsername | default $ConfigFile.Twitter.Username -}}
+{{- $TwitterUsername := $ConfigFile.Twitter.Username -}}
 {{- $TwitterUsername  = $TwitterUsername | default site.Params.twitter_username -}}
 
-{{- $SinglePage := $Params.Twitter.CardPreference.SinglePage -}}
-{{- $SinglePage  = $SinglePage | default $ConfigFile.Twitter.CardPreference.SinglePage -}}
+{{- $SinglePage := $ConfigFile.Twitter.CardPreference.SinglePage -}}
 {{- $SinglePage  = $SinglePage | default "large" -}}
 
-{{- $ListPage := $Params.Twitter.CardPreference.ListPage -}}
-{{- $ListPage  = $ListPage | default $ConfigFile.Twitter.CardPreference.ListPage -}}
+{{- $ListPage := $ConfigFile.Twitter.CardPreference.ListPage -}}
 {{- $ListPage  = $ListPage | default "small" -}}
 
-{{- $RequiresImage := $Params.Twitter.CardPreference.LargeSummaryRequiresImage -}}
-{{- $RequiresImage  = $RequiresImage | default $ConfigFile.Twitter.CardPreference.LargeSummaryRequiresImage -}}
+{{- $RequiresImage := $ConfigFile.Twitter.CardPreference.LargeSummaryRequiresImage -}}
 {{- $RequiresImage  = $RequiresImage | default true -}}
 
 

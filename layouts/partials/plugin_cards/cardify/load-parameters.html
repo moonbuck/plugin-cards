@@ -3,87 +3,65 @@
   */ -}}
   
 {{- $ConfigFile := (.Scratch.Get "plugin-cards").ConfigFile.Cardify -}}
-{{- $Params := (.Scratch.Get "plugin-cards").Params -}}
-{{- $Params  = $Params.Cardify -}}
 
-{{- $QueryMatch := $Params.Creation.QueryMatch -}}
-{{- $QueryMatch  = $QueryMatch | default $ConfigFile.Creation.QueryMatch -}}
+{{- $QueryMatch := $ConfigFile.Creation.QueryMatch -}}
 {{- $QueryMatch  = $QueryMatch | default true -}}
 
-{{- $QueryParameter := $Params.Creation.QueryParameter -}}
-{{- $QueryParameter  = $QueryParameter | default $ConfigFile.Creation.QueryParameter -}}
+{{- $QueryParameter := $ConfigFile.Creation.QueryParameter -}}
 {{- $QueryParameter  = $QueryParameter | default "cardify" -}}
 
-{{- $OverridesFilter := $Params.Creation.QueryMatchOverridesFilter -}}
-{{- $OverridesFilter  = $OverridesFilter | default $ConfigFile.Creation.QueryMatchOverridesFilter -}}
+{{- $OverridesFilter := $ConfigFile.Creation.QueryMatchOverridesFilter -}}
 {{- $OverridesFilter  = $OverridesFilter | default true -}}
 
-{{- $HostMatch := $Params.Creation.HostMatch -}}
-{{- $HostMatch  = $HostMatch | default $ConfigFile.Creation.HostMatch -}}
+{{- $HostMatch := $ConfigFile.Creation.HostMatch -}}
 {{- $HostMatch  = $HostMatch | default false -}}
 
-{{- $ReadMoreLink := $Params.HostMatch.ReadMoreLink -}}
-{{- $ReadMoreLink  = $ReadMoreLink | default $ConfigFile.HostMatch.ReadMoreLink -}}
+{{- $ReadMoreLink := $ConfigFile.HostMatch.ReadMoreLink -}}
 {{- $ReadMoreLink  = $ReadMoreLink | default ".read-more" -}}
 
-{{- $ListSandbox := $Params.HostMatch.ListSandbox -}}
-{{- $ListSandbox  = $ListSandbox | default $ConfigFile.HostMatch.ListSandbox -}}
+{{- $ListSandbox := $ConfigFile.HostMatch.ListSandbox -}}
 {{- $ListSandbox  = $ListSandbox | default ".post-body" -}}
 
-{{- $PageSandbox := $Params.HostMatch.PageSandbox -}}
-{{- $PageSandbox  = $PageSandbox | default $ConfigFile.HostMatch.PageSandbox -}}
+{{- $PageSandbox := $ConfigFile.HostMatch.PageSandbox -}}
 {{- $PageSandbox  = $PageSandbox | default "#post-body" -}}
 
-{{- $CustomSelector := $Params.HostMatch.CustomSelector -}}
-{{- $CustomSelector  = $CustomSelector | default $ConfigFile.HostMatch.CustomSelector -}}
+{{- $CustomSelector := $ConfigFile.HostMatch.CustomSelector -}}
 {{- $CustomSelector  = $CustomSelector | default "" -}}
 
-{{- $URLFilter := $Params.HostMatch.URLFilter -}}
-{{- $URLFilter  = $URLFilter | default $ConfigFile.HostMatch.URLFilter -}}
+{{- $URLFilter := $ConfigFile.HostMatch.URLFilter -}}
 {{- $URLFilter  = $URLFilter | default ".*.html" -}}
 
-{{- $SpacerY := $Params.Style.SpacerY -}}
-{{- $SpacerY  = $SpacerY | default $ConfigFile.Style.SpacerY -}}
+{{- $SpacerY := $ConfigFile.Style.SpacerY -}}
 {{- $SpacerY  = $SpacerY | default "1rem" -}}
 
-{{- $SpacerX := $Params.Style.SpacerX -}}
-{{- $SpacerX  = $SpacerX | default $ConfigFile.Style.SpacerX -}}
+{{- $SpacerX := $ConfigFile.Style.SpacerX -}}
 {{- $SpacerX  = $SpacerX | default "1rem" -}}
 
-{{- $TitleSpacerY := $Params.Style.TitleSpacerY -}}
-{{- $TitleSpacerY  = $TitleSpacerY | default $ConfigFile.Style.TitleSpacerY -}}
+{{- $TitleSpacerY := $ConfigFile.Style.TitleSpacerY -}}
 {{- $TitleSpacerY  = $TitleSpacerY | default "0.5rem" -}}
 
-{{- $BG := $Params.Style.BG -}}
-{{- $BG  = $BG | default $ConfigFile.Style.BG -}}
+{{- $BG := $ConfigFile.Style.BG -}}
 {{- $BG  = $BG | default "white" -}}
 
-{{- $BorderWidth := $Params.Style.BorderWidth -}}
-{{- $BorderWidth  = $BorderWidth | default $ConfigFile.Style.BorderWidth -}}
+{{- $BorderWidth := $ConfigFile.Style.BorderWidth -}}
 {{- $BorderWidth  = $BorderWidth | default "1px" -}}
 
-{{- $BorderColor := $Params.Style.BorderColor -}}
-{{- $BorderColor  = $BorderColor | default $ConfigFile.Style.BorderColor -}}
+{{- $BorderColor := $ConfigFile.Style.BorderColor -}}
 {{- $BorderColor  = $BorderColor | default "rgba(0,0,0,0.125)" -}}
 
-{{- $BorderRadius := $Params.Style.BorderRadius -}}
-{{- $BorderRadius  = $BorderRadius | default $ConfigFile.Style.BorderRadius -}}
+{{- $BorderRadius := $ConfigFile.Style.BorderRadius -}}
 {{- $BorderRadius  = $BorderRadius | default "0.5rem" -}}
 
-{{- $TimeDateColor := $Params.Style.TimeDateColor -}}
-{{- $TimeDateColor  = $TimeDateColor | default $ConfigFile.Style.TimeDateColor -}}
+{{- $TimeDateColor := $ConfigFile.Style.TimeDateColor -}}
 {{- $TimeDateColor  = $TimeDateColor | default "#666666" -}}
 
-{{- $Fingerprint := $Params.Build.Fingerprint -}}
-{{- $Fingerprint  = $Fingerprint | default $ConfigFile.Build.Fingerprint -}}
+{{- $Fingerprint := $ConfigFile.Build.Fingerprint -}}
 {{- $Fingerprint  = $Fingerprint | default true -}}
 
-{{- $SassOutput := $Params.Build.SassOutput -}}
-{{- $SassOutput  = $SassOutput | default $ConfigFile.Build.SassOutput -}}
+{{- $SassOutput := $ConfigFile.Build.SassOutput -}}
 {{- $SassOutput  = $SassOutput | default "nested" -}}
 
-{{- $MinifyScript := $Params.Build.MinifyScript -}}
-{{- $MinifyScript  = $MinifyScript | default $ConfigFile.Build.MinifyScript -}}
+{{- $MinifyScript := $ConfigFile.Build.MinifyScript -}}
 {{- $MinifyScript  = $MinifyScript | default false -}}
 
 {{- /*
