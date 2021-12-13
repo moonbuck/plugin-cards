@@ -53,7 +53,7 @@
 {{- $TwitterOG = $scratch.Get "TwitterOG" -}}
 {{- $StructuredData := $file.StructuredData | default dict -}}
 {{- $Cardify := $file.Cardify | default dict -}}
-{{- $DebugPrint := $file.DebugPrint -}}
+{{- $DebugPrint := $file.DebugPrint | default false -}}
 
 {{- $Config := dict "DebugPrint" $DebugPrint "TwitterOG" $TwitterOG "StructuredData" $StructuredData "Cardify" $Cardify -}}
 
