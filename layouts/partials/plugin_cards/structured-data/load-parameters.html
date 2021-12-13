@@ -2,27 +2,17 @@
   Resolve the relevant parameter values 
   */ -}}
   
-{{- $ConfigFile := (.Scratch.Get "plugin-cards").ConfigFile.StructuredData -}}
-
-{{- $Enable := $ConfigFile.Enable -}}
-{{- $Enable  = $Enable | default true -}}
-
-{{- $AuthorName := $ConfigFile.AuthorName -}}
-{{- $AuthorName  = $AuthorName | default site.Author.name -}}
-
-{{- $ProfileURL := $ConfigFile.ProfileURL -}}
-{{- $ProfileURL  = $ProfileURL | default site.Author.profileurl -}}
+{{- $Config := (.Get "Config").StructuredData -}}
+{{- $Enable := $Config.Enable | default true -}}
+{{- $AuthorName := $Config.AuthorName | default site.Author.name -}}
+{{- $ProfileURL := $Config.ProfileURL | default site.Author.profileurl -}}
 
 {{- /*
-  Create a local scratch and load with resolved values.
+  Create the Parameters map
   */ -}}
-{{- $scratch := newScratch -}}
-
-{{- $scratch.SetInMap "Parameters" "Enable" $Enable -}}
-{{- $scratch.SetInMap "Parameters" "AuthorName" $AuthorName -}}
-{{- $scratch.SetInMap "Parameters" "ProfileURL" $ProfileURL -}}
+{{- $Parameters := dict "Enable" $Enable "AuthorName" $AuthorName "ProfileURL" $ProfileURL -}}
 
 {{- /* 
-  Insert the Parameters map into the page scratch under TwitterOG 
+  Insert the Parameters map into the plugin scratch
   */ -}}
-{{- .Scratch.SetInMap "StructuredData" "Parameters" ($scratch.Get "Parameters") -}}
+{{- .SetInMap "StructuredData" "Parameters" $Parameters -}}

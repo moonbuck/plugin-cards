@@ -1,23 +1,26 @@
 {{- /* Load cardify parameters */ -}}
-{{- partial "plugin_cards/cardify/load-parameters.html" . -}}
+{{- $scratch := .scratch -}}
+{{- $context := .context -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "Cardify" "Parameters" .) -}}
+{{- partial "plugin_cards/cardify/load-parameters.html" $scratch -}}
 
-{{- with (.Scratch.Get "Cardify").Parameters -}}
+{{- partial "plugin_cards/debug-print.html" (slice "Cardify" "Parameters" $scratch) -}}
+
+{{- with ($scratch.Get "Cardify").Parameters -}}
 
 {{- if (or .Card.Creation.QueryMatch .Card.Creation.HostMatch) -}}
 
 {{- /* Load HTML element specifiers into the page scratch */ -}}
-{{- partial "plugin_cards/cardify/load-specifiers.html" $ -}}
+{{- partial "plugin_cards/cardify/load-specifiers.html" $scratch -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "Cardify" "Specifiers" $) -}}
+{{- partial "plugin_cards/debug-print.html" (slice "Cardify" "Specifiers" $scratch) -}}
 
 {{- $source_dir := "js/plugin_cards/" -}}
 {{- $template_name := "cardify.js" -}}
 {{- $source := path.Join $source_dir $template_name -}}
 {{- $target := path.Join "assets" $source -}}
 
-{{- $script := resources.Get $source | resources.ExecuteAsTemplate $target $ -}}
+{{- $script := resources.Get $source | resources.ExecuteAsTemplate $target $scratch -}}
 {{- if .Build.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
 {{- if .Build.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
 
@@ -28,7 +31,7 @@
 {{- $template_name = "cardify.scss" -}}
 {{- $source = path.Join $source_dir $template_name -}}
 {{- $target := path.Join "assets" $source -}}
-{{- $style := resources.Get $source | resources.ExecuteAsTemplate $target $ -}} 
+{{- $style := resources.Get $source | resources.ExecuteAsTemplate $target $scratch -}} 
 
 {{- $target = $target | replaceRE "sass|scss" "css" -}}
 {{- $options := dict "targetPath" $target  "outputStyle" .Build.SassOutput -}}

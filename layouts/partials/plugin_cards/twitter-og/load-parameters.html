@@ -2,75 +2,27 @@
   Resolve the relevant parameter values 
   */ -}}
   
-{{- $ConfigFile := (.Scratch.Get "plugin-cards").ConfigFile.TwitterOG -}}
-
-{{- $Enable := $ConfigFile.Enable -}}
-{{- $Enable  = $Enable | default true -}}
-
-{{- $Data := $ConfigFile.Data -}}
-{{- $Data  = $Data | default dict -}}
-
-{{- $VideoWidth := $ConfigFile.Video.Width -}}
-{{- $VideoWidth  = $VideoWidth | default 600 -}}
-
-{{- $VideoHeight := $ConfigFile.Video.Height -}}
-{{- $VideoHeight  = $VideoHeight | default 338 -}}
-
-{{- $VideoType := $ConfigFile.Video.Type -}}
-{{- $VideoType  = $VideoType | default "video.other" -}}
-
-{{- $AudioWidth := $ConfigFile.Audio.Width -}}
-{{- $AudioWidth  = $AudioWidth | default 338 -}}
-
-{{- $AudioHeight := $ConfigFile.Audio.Height -}}
-{{- $AudioHeight  = $AudioHeight | default 338 -}}
-
-{{- $AudioType := $ConfigFile.Audio.Type -}}
-{{- $AudioType  = $AudioType | default "music.song" -}}
-
-{{- $TwitterUsername := $ConfigFile.Twitter.Username -}}
-{{- $TwitterUsername  = $TwitterUsername | default site.Params.twitter_username -}}
-
-{{- $SinglePage := $ConfigFile.Twitter.CardPreference.SinglePage -}}
-{{- $SinglePage  = $SinglePage | default "large" -}}
-
-{{- $ListPage := $ConfigFile.Twitter.CardPreference.ListPage -}}
-{{- $ListPage  = $ListPage | default "small" -}}
-
-{{- $RequiresImage := $ConfigFile.Twitter.CardPreference.LargeSummaryRequiresImage -}}
-{{- $RequiresImage  = $RequiresImage | default true -}}
-
+{{- $Config := (.Get "Config").TwitterOG -}}
+{{- $Enable := $Config.Enable | default true -}}
+{{- $Data := $Config.Data | default dict -}}
+{{- $VideoWidth := $Config.Video.Width | default 600 -}}
+{{- $VideoHeight := $Config.Video.Height | default 338 -}}
+{{- $VideoType := $Config.Video.Type | default "video.other" -}}
+{{- $AudioWidth := $Config.Audio.Width | default 338 -}}
+{{- $AudioHeight := $Config.Audio.Height | default 112 -}}
+{{- $AudioType := $Config.Audio.Type | default "music.song" -}}
+{{- $TwitterUsername := $Config.Twitter.Username | default site.Params.twitter_username -}}
+{{- $SinglePage := $Config.Twitter.CardPreference.SinglePage | default "large" -}}
+{{- $ListPage := $Config.Twitter.CardPreference.ListPage | default "small" -}}
+{{- $RequiresImage := $Config.Twitter.CardPreference.LargeSummaryRequiresImage | default true -}}
 
 {{- /*
-  Create a local scratch and load with resolved values.
+  Create the Parameters map
   */ -}}
-{{- $scratch := newScratch -}}
+{{- $Parameters := dict "Enable" $Enable "Data" $Data "Video" (dict "Width" $VideoWidth "Height" $VideoHeight "Type" $VideoType) "Audio" (dict "Width" $AudioWidth "Height" $AudioHeight "Type" $AudioType) "Twitter" (dict "Username" $TwitterUsername "CardPreference" (dict "SinglePage" $SinglePage "ListPage" $ListPage "LargeSummaryRequiresImage" $RequiresImage)) -}}
   
-{{- $scratch.SetInMap "Parameters" "Enable" $Enable -}}
-{{- $scratch.SetInMap "Parameters" "Data" $Data -}}
-
-{{- $scratch.SetInMap "Video" "Width" $VideoWidth -}}
-{{- $scratch.SetInMap "Video" "Height" $VideoHeight -}}
-{{- $scratch.SetInMap "Video" "Type" $VideoType -}}
-
-{{- $scratch.SetInMap "Audio" "Width" $AudioWidth -}}
-{{- $scratch.SetInMap "Audio" "Height" $AudioHeight -}}
-{{- $scratch.SetInMap "Audio" "Type" $AudioType -}}
-
-{{- $scratch.SetInMap "Twitter" "Username" $TwitterUsername -}}
-{{- $scratch.SetInMap "CardPreference" "SinglePage" $SinglePage -}}
-{{- $scratch.SetInMap "CardPreference" "ListPage" $ListPage -}}
-{{- $scratch.SetInMap "CardPreference" "LargeSummaryRequiresImage" $RequiresImage -}}
 
 {{- /* 
-  Assemble the inner maps 
+  Insert the Parameters map into the plugin scratch 
   */ -}}
-{{- $scratch.SetInMap "Twitter" "CardPreference" ($scratch.Get "CardPreference") -}}
-{{- $scratch.SetInMap "Parameters" "Video" ($scratch.Get "Video") -}}
-{{- $scratch.SetInMap "Parameters" "Audio" ($scratch.Get "Audio") -}}
-{{- $scratch.SetInMap "Parameters" "Twitter" ($scratch.Get "Twitter") -}}
-
-{{- /* 
-  Insert the Parameters map into the page scratch under TwitterOG 
-  */ -}}
-{{- .Scratch.SetInMap "TwitterOG" "Parameters" ($scratch.Get "Parameters") -}}
+{{- .SetInMap "TwitterOG" "Parameters" $Parameters -}}

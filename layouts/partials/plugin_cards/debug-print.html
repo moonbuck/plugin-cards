@@ -2,24 +2,32 @@
   parameters:
     module: TwitterOG|StructuredData|Cardify
     index: The index into `module`
-    context: The page context
+    scratch: The plugin scratch
   */}}
 {{- $module := false -}}
 {{- $index := false -}}
-{{- $context := false -}}
+{{- $scratch := false -}}
 {{- if (reflect.IsMap .) -}}
-{{- $module = .module -}}
-{{- $index = .index -}}
-{{- $context = .context -}}
+  {{- $module = .module -}}
+  {{- $index = .index -}}
+  {{- $scratch = .scratch -}}
 {{- else if (and (reflect.IsSlice .) (eq 3 (len .))) -}}
-{{- $module = index . 0 -}}
-{{- $index = index . 1 -}}
-{{- $context = index . 2 -}}
-{{- end -}}
-{{- if (and (and $module $index) $context) -}}
-{{- with (index ($context.Scratch.Get $module) $index) -}}
-{{- printf "\n<!--\n%s.%s: %s\n-->" $module $index (jsonify .) | safeHTML }}
-{{- else -}}
-{{- printf "\n<!--%s.%s: null-->" $module $index | safeHTML -}}
-{{- end -}}
-{{- end -}}
+  {{- $module = index . 0 -}}
+  {{- $index = index . 1 -}}
+  {{- $scratch = index . 2 -}}
+{{- end -}} {{- /* if (reflect.IsMap .) */ -}}
+{{- if ($scratch.Get "Config").DebugPrint -}}
+  {{- if (and (and $module $index) $scratch) -}}
+    {{- with (index ($scratch.Get $module) $index) -}}
+      {{- printf "\n<!--\n%s.%s: %s\n-->" $module $index (jsonify .) | safeHTML }}
+    {{- else -}}
+      {{- printf "\n<!--%s.%s: null-->" $module $index | safeHTML -}}
+    {{- end -}} {{- /* with (index ($scratch.Get $module) $index) */ -}}
+  {{- else if (and $index $scratch) -}}
+    {{- with $scratch.Get $index -}}
+      {{- printf "\n<!--\n%s: %s\n-->" $index (jsonify .) | safeHTML }}
+    {{- else -}}
+      {{- printf "\n<!--%s: null-->" $index | safeHTML -}}
+    {{- end -}} {{- /* with $scratch.Get $index */ -}}  
+  {{- end -}} {{- /* if (and (and $module $index) $scratch) */ -}}
+{{- end -}} {{- /* ($scratch.Get "Config").DebugPrint */ -}}

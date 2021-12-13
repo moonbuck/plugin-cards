@@ -1,15 +1,18 @@
 {{- /* Load structured data parameters */ -}}
-{{- partial "plugin_cards/structured-data/load-parameters.html" . -}}
+{{- $scratch := .scratch -}}
+{{- $context := .context -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "StructuredData" "Parameters" .) -}}
+{{- partial "plugin_cards/structured-data/load-parameters.html" $scratch -}}
 
-{{- if (and ((.Scratch.Get "StructuredData").Parameters.Enable) (eq .Type "post")) -}}
+{{- partial "plugin_cards/debug-print.html" (slice "StructuredData" "Parameters" $scratch) -}}
 
-{{- partial "plugin_cards/structured-data/load-ld-json.html" . -}}
+{{- if (and (($scratch.Get "StructuredData").Parameters.Enable) (eq $context.Type "post")) -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "StructuredData" "JSON" .) -}}
+{{- partial "plugin_cards/structured-data/load-ld-json.html" (dict "scratch" $scratch "context" $context) -}}
 
-{{- $JSON := (.Scratch.Get "StructuredData").JSON -}}
+{{- partial "plugin_cards/debug-print.html" (slice "StructuredData" "JSON" $scratch) -}}
+
+{{- $JSON := ($scratch.Get "StructuredData").JSON -}}
 
 <script type="application/ld+json">{{ $JSON | jsonify | safeHTML }}</script>
 

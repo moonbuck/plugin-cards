@@ -1,5 +1,9 @@
-{{- with .Scratch.Get "Cardify" -}}
+{{- with .Get "Cardify" -}}
 /* Plugin parameter values */
+
+/*
+{{ printf "%s" (jsonify .) }}
+*/
 
 {{- with .Parameters.Card -}}
 

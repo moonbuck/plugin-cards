@@ -1,28 +1,31 @@
 {{- /* 
   Load Twitter and Open Graph parameters 
   */ -}}
-{{- partial "plugin_cards/twitter-og/load-parameters.html" . -}}
+{{- $scratch := .scratch -}}
+{{- $context := .context -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Parameters" .) -}}
+{{- partial "plugin_cards/twitter-og/load-parameters.html" $scratch -}}
+
+{{- partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Parameters" $scratch) -}}
   
-{{- if (.Scratch.Get "TwitterOG").Parameters.Enable -}}
+{{- if ($scratch.Get "TwitterOG").Parameters.Enable -}}
 
 {{- /* 
   Parse content for attribute values that have been
   registered via shortcode or query parameter.
   */ -}}
-{{- partial "plugin_cards/twitter-og/load-registered.html" . -}}
+{{- partial "plugin_cards/twitter-og/load-registered.html" (dict "scratch" $scratch "context" $context) -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Registered" .) -}}
+{{- partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Registered" $scratch) -}}
 
 {{- /* 
   Construct the attribute map from which the <meta> tags will draw.
   */ -}}
-{{- partial "plugin_cards/twitter-og/load-attributes.html" . -}}
+{{- partial "plugin_cards/twitter-og/load-attributes.html" (dict "scratch" $scratch "context" $context) -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Attributes" .) -}}
+{{- partial "plugin_cards/debug-print.html" (slice "TwitterOG" "Attributes" $scratch) -}}
 
-{{- $attributes := (.Scratch.Get "TwitterOG").Attributes -}}
+{{- $attributes := ($scratch.Get "TwitterOG").Attributes -}}
 
 {{/* Create meta tags using the loaded attributes. */}}
 

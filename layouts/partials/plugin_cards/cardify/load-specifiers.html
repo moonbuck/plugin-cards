@@ -1,14 +1,16 @@
-{{- /* Load HTML element class names and IDs into a local scratch. */ -}}
-{{- $scratch := newScratch -}}
+{{- /* 
+  Load HTML element class names and IDs into the provided scratch. 
+  */ -}}
+{{- .SetInMap "Specifiers" "Card" "cardify-card" -}}
+{{- .SetInMap "Specifiers" "Image" "cardify-card-img" -}}
+{{- .SetInMap "Specifiers" "Body" "cardify-card-body" -}}
+{{- .SetInMap "Specifiers" "Title" "cardify-card-title" -}}
+{{- .SetInMap "Specifiers" "Text" "cardify-card-text" -}}
+{{- .SetInMap "Specifiers" "Link" "cardify-card-link" -}}
+{{- .SetInMap "Specifiers" "PublishDate" "cardify-card-publish-date" -}}
+{{- .SetInMap "Specifiers" "ReadingTime" "cardify-card-reading-time" -}}
 
-{{- $scratch.SetInMap "Specifiers" "Card" "cardify-card" -}}
-{{- $scratch.SetInMap "Specifiers" "Image" "cardify-card-img" -}}
-{{- $scratch.SetInMap "Specifiers" "Body" "cardify-card-body" -}}
-{{- $scratch.SetInMap "Specifiers" "Title" "cardify-card-title" -}}
-{{- $scratch.SetInMap "Specifiers" "Text" "cardify-card-text" -}}
-{{- $scratch.SetInMap "Specifiers" "Link" "cardify-card-link" -}}
-{{- $scratch.SetInMap "Specifiers" "PublishDate" "cardify-card-publish-date" -}}
-{{- $scratch.SetInMap "Specifiers" "ReadingTime" "cardify-card-reading-time" -}}
-
-{{- /* Add the map of specifiers to the cardify map in the page scratch. */ -}}
-{{- .Scratch.SetInMap "Cardify" "Specifiers" ($scratch.Get "Specifiers") -}}
+{{- /* Move the map of specifiers to under Cardify */ -}}
+{{- $Specifiers := .Get "Specifiers" -}}
+{{- .Delete "Specifiers" -}}
+{{- .SetInMap "Cardify" "Specifiers" $Specifiers -}}

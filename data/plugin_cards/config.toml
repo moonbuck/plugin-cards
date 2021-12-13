@@ -2,6 +2,10 @@
 # plugin-cards config file
 ######################################################################
 
+# Whether to include HTML comments with debugging information
+#
+DebugPrint = false
+
 # Twitter and Open Graph <meta> tag configuration
 #################################################
 [TwitterOG]

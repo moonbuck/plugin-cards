@@ -1,28 +1,29 @@
 {{- /*
-  Create a local scratch for building the JSON structure.
+  Loads the JSON object into the provided scratch.
   */ -}}
-  
-{{- $scratch := newScratch -}}
+{{- $scratch := .scratch -}}
+{{- $context := .context -}}
 
 {{- /* 
   Insert the context and type.
   */ -}}
-{{- $scratch.SetInMap "JSON" "@context" "https://schema.org" -}}
-{{- $scratch.SetInMap "JSON" "@type" "BlogPosting" -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "@context" "https://schema.org" -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "@type" "BlogPosting" -}}
 
 {{- /* 
   When an author name is available, generate a map for the
   author with the name and, optionally, the URL.
   */ -}}
-{{- with (.Scratch.Get "StructuredData").Parameters.AuthorName -}}
-{{- $scratch.SetInMap "Author" "@type" "Person" -}}
-{{- $scratch.SetInMap "Author" "name" . -}}
-{{- with ($.Scratch.Get "StructuredData").Parameters.ProfileURL -}}
-{{- $scratch.SetInMap "Author" "url" . -}}
+{{- with ($scratch.Get "StructuredData").Parameters.AuthorName -}}
+{{- $scratch.SetInMap "StructuredData.Author" "@type" "Person" -}}
+{{- $scratch.SetInMap "StructuredData.Author" "name" . -}}
+{{- with ($scratch.Get "StructuredData").Parameters.ProfileURL -}}
+{{- $scratch.SetInMap "StructuredData.Author" "url" . -}}
 {{- end -}}
 {{- end -}}
-{{- with $scratch.Get "Author" -}}
-{{- $scratch.SetInMap "JSON" "author" . -}}
+{{- with $scratch.Get "StructuredData.Author" -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "author" . -}}
+{{- $scratch.Delete "StructuredData.Author" -}}
 {{- end -}}
 
 {{- /* 
@@ -31,38 +32,40 @@
   however, these values are not currently set in the page
   front matter so they resolve to the value of .Date.
   */ -}}
-{{- if (not .Date.IsZero) -}}
-{{- $date := .Date.Format "2006-01-02T15:04:05-07:00" -}}
-{{- $scratch.SetInMap "JSON" "datePublished" $date -}}
+{{- if (not $context.Date.IsZero) -}}
+{{- $date := $context.Date.Format "2006-01-02T15:04:05-07:00" -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "datePublished" $date -}}
 {{- end -}}
 
 {{- /* 
   Insert the post title as the headline.
   */ -}}
-{{- with .Title -}}
-{{- $scratch.SetInMap "JSON" "headline" . -}}
+{{- with $context.Title -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "headline" . -}}
 {{- end -}}
 
 {{- /* 
   Insert any images found in the page front matter. 
   */ -}}
-{{- with .Params.images -}}
-{{- $scratch.SetInMap "JSON" "image" (apply . "absURL" ".") -}}
+{{- with $context.Params.images -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "image" (apply . "absURL" ".") -}}
 {{- end -}}
 
 {{- /* 
   Insert the page summary for a description.
   */ -}}
-{{- with .Summary -}}
-{{- $scratch.SetInMap "JSON" "description" (. | plainify | chomp) -}}
+{{- with $context.Summary -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "description" (. | plainify | chomp) -}}
 {{- end -}}
 
 {{- /* 
   Insert the page's word count.
   */ -}}
-{{- with .WordCount -}}
-{{- $scratch.SetInMap "JSON" "wordcount" . -}}
+{{- with $context.WordCount -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "wordcount" . -}}
 {{- end -}}
 
-{{- /* Insert the constructed JSON object into the page scratch. */ -}}
-{{- .Scratch.SetInMap "StructuredData" "JSON" ($scratch.Get "JSON") -}}
+{{- /* Move the constructed JSON object under StructuredData. */ -}}
+{{- $JSON := $scratch.Get "StructuredData.JSON" -}}
+{{- $scratch.Delete "StructuredData.JSON" -}}
+{{- $scratch.SetInMap "StructuredData" "JSON" $JSON -}}

@@ -1,9 +1,14 @@
-{{- /* Create a local scratch for assembling the map */ -}}
-{{- $scratch := newScratch -}}
+{{- /* 
+  Parameters:
+  scratch: plugin scratch
+  context: page context
+  */ -}}
+{{- $scratch := .scratch -}}
+{{- $context := .context -}}
 
 {{/* Resolve registered resources */}}
 
-{{- $content := .Content | markdownify -}}
+{{- $content := $context.Content | markdownify -}}
 
 {{- /* Look for a card-config comment */ -}}
 
@@ -22,45 +27,47 @@
 {{- $value := replaceRE $url_re "$1" (index $key_value 1) -}}
 
 {{- /* Load the entry into the map */ -}}
-{{- $scratch.SetInMap "Registered" $key $value -}}
+{{- $scratch.SetInMap "TwitterOG.Registered" $key $value -}}
 
 {{- end -}} {{/* range $entries */}}
 
 {{- end -}} {{/* with findRE `<!--card-config(.|\n)+-->` $content */}}
 
-{{- if not (isset ($scratch.Get "Registered") "title") -}}
+{{- if not (isset ($scratch.Get "TwitterOG.Registered") "title") -}}
 {{- $title_re := `<h[0-9][^>]+data-card-title="([^"]+)"` -}}
 {{- with findRE $title_re $content -}}
-{{- $scratch.SetInMap "Registered" "title" (replaceRE $title_re "$1" (index . 0)) -}}
+{{- $scratch.SetInMap "TwitterOG.Registered" "title" (replaceRE $title_re "$1" (index . 0)) -}}
 {{- end -}}
 {{- end -}}
 
-{{- if not (isset ($scratch.Get "Registered") "image") -}}
+{{- if not (isset ($scratch.Get "TwitterOG.Registered") "image") -}}
 {{- $image_re := `<img[^>]+src="([^"]+)\?[^"]*card-image[^"]*"` -}}
 {{- $images := slice -}}
 {{- range findRE $image_re $content -}}
 {{- $images = $images | append (replaceRE $image_re "$1" .) -}}
 {{- end -}}
-{{ $scratch.SetInMap "Registered" "images" $images }}
+{{ $scratch.SetInMap "TwitterOG.Registered" "images" $images }}
 {{- end -}}
 
-{{- if not (isset ($scratch.Get "Registered") "audio") -}}
+{{- if not (isset ($scratch.Get "TwitterOG.Registered") "audio") -}}
 {{- $audio_re := `<audio[^>]+src="([^"]+)\?[^"]*card-audio[^"]*"` -}}
 {{- $audio := slice -}}
 {{- range findRE $audio_re $content -}}
 {{- $audio = $audio | append (replaceRE $audio_re "$1" .) -}}
 {{- end -}}
-{{ $scratch.SetInMap "Registered" "audio" $audio }}
+{{ $scratch.SetInMap "TwitterOG.Registered" "audio" $audio }}
 {{- end -}}
 
-{{- if not (isset ($scratch.Get "Registered") "video") -}}
+{{- if not (isset ($scratch.Get "TwitterOG.Registered") "video") -}}
 {{- $video_re := `<video[^>]+src="([^"]+)\?[^"]*card-video[^"]*"` -}}
 {{- $video := slice -}}
 {{- range findRE $video_re $content -}}
 {{- $video = $video | append (replaceRE $video_re "$1" .) -}}
 {{- end -}}
-{{ $scratch.SetInMap "Registered" "video" $video }}
+{{ $scratch.SetInMap "TwitterOG.Registered" "video" $video }}
 {{- end -}}
 
-{{- /* Insert the Registered map into the page scratch. */ -}}
-{{- .Scratch.SetInMap "TwitterOG" "Registered" ($scratch.Get "Registered") -}}
+{{- /* Move the Registered map under TwitterOG */ -}}
+{{- $Registered := $scratch.Get "TwitterOG.Registered" -}}
+{{- $scratch.Delete "TwitterOG.Registered" -}}
+{{- $scratch.SetInMap "TwitterOG" "Registered" $Registered -}}

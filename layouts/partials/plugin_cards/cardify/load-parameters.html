@@ -2,107 +2,34 @@
   Resolve the relevant parameter values 
   */ -}}
   
-{{- $ConfigFile := (.Scratch.Get "plugin-cards").ConfigFile.Cardify -}}
-
-{{- $QueryMatch := $ConfigFile.Creation.QueryMatch -}}
-{{- $QueryMatch  = $QueryMatch | default true -}}
-
-{{- $QueryParameter := $ConfigFile.Creation.QueryParameter -}}
-{{- $QueryParameter  = $QueryParameter | default "cardify" -}}
-
-{{- $OverridesFilter := $ConfigFile.Creation.QueryMatchOverridesFilter -}}
-{{- $OverridesFilter  = $OverridesFilter | default true -}}
-
-{{- $HostMatch := $ConfigFile.Creation.HostMatch -}}
-{{- $HostMatch  = $HostMatch | default false -}}
-
-{{- $ReadMoreLink := $ConfigFile.HostMatch.ReadMoreLink -}}
-{{- $ReadMoreLink  = $ReadMoreLink | default ".read-more" -}}
-
-{{- $ListSandbox := $ConfigFile.HostMatch.ListSandbox -}}
-{{- $ListSandbox  = $ListSandbox | default ".post-body" -}}
-
-{{- $PageSandbox := $ConfigFile.HostMatch.PageSandbox -}}
-{{- $PageSandbox  = $PageSandbox | default "#post-body" -}}
-
-{{- $CustomSelector := $ConfigFile.HostMatch.CustomSelector -}}
-{{- $CustomSelector  = $CustomSelector | default "" -}}
-
-{{- $URLFilter := $ConfigFile.HostMatch.URLFilter -}}
-{{- $URLFilter  = $URLFilter | default ".*.html" -}}
-
-{{- $SpacerY := $ConfigFile.Style.SpacerY -}}
-{{- $SpacerY  = $SpacerY | default "1rem" -}}
-
-{{- $SpacerX := $ConfigFile.Style.SpacerX -}}
-{{- $SpacerX  = $SpacerX | default "1rem" -}}
-
-{{- $TitleSpacerY := $ConfigFile.Style.TitleSpacerY -}}
-{{- $TitleSpacerY  = $TitleSpacerY | default "0.5rem" -}}
-
-{{- $BG := $ConfigFile.Style.BG -}}
-{{- $BG  = $BG | default "white" -}}
-
-{{- $BorderWidth := $ConfigFile.Style.BorderWidth -}}
-{{- $BorderWidth  = $BorderWidth | default "1px" -}}
-
-{{- $BorderColor := $ConfigFile.Style.BorderColor -}}
-{{- $BorderColor  = $BorderColor | default "rgba(0,0,0,0.125)" -}}
-
-{{- $BorderRadius := $ConfigFile.Style.BorderRadius -}}
-{{- $BorderRadius  = $BorderRadius | default "0.5rem" -}}
-
-{{- $TimeDateColor := $ConfigFile.Style.TimeDateColor -}}
-{{- $TimeDateColor  = $TimeDateColor | default "#666666" -}}
-
-{{- $Fingerprint := $ConfigFile.Build.Fingerprint -}}
-{{- $Fingerprint  = $Fingerprint | default true -}}
-
-{{- $SassOutput := $ConfigFile.Build.SassOutput -}}
-{{- $SassOutput  = $SassOutput | default "nested" -}}
-
-{{- $MinifyScript := $ConfigFile.Build.MinifyScript -}}
-{{- $MinifyScript  = $MinifyScript | default false -}}
+{{- $Config := (.Get "Config").Cardify -}}
+{{- $QueryMatch := $Config.Card.Creation.QueryMatch | default true -}}
+{{- $QueryParameter := $Config.Card.Creation.QueryParameter | default "cardify" -}}
+{{- $OverridesFilter := $Config.Card.Creation.QueryMatchOverridesFilter | default true -}}
+{{- $HostMatch := $Config.Card.Creation.HostMatch | default false -}}
+{{- $ReadMoreLink := $Config.Card.HostMatch.ReadMoreLink | default ".read-more" -}}
+{{- $ListSandbox := $Config.Card.HostMatch.ListSandbox | default ".post-body" -}}
+{{- $PageSandbox := $Config.Card.HostMatch.PageSandbox | default "#post-body" -}}
+{{- $CustomSelector := $Config.Card.HostMatch.CustomSelector | default "" -}}
+{{- $URLFilter := $Config.Card.HostMatch.URLFilter | default ".*.html" -}}
+{{- $SpacerY := $Config.Card.Style.SpacerY | default "1rem" -}}
+{{- $SpacerX := $Config.Card.Style.SpacerX | default "1rem" -}}
+{{- $TitleSpacerY := $Config.Card.Style.TitleSpacerY | default "0.5rem" -}}
+{{- $BG := $Config.Card.Style.BG | default "white" -}}
+{{- $BorderWidth := $Config.Card.Style.BorderWidth | default "1px" -}}
+{{- $BorderColor := $Config.Card.Style.BorderColor | default "rgba(0,0,0,0.125)" -}}
+{{- $BorderRadius := $Config.Card.Style.BorderRadius | default "0.5rem" -}}
+{{- $TimeDateColor := $Config.Card.Style.TimeDateColor | default "#666666" -}}
+{{- $Fingerprint := $Config.Build.Fingerprint | default true -}}
+{{- $SassOutput := $Config.Build.SassOutput | default "nested" -}}
+{{- $MinifyScript := $Config.Build.MinifyScript | default false -}}
 
 {{- /*
-  Create a local scratch and load with resolved values.
+  Create the Parameters map
   */ -}}
-{{- $scratch := newScratch -}}
-
-{{- $scratch.SetInMap "Creation" "QueryMatch" $QueryMatch -}}
-{{- $scratch.SetInMap "Creation" "QueryParameter" $QueryParameter -}}
-{{- $scratch.SetInMap "Creation" "QueryMatchOverridesFilter" $OverridesFilter -}}
-{{- $scratch.SetInMap "Creation" "HostMatch" $HostMatch -}}
-
-{{- $scratch.SetInMap "HostMatch" "ReadMoreLink" $ReadMoreLink -}}
-{{- $scratch.SetInMap "HostMatch" "ListSandbox" $ListSandbox -}}
-{{- $scratch.SetInMap "HostMatch" "PageSandbox" $PageSandbox -}}
-{{- $scratch.SetInMap "HostMatch" "CustomSelector" $CustomSelector -}}
-{{- $scratch.SetInMap "HostMatch" "URLFilter" $URLFilter -}}
-
-{{- $scratch.SetInMap "Style" "SpacerY" $SpacerY -}}
-{{- $scratch.SetInMap "Style" "SpacerX" $SpacerX -}}
-{{- $scratch.SetInMap "Style" "TitleSpacerY" $TitleSpacerY -}}
-{{- $scratch.SetInMap "Style" "BG" $BG -}}
-{{- $scratch.SetInMap "Style" "BorderWidth" $BorderWidth -}}
-{{- $scratch.SetInMap "Style" "BorderColor" $BorderColor -}}
-{{- $scratch.SetInMap "Style" "BorderRadius" $BorderRadius -}}
-{{- $scratch.SetInMap "Style" "TimeDateColor" $TimeDateColor -}}
-
-{{- $scratch.SetInMap "Build" "Fingerprint" $Fingerprint -}}
-{{- $scratch.SetInMap "Build" "SassOutput" $SassOutput -}}
-{{- $scratch.SetInMap "Build" "MinifyScript" $MinifyScript -}}
+  {{- $Parameters := dict "Card" (dict "Creation" (dict "QueryMatch" $QueryMatch "QueryParameter" $QueryParameter "QueryMatchOverridesFilter" $OverridesFilter "HostMatch" $HostMatch) "HostMatch" (dict "ReadMoreLink" $ReadMoreLink "ListSandbox" $ListSandbox "PageSandbox" $PageSandbox "CustomSelector" $CustomSelector "URLFilter" $URLFilter) "Style" (dict "SpacerY" $SpacerY "SpacerX" $SpacerX "TitleSpacerY" $TitleSpacerY "BG" $BG "BorderWidth" $BorderWidth "BorderColor" $BorderColor "BorderRadius" $BorderRadius "TimeDateColor" $TimeDateColor)) "Build" (dict  "Fingerprint" $Fingerprint "SassOutput" $SassOutput "MinifyScript" $MinifyScript) -}}
 
 {{- /* 
-  Assemble the inner maps 
+  Insert the Parameters map into the plugin scratch
   */ -}}
-{{- $scratch.SetInMap "Card" "Creation" ($scratch.Get "Creation") -}}
-{{- $scratch.SetInMap "Card" "HostMatch" ($scratch.Get "HostMatch") -}}
-{{- $scratch.SetInMap "Card" "Style" ($scratch.Get "Style") -}}
-{{- $scratch.SetInMap "Parameters" "Card" ($scratch.Get "Card") -}}
-{{- $scratch.SetInMap "Parameters" "Build" ($scratch.Get "Build") -}}
-
-{{- /* 
-  Insert the Parameters map into the page scratch under Cardify
-  */ -}}
-{{- .Scratch.SetInMap "Cardify" "Parameters" ($scratch.Get "Parameters") -}}
+{{- .SetInMap "Cardify" "Parameters" $Parameters -}}

@@ -2,26 +2,63 @@
   Insert the plugin version and build time 
   */ -}}
 {{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
-{{ printf "\n<!-- Cards v4.0.12 (built on %s) -->" $time | safeHTML }}
+{{ printf "\n<!-- Cards v4.0.13 (built on %s) -->" $time | safeHTML }}
+
+{{- /* Create a local scratch for plugin use. */ -}}
+{{- $scratch := newScratch -}}
 
 {{- /* 
-  Load the config file values into the page scratch 
+  Load the config file values into the scratch 
   */ -}}
-{{- partial "plugin_cards/load-config-file.html" . -}}
+{{- template "resolve-config-file" $scratch -}}
 
-{{- /*partial "plugin_cards/debug-print.html" (slice "plugin-cards" "ConfigFile" .)*/ -}}
+{{- partial "plugin_cards/debug-print.html" (slice "" "Config" $scratch) -}}
 
 {{- /* 
   Inject the Twitter / Open Graph meta tags 
   */ -}}
-{{- partial "plugin_cards/twitter-og/injection.html" . -}}
+{{- partial "plugin_cards/twitter-og/injection.html" (dict "scratch" $scratch "context" .) -}}
 
 {{- /* 
   Inject the structured data meta tags 
   */ -}}
-{{- partial "plugin_cards/structured-data/injection.html" . -}}
+{{- partial "plugin_cards/structured-data/injection.html" (dict "scratch" $scratch "context" .) -}}
 
 {{- /* 
   Inject the cardify Javascript and stylesheet 
   */ -}}
-{{- partial "plugin_cards/cardify/injection.html" . -}}
+{{- partial "plugin_cards/cardify/injection.html" (dict "scratch" $scratch "context" .) -}}
+
+{{- /* 
+ 
+  Expects an instance of Scratch within which to insert 
+  the resolved config file.
+  
+  */ -}}
+{{- define "resolve-config-file" -}}  
+
+{{- $scratch := . -}}
+
+{{- $file := site.Data.plugin_cards_config -}}
+{{- $file  = $file | default site.Data.plugin_cards.config -}}
+{{- $file  = $file | default dict -}}
+
+{{- $data := site.Data.plugin_cards_data -}}
+{{- $data  = $data | default site.Data.plugin_cards.data -}}
+{{- $data  = $data | default dict -}}
+
+{{- $TwitterOG := $file.TwitterOG | default dict -}}
+{{- $scratch.Set "TwitterOG" $TwitterOG -}}
+{{- $scratch.SetInMap "TwitterOG" "Data" $data -}}
+{{- $TwitterOG = $scratch.Get "TwitterOG" -}}
+{{- $StructuredData := $file.StructuredData | default dict -}}
+{{- $Cardify := $file.Cardify | default dict -}}
+{{- $DebugPrint := $file.DebugPrint -}}
+
+{{- $Config := dict "DebugPrint" $DebugPrint "TwitterOG" $TwitterOG "StructuredData" $StructuredData "Cardify" $Cardify -}}
+
+{{- $scratch.Delete "TwitterOG" -}}
+
+{{- $scratch.Set "Config" $Config -}}
+
+{{- end -}}
