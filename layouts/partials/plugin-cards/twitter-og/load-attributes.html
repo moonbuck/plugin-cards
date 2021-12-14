@@ -1,47 +1,49 @@
 {{- /* 
   Create a local scratch for constructing the map.
   */ -}}
-{{- $scratch := .scratch -}}
-{{- $context := .context -}}
-
+  
 {{- /* Retrieve the parameter values */ -}}
-{{- $Parameters := ($scratch.Get "TwitterOG").Parameters -}}
+{{- $Parameters := (.Scratch.Get "plugin-cards.Parameters").TwitterOG -}}
 
 {{- /* Retrieve the registration map from the page scratch. */ -}}
-{{- $Registered := ($scratch.Get "TwitterOG").Registered -}}
+{{- $Registered := .Scratch.Get "plugin-cards.TwitterOG" -}}
+
+{{- $reading_time := .ReadingTime -}}
 
 {{- /* 
   Grab the page's URL.
   */ -}}
-{{- $scratch.SetInMap "Attributes" "url" $context.Permalink -}}
+{{- $url := .Permalink -}}
 
 {{- /*
   Grab the site name.
   */ -}}
-{{- $scratch.SetInMap "Attributes" "site_name" site.Title -}}
+{{- $site_name := site.Title -}}
 
 {{- /*
   Grab the hostname for the domain attribute.
   */ -}}
-{{- $scratch.SetInMap "Attributes" "domain" (urls.Parse site.BaseURL).Host -}}
+{{- $domain := (urls.Parse site.BaseURL).Host -}}
 
 {{- /*
   Grab the page section.
   */ -}}
-{{- $scratch.SetInMap "Attributes" "section" $context.Section -}}
+{{- $section := .Section -}}
 
 {{- /*
   Grab any categories for tag attributes.
   */ -}}
-{{- $scratch.SetInMap "Attributes" "tags" $context.Params.categories -}}
+{{- $tags := .Params.categories -}}
 
 {{- /*
   Grab the Twitter username for the site and creator attributes.
   */ -}}
+{{- $site := false -}}
+{{- $creator := false -}}
 {{- with $Parameters.Twitter.Username -}}
 {{- $handle := printf "@%s" . -}}
-{{- $scratch.SetInMap "Attributes" "site" $handle -}}
-{{- $scratch.SetInMap "Attributes" "creator" $handle -}}
+{{- $site = $handle -}}
+{{- $screator = $handle -}}
 {{- end -}}
 
 {{- /* 
@@ -55,8 +57,8 @@
   
   */ -}}
 {{- $description := $Registered.description -}}
-{{- $description  = $description | default $context.Summary -}}
-{{- $description  = $description | default $context.Description -}}
+{{- $description  = $description | default .Summary -}}
+{{- $description  = $description | default .Description -}}
 {{- $description  = $description | default site.Params.description -}}
 
 {{- /* 
@@ -66,7 +68,6 @@
 {{- with $description -}}
 {{- $description = . | markdownify | plainify | truncate 200 | chomp -}}  
 {{- end -}}
-{{- $scratch.SetInMap "Attributes" "description" $description -}}
 
 {{- /* 
   Determine content for title using the following lookup order:
@@ -75,7 +76,7 @@
   3) The description.
   */ -}}
 {{- $title := $Registered.title -}}
-{{- $title  = $title | default $context.Title -}}
+{{- $title  = $title | default .Title -}}
 {{- $title  = $title | default $description -}}
 
 {{- /* 
@@ -85,7 +86,6 @@
 {{- with $title -}}
 {{- $title = . | markdownify | plainify | truncate 70 | chomp -}}
 {{- end -}}
-{{- $scratch.SetInMap "Attributes" "title" $title -}}
 
 {{- /* 
   Grab the image using the following lookup order:
@@ -96,7 +96,7 @@
   */ -}}
 {{- $image := $Registered.image -}}
 {{- $image  = $image | default $Registered.images -}}
-{{- $image  = $image | default $context.Params.images -}}
+{{- $image  = $image | default .Params.images -}}
 
 {{- /* If we have a slice of images, grab the first one. */ -}}
 {{- if (reflect.IsSlice $image) -}}
@@ -106,10 +106,10 @@
 {{- else if (not $image) -}}
 
 {{- /* Check for card data */ -}}
-{{- with ($scratch.Get "TwitterOG").Parameters.Data -}}
+{{- with $Parameters.Data -}}
   
 {{- /* Capture the path and trim off any query parameters */ -}}
-{{- $page_path := (urls.Parse $context.Permalink).Path -}}
+{{- $page_path := (urls.Parse $.Permalink).Path -}}
 {{- $page_path = replaceRE "^([^?]+)(?:[?].+)?" "$1" $page_path -}}
             
 {{- /* Check whether the data has an entry for this page */ -}}
@@ -122,7 +122,6 @@
 {{- end -}} {{- /* with (index . $page_path) */ -}}
 {{- end -}} {{- /* with .Scratch.Get "Data" */ -}}      
 {{- end -}} {{- /* if (reflect.IsSlice $image) */ -}}
-{{- $scratch.SetInMap "Attributes" "image" $image -}}
 
 {{- /* 
   Process the .Date page variable. Ideally we would want
@@ -134,10 +133,16 @@
   published time and for all other pages we will call
   it the updated time.
   */ -}}
-{{- if (not $context.Date.IsZero) -}}
-{{- $time := $context.Date.Format "2006-01-02T15:04:05-07:00" -}}
-{{- $key := cond $context.IsPage "published_time" "updated_time" -}}
-{{- $scratch.SetInMap "Attributes" $key $time -}}
+{{- $published_time := false -}}
+{{- $updated_time := false -}}
+
+{{- if (not .Date.IsZero) -}}
+{{- $time := .Date.Format "2006-01-02T15:04:05-07:00" -}}
+{{- if .IsPage -}}
+{{- $published_time = $time -}}
+{{- else -}}
+{{- $updated_time = $time -}}
+{{- end -}}
 {{- end -}}
 
 {{- /*
@@ -147,10 +152,10 @@
   */ -}}
 {{- $audio := $Registered.audio -}}
 {{- /*$audio  = $audio | default .Params.audio*/ -}}
-{{- if (reflect.IsSlice $audio) -}}
+{{- /*if (reflect.IsSlice $audio) -}}
 {{- $audio = index $audio 0 }}
 {{- end -}}
-{{- $scratch.SetInMap "Attributes" "audio" $audio -}}
+{{- $scratch.SetInMap "Attributes" "audio" $audio*/ -}}
 
 {{- /*
   Grab the video using the following lookup order:
@@ -162,41 +167,37 @@
   */ -}}
 {{- $video := $Registered.video -}}
 {{- /*$video  = $video | default .Params.videos*/ -}}
-{{- if (reflect.IsSlice $video) -}}
+{{- /*if (reflect.IsSlice $video) -}}
 {{- $video = index $video 0 }}
 {{- end -}}
-{{- $scratch.SetInMap "Attributes" "video" $video -}}
+{{- $scratch.SetInMap "Attributes" "video" $video*/ -}}
 
 {{- /* 
   Resolve the Open Graph type.
   */ -}}
-  
+{{- $type := "website" -}}
+
 {{- /* Check whether an Open Graph type has been registered. */ -}}
 {{- with $Registered.type -}}
 
-{{- $scratch.SetInMap "Attributes" "type" . -}}
+{{- $type = . -}}
 
 {{- else -}}
   {{- /* Otherwise look for registered audio */ -}}
   {{- if $Registered.audio -}}
   
-  {{- $scratch.SetInMap "Attributes" "type" $Parameters.Audio.Type -}}
+  {{- $type = $Parameters.Audio.Type -}}
   
   {{- /* Otherwise look for registered video */ -}}
   {{- else if $Registered.video -}}
   
-  {{- $scratch.SetInMap "Attributes" "type" $Parameters.Video.Type -}}
+  {{- $type = $Parameters.Video.Type -}}
   
   {{- /* Otherwise check whether this is a single page */ -}}
   {{- else if .IsPage -}}
   
-  {{- $scratch.SetInMap "Attributes" "type" "article" -}}
+  {{- $type = "article" -}}
   
-  {{- /* Otherwise default to the website type */ -}}
-  {{- else -}}
-  
-  {{- $scratch.SetInMap "Attributes" "type" "website" -}}
-
   {{- end -}} {{- /* if $Registered.audio */ -}}
   
 {{- end -}} {{- /* with $Registered.type */ -}}
@@ -206,37 +207,43 @@
   if video or audio has been registered; otherwise,
   configure Twitter summary card.
   */ -}}
+{{- $width := false-}}
+{{- $height := false -}}
+{{- $card := "summary" -}}
+{{- $player := false -}}
+
 {{- $require_image := $Parameters.Twitter.CardPreference.LargeSummaryRequiresImage -}}
+
 {{- if $video -}}
 
-{{- $scratch.SetInMap "Attributes" "width" $Parameters.Video.Width -}}
-{{- $scratch.SetInMap "Attributes" "height" $Parameters.Video.Height -}}
-{{- $scratch.SetInMap "Attributes" "card" "player" -}}
-{{- $scratch.SetInMap "Attributes" "player" $video -}}
+{{- $width = $Parameters.Video.Width -}}
+{{- $height = $Parameters.Video.Height -}}
+{{- $card = "player" -}}
+{{- $player = $video -}}
 
 {{- else if $audio -}}
 
-{{- $scratch.SetInMap "Attributes" "width" $Parameters.Audio.Width -}}
-{{- $scratch.SetInMap "Attributes" "height" $Parameters.Audio.Height -}}
-{{- $scratch.SetInMap "Attributes" "card" "player" -}}
-{{- $scratch.SetInMap "Attributes" "player" $audio -}}
+{{- $width = $Parameters.Audio.Width -}}
+{{- $height = $Parameters.Audio.Height -}}
+{{- $card = "player" -}}
+{{- $player = $audio -}}
 
 {{- else -}}
 {{- with $Parameters.Twitter.CardPreference -}}
 
-{{- $preference := cond $context.IsPage .SinglePage .ListPage -}}
+{{- $preference := cond $.IsPage .SinglePage .ListPage -}}
 {{- if (and (and (eq $preference "large") (not $image)) $require_image) -}}
 {{- $preference = "small" -}}
 {{- end -}}
 
-{{- $scratch.SetInMap "Attributes" "card" (cond (eq $preference "large") "summary_large_image" "summary") -}}
+{{- if (eq $preference "large") -}}
+{{- $card = "summary_large_image" -}}
+{{- end -}
 
 {{- end -}} {{- /* with $Parameters.Twitter.CardPreference */ -}}
 
-
 {{- end -}} {{- /* if $Registered.video */ -}}
 
-{{- /* Move the Attributes map under TwitterOG */ -}}
-{{- $Attributes := $scratch.Get "Attributes" -}}
-{{- $scratch.Delete "Attributes" -}}
-{{- $scratch.SetInMap "TwitterOG" "Attributes" $Attributes -}}
+{{- $Attributes := dict "reading_time" $reading_time "url" $url "site_name" $site_name "domain" $domain "section" $section "tags" $tags "site" $site "creator" $creator "description" $description "title" $title "image" $image "published_time" $published_time "updated_time" $updated_time "audio" $audio "video" $video "type" $type "width" $width "height" $height "card" $card "player" $player -}}
+
+{{- .Scratch.Set "plugin-cards.TwitterOG" $Attributes -}}

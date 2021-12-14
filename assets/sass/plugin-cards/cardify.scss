@@ -1,4 +1,4 @@
-{{ with .Get "Cardify" }}
+{{ with .Scratch.Get "plugin-cards.Cardify" }}
 
 {{ with .Parameters.Card.Style -}}
 /// Plugin parameter values

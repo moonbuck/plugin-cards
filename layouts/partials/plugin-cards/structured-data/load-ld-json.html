@@ -1,8 +1,9 @@
 {{- /*
   Loads the JSON object into the provided scratch.
   */ -}}
-{{- $scratch := .scratch -}}
-{{- $context := .context -}}
+{{- $scratch := newScratch -}}
+
+{{- $Parameters := (.Scratch.Get "plugin-cards.Parameters").StructuredData -}}
 
 {{- /* 
   Insert the context and type.
@@ -14,16 +15,16 @@
   When an author name is available, generate a map for the
   author with the name and, optionally, the URL.
   */ -}}
-{{- with ($scratch.Get "StructuredData").Parameters.AuthorName -}}
+{{- with $Parameters.AuthorName -}}
 {{- $scratch.SetInMap "StructuredData.Author" "@type" "Person" -}}
 {{- $scratch.SetInMap "StructuredData.Author" "name" . -}}
-{{- with ($scratch.Get "StructuredData").Parameters.ProfileURL -}}
+{{- with $Parameters.ProfileURL -}}
 {{- $scratch.SetInMap "StructuredData.Author" "url" . -}}
 {{- end -}}
 {{- end -}}
-{{- with $scratch.Get "StructuredData.Author" -}}
+{{- $author := $scratch.Get "StructuredData.Author" -}}
+{{- with $author -}}
 {{- $scratch.SetInMap "StructuredData.JSON" "author" . -}}
-{{- $scratch.Delete "StructuredData.Author" -}}
 {{- end -}}
 
 {{- /* 
@@ -32,40 +33,40 @@
   however, these values are not currently set in the page
   front matter so they resolve to the value of .Date.
   */ -}}
-{{- if (not $context.Date.IsZero) -}}
-{{- $date := $context.Date.Format "2006-01-02T15:04:05-07:00" -}}
+{{- if (not .Date.IsZero) -}}
+{{- $date := .Date.Format "2006-01-02T15:04:05-07:00" -}}
 {{- $scratch.SetInMap "StructuredData.JSON" "datePublished" $date -}}
 {{- end -}}
 
 {{- /* 
   Insert the post title as the headline.
   */ -}}
-{{- with $context.Title -}}
+{{- with .Title -}}
 {{- $scratch.SetInMap "StructuredData.JSON" "headline" . -}}
 {{- end -}}
 
 {{- /* 
   Insert any images found in the page front matter. 
   */ -}}
-{{- with $context.Params.images -}}
+{{- with .Params.images -}}
 {{- $scratch.SetInMap "StructuredData.JSON" "image" (apply . "absURL" ".") -}}
 {{- end -}}
 
 {{- /* 
   Insert the page summary for a description.
   */ -}}
-{{- with $context.Summary -}}
+{{- with .Summary -}}
 {{- $scratch.SetInMap "StructuredData.JSON" "description" (. | plainify | chomp) -}}
 {{- end -}}
 
 {{- /* 
   Insert the page's word count.
   */ -}}
-{{- with $context.WordCount -}}
+{{- with .WordCount -}}
 {{- $scratch.SetInMap "StructuredData.JSON" "wordcount" . -}}
 {{- end -}}
 
 {{- /* Move the constructed JSON object under StructuredData. */ -}}
 {{- $JSON := $scratch.Get "StructuredData.JSON" -}}
-{{- $scratch.Delete "StructuredData.JSON" -}}
-{{- $scratch.SetInMap "StructuredData" "JSON" $JSON -}}
+
+{{- .Scratch.Set "plugin-cards.StructuredData" $JSON -}}
