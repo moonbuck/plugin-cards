@@ -2,20 +2,20 @@
 {{- $scratch := .scratch -}}
 {{- $context := .context -}}
 
-{{- partial "plugin_cards/cardify/load-parameters.html" $scratch -}}
+{{- partial "plugin-cards/cardify/load-parameters.html" $scratch -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "Cardify" "Parameters" $scratch) -}}
+{{- partial "plugin-cards/debug-print.html" (slice "Cardify" "Parameters" $scratch) -}}
 
 {{- with ($scratch.Get "Cardify").Parameters -}}
 
 {{- if (or .Card.Creation.QueryMatch .Card.Creation.HostMatch) -}}
 
 {{- /* Load HTML element specifiers into the page scratch */ -}}
-{{- partial "plugin_cards/cardify/load-specifiers.html" $scratch -}}
+{{- partial "plugin-cards/cardify/load-specifiers.html" $scratch -}}
 
-{{- partial "plugin_cards/debug-print.html" (slice "Cardify" "Specifiers" $scratch) -}}
+{{- partial "plugin-cards/debug-print.html" (slice "Cardify" "Specifiers" $scratch) -}}
 
-{{- $source_dir := "js/plugin_cards/" -}}
+{{- $source_dir := "js/plugin-cards/" -}}
 {{- $template_name := "cardify.js" -}}
 {{- $source := path.Join $source_dir $template_name -}}
 {{- $target := path.Join "assets" $source -}}
@@ -27,7 +27,7 @@
 {{- print "\n" -}}
 <script src="{{ $script.Permalink }}"></script>
 
-{{- $source_dir = "sass/plugin_cards/" -}}
+{{- $source_dir = "sass/plugin-cards/" -}}
 {{- $template_name = "cardify.scss" -}}
 {{- $source = path.Join $source_dir $template_name -}}
 {{- $target := path.Join "assets" $source -}}
