@@ -48,21 +48,21 @@
 {{- if not ($registered.Get "image") -}}
 {{- $image_re := `<img[^>]+src="([^"]+)\?[^"]*card-image[^"]*"` -}}
 {{- with findRE $image_re $content -}}
-{{- $registered.Set "image" (replaceRE $image_re "$1" (index . 0) -}}
+{{- $registered.Set "image" (replaceRE $image_re "$1" (index . 0)) -}}
 {{- end -}}
 {{- end -}}
 
 {{- if not ($registered.Get "audio") -}}
 {{- $audio_re := `<audio[^>]+src="([^"]+)\?[^"]*card-audio[^"]*"` -}}
 {{- with findRE $audio_re $content -}}
-{{- $registered.Set "audio" (replaceRE $audio_re "$1" (index . 0) -}}
+{{- $registered.Set "audio" (replaceRE $audio_re "$1" (index . 0)) -}}
 {{- end -}}
 {{- end -}}
 
 {{- if not ($registered.Get "video") -}}
 {{- $video_re := `<video[^>]+src="([^"]+)\?[^"]*card-video[^"]*"` -}}
 {{- with findRE $video_re $content -}}
-{{- $registered.Set "video" (replaceRE $video_re "$1" (index . 0) -}}
+{{- $registered.Set "video" (replaceRE $video_re "$1" (index . 0)) -}}
 {{- end -}}
 {{- end -}}
 

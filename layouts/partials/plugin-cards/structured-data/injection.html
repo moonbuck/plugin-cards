@@ -1,6 +1,6 @@
 {{- /* Load structured data parameters */ -}}
 
-{{- if (and ((.Scratch.Get "plugin-cards.Parameters").StructuredData.Enable) (eq $context.Type "post")) -}}
+{{- if (and ((.Scratch.Get "plugin-cards.Parameters").StructuredData.Enable) (eq .Type "post")) -}}
 
 {{- partial "plugin-cards/structured-data/load-ld-json.html" . -}}
 

@@ -43,7 +43,7 @@
 {{- with $Parameters.Twitter.Username -}}
 {{- $handle := printf "@%s" . -}}
 {{- $site = $handle -}}
-{{- $screator = $handle -}}
+{{- $creator = $handle -}}
 {{- end -}}
 
 {{- /* 
@@ -207,7 +207,7 @@
   if video or audio has been registered; otherwise,
   configure Twitter summary card.
   */ -}}
-{{- $width := false-}}
+{{- $width := false -}}
 {{- $height := false -}}
 {{- $card := "summary" -}}
 {{- $player := false -}}
@@ -238,7 +238,7 @@
 
 {{- if (eq $preference "large") -}}
 {{- $card = "summary_large_image" -}}
-{{- end -}
+{{- end -}}
 
 {{- end -}} {{- /* with $Parameters.Twitter.CardPreference */ -}}
 
