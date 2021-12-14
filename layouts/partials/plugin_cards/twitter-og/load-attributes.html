@@ -106,7 +106,7 @@
 {{- else if (not $image) -}}
 
 {{- /* Check for card data */ -}}
-{{- with ($scratch.Get "TwitterOG").Data -}}
+{{- with ($scratch.Get "TwitterOG").Parameters.Data -}}
   
 {{- /* Capture the path and trim off any query parameters */ -}}
 {{- $page_path := (urls.Parse $context.Permalink).Path -}}
