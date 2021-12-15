@@ -139,12 +139,12 @@
 {{- $updated_time := false -}}
 
 {{- if (not .Date.IsZero) -}}
-{{- $time := .Date.Format "2006-01-02T15:04:05-07:00" -}}
-{{- if .IsPage -}}
-{{- $published_time = $time -}}
-{{- else -}}
-{{- $updated_time = $time -}}
-{{- end -}}
+  {{- $time := .Date.Format "2006-01-02T15:04:05-07:00" -}}
+  {{- if .IsPage -}}
+    {{- $published_time = $time -}}
+  {{- else -}}
+    {{- $updated_time = $time -}}
+  {{- end -}}
 {{- end -}}
 
 {{- /* 

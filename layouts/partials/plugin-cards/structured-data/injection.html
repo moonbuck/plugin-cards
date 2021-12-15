@@ -9,5 +9,4 @@
 {{- $JSON := .Scratch.Get "plugin-cards.StructuredData" -}}
 
 <script type="application/ld+json">{{ $JSON | jsonify | safeHTML }}</script>
-
-{{- end -}}
+{{ end -}}

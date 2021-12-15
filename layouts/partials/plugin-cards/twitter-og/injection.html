@@ -27,35 +27,35 @@
   
 {{- if (eq .Type "post") -}}
 <meta property="article:reading_time" content="{{ $Attributes.reading_time }}" />
-{{- end -}}
+{{ end -}}
 
 {{- /* 
   Insert the shared Open Graph attributes 
   */ -}}
   
-{{ with $Attributes.type -}}
+{{- with $Attributes.type -}}
 <meta property="og:type" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.url -}}
+{{- with $Attributes.url -}}
 <meta property="og:url" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.title -}}
+{{- with $Attributes.title -}}
 <meta property="og:title" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.description -}}
+{{- with $Attributes.description -}}
 <meta property="og:description" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.site_name -}}
+{{- with $Attributes.site_name -}}
 <meta property="og:site_name" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.image -}}
+{{- with $Attributes.image -}}
 <meta property="og:image" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
 {{- /* 
   Insert tags applicable for audio 
@@ -63,23 +63,23 @@
   
 {{- if (eq $Attributes.type $Parameters.Audio.Type) -}}
 
-{{ with $Attributes.published_time -}}
+{{- with $Attributes.published_time -}}
 <meta property="article:published_time" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.section -}}
+{{- with $Attributes.section -}}
 <meta property="article:section" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.tags -}}
+{{- with $Attributes.tags -}}
 {{- range first 6 . -}}
 <meta property="article:tag" content="{{ . }}" />
+{{ end -}}
 {{- end -}}
-{{- end }}
 
-{{ with $Attributes.audio -}}
+{{- with $Attributes.audio -}}
 <meta property="og:audio" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
 {{- /* 
   Insert tags applicable for video 
@@ -87,31 +87,31 @@
   
 {{- else if (eq $Attributes.type $Parameters.Video.Type) -}}
 
-{{ with $Attributes.published_time -}}
+{{- with $Attributes.published_time -}}
 <meta property="article:published_time" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.section -}}
+{{- with $Attributes.section -}}
 <meta property="article:section" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.tags -}}
+{{- with $Attributes.tags -}}
 {{- range first 6 . -}}
 <meta property="article:tag" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 {{- end }}
 
-{{ with $Attributes.width -}}
+{{- with $Attributes.width -}}
 <meta property="og:video:width" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.height -}}
+{{- with $Attributes.height -}}
 <meta property="og:video:height" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.video -}}
+{{- with $Attributes.video -}}
 <meta property="og:video" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
 {{- /* 
   Insert tags applicable for article 
@@ -119,19 +119,19 @@
   
 {{- else if (eq $Attributes.type "article") -}}
 
-{{ with $Attributes.published_time -}}
+{{- with $Attributes.published_time -}}
 <meta property="article:published_time" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.section -}}
+{{- with $Attributes.section -}}
 <meta property="article:section" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.tags -}}
+{{- with $Attributes.tags -}}
 {{- range first 6 . -}}
 <meta property="article:tag" content="{{ . }}" />
+{{ end -}}
 {{- end -}}
-{{- end }}
 
 {{- /* 
   Insert tags applicable for website 
@@ -139,9 +139,9 @@
   
 {{- else -}}
 
-{{ with $Attributes.updated_time -}}
+{{- with $Attributes.updated_time -}}
 <meta property="og:updated_time" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
 {{- end -}}
 
@@ -149,37 +149,37 @@
   Insert shared Twitter Card attributes 
   */ -}}
 
-{{ with $Attributes.url -}}
+{{- with $Attributes.url -}}
 <meta name="twitter:url" content="{{ . }}">  
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.title -}}
+{{- with $Attributes.title -}}
 <meta name="twitter:title" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.description -}}
+{{- with $Attributes.description -}}
 <meta name="twitter:description" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.site -}}
+{{- with $Attributes.site -}}
 <meta name="twitter:site" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.creator -}}
+{{- with $Attributes.creator -}}
 <meta name="twitter:creator" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.domain -}}
+{{- with $Attributes.domain -}}
 <meta name="twitter:domain" content="{{ . }}">
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.image -}}
+{{- with $Attributes.image -}}
 <meta name="twitter:image" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.card -}}
+{{- with $Attributes.card -}}
 <meta name="twitter:card" content="{{ . }}"/>
-{{- end -}}
+{{ end -}}
 
 {{- /* 
   Insert attributes specific to player cards 
@@ -187,17 +187,17 @@
   
 {{- if (eq $Attributes.card "player") -}}
   
-{{ with $Attributes.player -}}
+{{- with $Attributes.player -}}
 <meta name="twitter:player" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.width -}}
+{{- with $Attributes.width -}}
 <meta name="twitter:player:width" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
-{{ with $Attributes.height -}}
+{{- with $Attributes.height -}}
 <meta name="twitter:player:height" content="{{ . }}" />
-{{- end -}}
+{{ end -}}
 
 {{- end -}} {{- /* if (eq $Attributes.card "player") */ -}}
 

@@ -19,15 +19,15 @@
 {{- if ($scratch.Get "plugin-cards.Parameters").DebugPrint -}}
   {{- if (and (and $label $index) $scratch) -}}
     {{- with $scratch.Get $index -}}
-      {{- printf "\n<!--\n%s: %s: %s\n-->" $label $index (jsonify .) | safeHTML }}
+      {{- printf "\n<!--\n%s: %s: %s\n-->\n" $label $index (jsonify .) | safeHTML }}
     {{- else -}}
-      {{- printf "\n<!--%s: %s: null-->" $label $index | safeHTML -}}
+      {{- printf "\n<!--%s: %s: null-->\n" $label $index | safeHTML -}}
     {{- end -}} {{- /* with (index ($scratch.Get $label) $index) */ -}}
   {{- else if (and $index $scratch) -}}
     {{- with $scratch.Get $index -}}
-      {{- printf "\n<!--\n%s: %s\n-->" $index (jsonify .) | safeHTML }}
+      {{- printf "\n<!--\n%s: %s\n-->\n" $index (jsonify .) | safeHTML }}
     {{- else -}}
-      {{- printf "\n<!--%s: null-->" $index | safeHTML -}}
+      {{- printf "\n<!--%s: null-->\n" $index | safeHTML -}}
     {{- end -}} {{- /* with $scratch.Get $index */ -}}  
   {{- end -}} {{- /* if (and (and $label $index) $scratch) */ -}}
 {{- end -}} {{- /* ($scratch.Get "Config").DebugPrint */ -}}
