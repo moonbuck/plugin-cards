@@ -1,6 +1,3 @@
-{{- /* 
-  
-  */ -}}
 {{- $Parameters := .Scratch.Get "plugin-cards.Parameters" -}}
   
 {{- if $Parameters.TwitterOG.Enable -}}
@@ -11,112 +8,197 @@
   */ -}}
 {{- partial "plugin-cards/twitter-og/load-registered.html" . -}}
 
+{{- $Registered := .Scratch.Get "plugin-cards.TwitterOG" -}}
+
+{{- partial "plugin-cards/debug-print.html" (slice "Registered" "plugin-cards.TwitterOG" .Scratch) -}}
+
 {{- /* 
   Construct the attribute map from which the <meta> tags will draw.
   */ -}}
 {{- partial "plugin-cards/twitter-og/load-attributes.html" . -}}
 
-{{- $attributes := .Scratch.Get "plugin-cards.TwitterOG" -}}
+{{- $Attributes := .Scratch.Get "plugin-cards.TwitterOG" -}}
 
-{{/* Create meta tags using the loaded attributes. */}}
+{{- partial "plugin-cards/debug-print.html" (slice "Attributes" "plugin-cards.TwitterOG" .Scratch) -}}
 
-{{- with $attributes -}}
+{{- /* 
+  Insert the custom reading time attribute for posts. 
+  */ -}}
+  
+{{- if (eq .Type "post") -}}
+<meta property="article:reading_time" content="{{ $Attributes.reading_time }}" />
+{{- end -}}
 
-{{ with .url -}}
+{{- /* 
+  Insert the shared Open Graph attributes 
+  */ -}}
+  
+{{ with $Attributes.type -}}
+<meta property="og:type" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.url -}}
 <meta property="og:url" content="{{ . }}" />
-<meta name="twitter:url" content="{{ . }}">
-{{ end -}}
+{{- end -}}
 
-{{ with .title -}}
+{{ with $Attributes.title -}}
 <meta property="og:title" content="{{ . }}" />
-<meta name="twitter:title" content="{{ . }}" />
-{{- end }}
+{{- end -}}
 
-{{ with .description -}}
+{{ with $Attributes.description -}}
 <meta property="og:description" content="{{ . }}" />
-<meta name="twitter:description" content="{{ . }}" />
-{{- end }}
+{{- end -}}
 
-{{ with .site_name -}}
+{{ with $Attributes.site_name -}}
 <meta property="og:site_name" content="{{ . }}" />
-{{- end }}
+{{- end -}}
 
-{{ with .site -}}
-<meta name="twitter:site" content="{{ . }}" />
-{{- end }}
+{{ with $Attributes.image -}}
+<meta property="og:image" content="{{ . }}" />
+{{- end -}}
 
-{{ with .creator -}}
-<meta name="twitter:creator" content="{{ . }}" />
-{{- end }}
+{{- /* 
+  Insert tags applicable for audio 
+  */ -}}
+  
+{{- if (eq $Attributes.type $Parameters.Audio.Type) -}}
 
-{{ with .domain -}}
-<meta name="twitter:domain" content="{{ . }}">
-{{- end }}
-
-{{ with .published_time -}}
+{{ with $Attributes.published_time -}}
 <meta property="article:published_time" content="{{ . }}" />
-{{- end }}
+{{- end -}}
 
-{{ with .modified_time -}}
-<meta property="article:modified_time" content="{{ . }}" />
-{{- end }}
-
-{{ with .updated_time -}}
-<meta property="og:updated_time" content="{{ . }}" />
-{{- end }}
-
-{{ with .section -}}
+{{ with $Attributes.section -}}
 <meta property="article:section" content="{{ . }}" />
-{{- end }}
+{{- end -}}
 
-{{ with .tags -}}
+{{ with $Attributes.tags -}}
 {{- range first 6 . -}}
 <meta property="article:tag" content="{{ . }}" />
 {{- end -}}
 {{- end }}
 
-{{ with .audio -}}
+{{ with $Attributes.audio -}}
 <meta property="og:audio" content="{{ . }}" />
+{{- end -}}
+
+{{- /* 
+  Insert tags applicable for video 
+  */ -}}
+  
+{{- else if (eq $Attributes.type $Parameters.Video.Type) -}}
+
+{{ with $Attributes.published_time -}}
+<meta property="article:published_time" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.section -}}
+<meta property="article:section" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.tags -}}
+{{- range first 6 . -}}
+<meta property="article:tag" content="{{ . }}" />
+{{- end -}}
 {{- end }}
 
-{{ with .type -}}
-<meta property="og:type" content="{{ . }}" />
-{{- end }}
-
-{{ with .card -}}
-<meta name="twitter:card" content="{{ . }}"/>
-{{- end }}
-
-{{ with .player -}}
-<meta name="twitter:player" content="{{ . }}" />
-{{- end }}
-
-{{ with .video -}}
-<meta property="og:video" content="{{ . }}" />
-{{- end }}
-
-{{ with .width -}}
-<meta name="twitter:player:width" content="{{ . }}" />
-{{- /*if $attributes.video*/ -}}
+{{ with $Attributes.width -}}
 <meta property="og:video:width" content="{{ . }}" />
-{{- /*end*/ -}}
-{{- end }}
-{{ with .height -}}
-<meta name="twitter:player:height" content="{{ . }}" />
-{{- /*if $attributes.video*/ -}}
+{{- end -}}
+
+{{ with $Attributes.height -}}
 <meta property="og:video:height" content="{{ . }}" />
-{{- /*end*/ -}}
+{{- end -}}
+
+{{ with $Attributes.video -}}
+<meta property="og:video" content="{{ . }}" />
+{{- end -}}
+
+{{- /* 
+  Insert tags applicable for article 
+  */ -}}
+  
+{{- else if (eq $Attributes.type "article") -}}
+
+{{ with $Attributes.published_time -}}
+<meta property="article:published_time" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.section -}}
+<meta property="article:section" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.tags -}}
+{{- range first 6 . -}}
+<meta property="article:tag" content="{{ . }}" />
+{{- end -}}
 {{- end }}
 
-{{ with .image -}}
-<meta property="og:image" content="{{ . }}" />
+{{- /* 
+  Insert tags applicable for website 
+  */ -}}
+  
+{{- else -}}
+
+{{ with $Attributes.updated_time -}}
+<meta property="og:updated_time" content="{{ . }}" />
+{{- end -}}
+
+{{- end -}}
+
+{{- /* 
+  Insert shared Twitter Card attributes 
+  */ -}}
+
+{{ with $Attributes.url -}}
+<meta name="twitter:url" content="{{ . }}">  
+{{- end -}}
+
+{{ with $Attributes.title -}}
+<meta name="twitter:title" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.description -}}
+<meta name="twitter:description" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.site -}}
+<meta name="twitter:site" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.creator -}}
+<meta name="twitter:creator" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.domain -}}
+<meta name="twitter:domain" content="{{ . }}">
+{{- end -}}
+
+{{ with $Attributes.image -}}
 <meta name="twitter:image" content="{{ . }}" />
-{{- end }}
+{{- end -}}
 
-{{ with .reading_time -}}
-<meta property="article:reading_time" content="{{ . }}" />
-{{- end }}
+{{ with $Attributes.card -}}
+<meta name="twitter:card" content="{{ . }}"/>
+{{- end -}}
 
-{{- end -}} {{- /* with $attributes */ -}}
+{{- /* 
+  Insert attributes specific to player cards 
+  */ -}}
+  
+{{- if (eq $Attributes.card "player") -}}
+  
+{{ with $Attributes.player -}}
+<meta name="twitter:player" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.width -}}
+<meta name="twitter:player:width" content="{{ . }}" />
+{{- end -}}
+
+{{ with $Attributes.height -}}
+<meta name="twitter:player:height" content="{{ . }}" />
+{{- end -}}
+
+{{- end -}} {{- /* if (eq $Attributes.card "player") */ -}}
 
 {{- end -}} {{- /* if $parameters.Enable */ -}}

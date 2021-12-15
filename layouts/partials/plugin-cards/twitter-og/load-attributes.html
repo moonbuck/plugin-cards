@@ -1,43 +1,32 @@
-{{- /* 
-  Create a local scratch for constructing the map.
-  */ -}}
-  
 {{- /* Retrieve the parameter values */ -}}
 {{- $Parameters := (.Scratch.Get "plugin-cards.Parameters").TwitterOG -}}
 
 {{- /* Retrieve the registration map from the page scratch. */ -}}
 {{- $Registered := .Scratch.Get "plugin-cards.TwitterOG" -}}
 
+
+{{- /*
+  Grab attribute values that require no logic.
+  */ -}}
+
 {{- $reading_time := .ReadingTime -}}
-
-{{- /* 
-  Grab the page's URL.
-  */ -}}
 {{- $url := .Permalink -}}
-
-{{- /*
-  Grab the site name.
-  */ -}}
 {{- $site_name := site.Title -}}
-
-{{- /*
-  Grab the hostname for the domain attribute.
-  */ -}}
 {{- $domain := (urls.Parse site.BaseURL).Host -}}
-
-{{- /*
-  Grab the page section.
-  */ -}}
 {{- $section := .Section -}}
-
-{{- /*
-  Grab any categories for tag attributes.
-  */ -}}
 {{- $tags := .Params.categories -}}
+{{- $audio := $Registered.audio -}}
+{{- $video := $Registered.video -}}
+{{- $card := $Registered.card -}}
+{{- $type := $Registered.type -}}
+{{- $title := $Registered.title -}}
+{{- $description := $Registered.description -}}
+{{- $image := $Registered.image -}}
 
 {{- /*
   Grab the Twitter username for the site and creator attributes.
   */ -}}
+  
 {{- $site := false -}}
 {{- $creator := false -}}
 {{- with $Parameters.Twitter.Username -}}
@@ -56,15 +45,16 @@
   4) A description value residing in the site parameters.
   
   */ -}}
-{{- $description := $Registered.description -}}
-{{- $description  = $description | default .Summary -}}
-{{- $description  = $description | default .Description -}}
-{{- $description  = $description | default site.Params.description -}}
+  
+{{- $description = $description | default .Summary -}}
+{{- $description = $description | default .Description -}}
+{{- $description = $description | default site.Params.description -}}
 
 {{- /* 
   Normalize the description value to plain text 
   that is 200 characters or less before inserting. 
   */ -}}
+  
 {{- with $description -}}
 {{- $description = . | markdownify | plainify | truncate 200 | chomp -}}  
 {{- end -}}
@@ -75,14 +65,15 @@
   2) The value of the title page variable.
   3) The description.
   */ -}}
-{{- $title := $Registered.title -}}
-{{- $title  = $title | default .Title -}}
-{{- $title  = $title | default $description -}}
+  
+{{- $title = $title | default .Title -}}
+{{- $title = $title | default $description -}}
 
 {{- /* 
   Normalize the title value to plain text 
   that is 70 characters or less before inserting. 
   */ -}}
+  
 {{- with $title -}}
 {{- $title = . | markdownify | plainify | truncate 70 | chomp -}}
 {{- end -}}
@@ -94,33 +85,43 @@
   3) The image set in the card data for this page.
   4) The default image set in the card data.
   */ -}}
-{{- $image := $Registered.image -}}
-{{- $image  = $image | default $Registered.images -}}
-{{- $image  = $image | default .Params.images -}}
+  
+{{- $image = $image | default $Registered.images -}}
+{{- $image = $image | default .Params.images -}}
 
 {{- /* If we have a slice of images, grab the first one. */ -}}
 {{- if (reflect.IsSlice $image) -}}
-{{- $image = index $image 0 -}}
+
+  {{- $image = index $image 0 -}}
 
 {{- /* If we still don't have an image */ -}}
 {{- else if (not $image) -}}
 
-{{- /* Check for card data */ -}}
-{{- with $Parameters.Data -}}
-  
-{{- /* Capture the path and trim off any query parameters */ -}}
-{{- $page_path := (urls.Parse $.Permalink).Path -}}
-{{- $page_path = replaceRE "^([^?]+)(?:[?].+)?" "$1" $page_path -}}
-            
-{{- /* Check whether the data has an entry for this page */ -}}
-{{- with (index . $page_path) -}}
-{{- $image = . -}}
+  {{- /* Check for card data */ -}}
+  {{- with $Parameters.Data -}}
+    
+    {{- /* Capture the path and trim off any query parameters */ -}}
+    {{- $page_path := (urls.Parse $.Permalink).Path -}}
+    {{- $page_path = replaceRE "^([^?]+)(?:[?].+)?" "$1" $page_path -}}
+                
+    {{- /* Check whether the data has an entry for this page */ -}}
+    {{- with (index . $page_path) -}}
 
-{{- /* Otherwise, check for a default image. */ -}}
-{{- else -}}
-{{- with index . "default" -}}{{ $image = . }}{{ end -}}
-{{- end -}} {{- /* with (index . $page_path) */ -}}
-{{- end -}} {{- /* with .Scratch.Get "Data" */ -}}      
+      {{- $image = . -}}
+    
+    {{- /* Otherwise, check for a default image. */ -}}
+    {{- else -}}
+    
+      {{- with index . "default" -}}
+
+        {{- $image = . -}}
+      
+      {{- end -}} {{- /* with index . "default" */ -}}
+    
+    {{- end -}} {{- /* with (index . $page_path) */ -}}
+    
+  {{- end -}} {{- /* with $Parameters.Data */ -}}
+  
 {{- end -}} {{- /* if (reflect.IsSlice $image) */ -}}
 
 {{- /* 
@@ -133,6 +134,7 @@
   published time and for all other pages we will call
   it the updated time.
   */ -}}
+  
 {{- $published_time := false -}}
 {{- $updated_time := false -}}
 
@@ -145,51 +147,20 @@
 {{- end -}}
 {{- end -}}
 
-{{- /*
-  Grab the audio using the following lookup order:
-  1) The first audio registered via shortcode or query parameter.
-  2) The first audio found in the page front matter.  
-  */ -}}
-{{- $audio := $Registered.audio -}}
-{{- /*$audio  = $audio | default .Params.audio*/ -}}
-{{- /*if (reflect.IsSlice $audio) -}}
-{{- $audio = index $audio 0 }}
-{{- end -}}
-{{- $scratch.SetInMap "Attributes" "audio" $audio*/ -}}
-
-{{- /*
-  Grab the video using the following lookup order:
-  1) The first video registered via shortcode or query parameter.
-  2) The first video found in the page front matter.
-  
-  Note that videos are not currently being set in the page
-  front matter; but, they are meant to be so maybe one day.  
-  */ -}}
-{{- $video := $Registered.video -}}
-{{- /*$video  = $video | default .Params.videos*/ -}}
-{{- /*if (reflect.IsSlice $video) -}}
-{{- $video = index $video 0 }}
-{{- end -}}
-{{- $scratch.SetInMap "Attributes" "video" $video*/ -}}
-
 {{- /* 
   Resolve the Open Graph type.
   */ -}}
-{{- $type := "website" -}}
 
 {{- /* Check whether an Open Graph type has been registered. */ -}}
-{{- with $Registered.type -}}
+{{- if not $type -}}
 
-{{- $type = . -}}
-
-{{- else -}}
   {{- /* Otherwise look for registered audio */ -}}
-  {{- if $Registered.audio -}}
+  {{- if $audio -}}
   
   {{- $type = $Parameters.Audio.Type -}}
   
   {{- /* Otherwise look for registered video */ -}}
-  {{- else if $Registered.video -}}
+  {{- else if $video -}}
   
   {{- $type = $Parameters.Video.Type -}}
   
@@ -198,51 +169,71 @@
   
   {{- $type = "article" -}}
   
+  {{- else -}}
+  
+  {{- $type = "website" -}}
+  
   {{- end -}} {{- /* if $Registered.audio */ -}}
   
-{{- end -}} {{- /* with $Registered.type */ -}}
+{{- end -}} {{- /* if not $type */ -}}
 
 {{- /*
-  Add width, height and Twitter player card attributes 
+  Resolve the Twitter card attributes
+  
+  Configure width, height and player attributes 
   if video or audio has been registered; otherwise,
   configure Twitter summary card.
   */ -}}
+  
 {{- $width := false -}}
 {{- $height := false -}}
-{{- $card := "summary" -}}
 {{- $player := false -}}
 
-{{- $require_image := $Parameters.Twitter.CardPreference.LargeSummaryRequiresImage -}}
 
-{{- if $video -}}
 
-{{- $width = $Parameters.Video.Width -}}
-{{- $height = $Parameters.Video.Height -}}
-{{- $card = "player" -}}
-{{- $player = $video -}}
+{{- /* Check whether a Twitter card has been registered */ -}}
+{{- if not $card -}}
 
-{{- else if $audio -}}
-
-{{- $width = $Parameters.Audio.Width -}}
-{{- $height = $Parameters.Audio.Height -}}
-{{- $card = "player" -}}
-{{- $player = $audio -}}
-
-{{- else -}}
-{{- with $Parameters.Twitter.CardPreference -}}
-
-{{- $preference := cond $.IsPage .SinglePage .ListPage -}}
-{{- if (and (and (eq $preference "large") (not $image)) $require_image) -}}
-{{- $preference = "small" -}}
+  {{- /* Configure for video if registered */ -}}
+  {{- if $video -}}
+  
+  {{- $width = $Parameters.Video.Width -}}
+  {{- $height = $Parameters.Video.Height -}}
+  {{- $card = "player" -}}
+  {{- $player = $video -}}
+  
+  {{- /* Configure for audio if registered */ -}}
+  {{- else if $audio -}}
+  
+  {{- $width = $Parameters.Audio.Width -}}
+  {{- $height = $Parameters.Audio.Height -}}
+  {{- $card = "player" -}}
+  {{- $player = $audio -}}
+  
+  {{- /* Otherwise configure for summary */ -}}
+  {{- else -}}
+  
+    {{- /* Fetch the preferences out of the parameters */ -}}
+    {{- with $Parameters.Twitter.CardPreference -}}
+    
+    {{- $require_image := .LargeSummaryRequiresImage -}}
+    {{- $preference := cond $.IsPage .SinglePage .ListPage -}}
+    
+    {{- /* Override the large preference if we require a missing image */ -}}
+    {{- if (and (and (eq $preference "large") (not $image)) $require_image) -}}
+    
+      {{- $preference = "small" -}}
+      
+    {{- end -}}
+    
+    {{- /* Update the card variable value */ -}}
+    {{- $card = cond (eq $preference "large") "summary_large_image" "summary" -}}
+    
+    {{- end -}} {{- /* with $Parameters.Twitter.CardPreference */ -}}
+  
+  {{- end -}} {{- /* if $video */ -}}
+  
 {{- end -}}
-
-{{- if (eq $preference "large") -}}
-{{- $card = "summary_large_image" -}}
-{{- end -}}
-
-{{- end -}} {{- /* with $Parameters.Twitter.CardPreference */ -}}
-
-{{- end -}} {{- /* if $Registered.video */ -}}
 
 {{- $Attributes := dict "reading_time" $reading_time "url" $url "site_name" $site_name "domain" $domain "section" $section "tags" $tags "site" $site "creator" $creator "description" $description "title" $title "image" $image "published_time" $published_time "updated_time" $updated_time "audio" $audio "video" $video "type" $type "width" $width "height" $height "card" $card "player" $player -}}
 

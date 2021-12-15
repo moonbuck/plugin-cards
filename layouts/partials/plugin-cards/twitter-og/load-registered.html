@@ -32,7 +32,9 @@
 {{- $value := replaceRE $url_re "$1" (index $key_value 1) -}}
 
 {{- /* Load the entry into the map */ -}}
+{{- if not ($registered.Get $key) -}}
 {{- $registered.Set $key $value -}}
+{{- end -}}
 
 {{- end -}} {{/* range $entries */}}
 

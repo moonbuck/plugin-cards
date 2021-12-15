@@ -7,6 +7,8 @@
 {{- $Cardify := dict "Parameters" $Parameters "Specifiers" $Specifiers -}}
 {{- .Scratch.Set "plugin-cards.Cardify" $Cardify -}}
 
+{{- partial "plugin-cards/debug-print.html" (slice "Cardify" "plugin-cards.Cardify" .Scratch) -}}
+
 {{- $source_dir := "js/plugin-cards/" -}}
 {{- $template_name := "cardify.js" -}}
 {{- $source := path.Join $source_dir $template_name -}}
