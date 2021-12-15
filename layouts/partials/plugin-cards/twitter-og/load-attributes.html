@@ -97,8 +97,8 @@
 {{- /* If we still don't have an image */ -}}
 {{- else if (not $image) -}}
 
-  {{- /* Check for card data */ -}}
-  {{- with $Parameters.Data -}}
+  {{- /* Check for provided card images */ -}}
+  {{- with $Parameters.Images -}}
     
     {{- /* Capture the path and trim off any query parameters */ -}}
     {{- $page_path := (urls.Parse $.Permalink).Path -}}

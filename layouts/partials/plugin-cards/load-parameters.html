@@ -9,9 +9,9 @@
 {{- $Config  = $Config | default dict -}}
 
 {{- /* Resolve the data file provided to the plugin  */ -}}
-{{- $Data := site.Data.plugin_cards_data -}}
-{{- $Data  = $Data | default site.Data.plugin_cards.data -}}
-{{- $Data  = $Data | default dict -}}
+{{- $Images := site.Data.plugin_cards_images -}}
+{{- $Images  = $Images | default site.Data.plugin_cards.images -}}
+{{- $Images  = $Images | default dict -}}
 
 {{- /* 
   
@@ -22,7 +22,7 @@
 
 {{- $DebugPrint := $Config.DebugPrint | default false -}}
 {{- $TwitterOG_Enable := $Config.TwitterOG.Enable | default true -}}
-{{- $TwitterOG_Data := $Data -}}
+{{- $TwitterOG_Images := $Images -}}
 {{- $TwitterOG_Video_Width := $Config.TwitterOG.Video.Width | default 600 -}}
 {{- $TwitterOG_Video_Height := $Config.TwitterOG.Video.Height | default 338 -}}
 {{- $TwitterOG_Video_Type := $Config.TwitterOG.Video.Type | default "video.other" -}}
@@ -56,7 +56,7 @@
 {{- $Cardify_Build_SassOutput := $Config.Cardify.Build.SassOutput | default "nested" -}}
 {{- $Cardify_Build_MinifyScript := $Config.Cardify.Build.MinifyScript | default false -}}
 
-{{- $Parameters := dict "DebugPrint" $DebugPrint "TwitterOG" (dict "Enable" $TwitterOG_Enable "Data" $TwitterOG_Data "Video" (dict "Width" $TwitterOG_Video_Width "Height" $TwitterOG_Video_Height "Type" $TwitterOG_Video_Type) "Audio" (dict "Width" $TwitterOG_Audio_Width "Height" $TwitterOG_Audio_Height "Type" $TwitterOG_Audio_Type) "Twitter" (dict "Username" $TwitterOG_Twitter_Username "CardPreference" (dict "SinglePage" $TwitterOG_Twitter_CardPreference_SinglePage "ListPage" $TwitterOG_Twitter_CardPreference_ListPage "LargeSummaryRequiresImage" $TwitterOG_Twitter_CardPreference_LargeSummaryRequiresImage))) "StructuredData" (dict "Enable" $StructuredData_Enable "AuthorName" $StructuredData_AuthorName "ProfileURL" $StructuredData_ProfileURL) "Cardify" (dict "Card" (dict "Creation" (dict "QueryMatch" $Cardify_Card_Creation_QueryMatch "QueryParameter" $Cardify_Card_Creation_QueryParameter "QueryMatchOverridesFilter" $Cardify_Card_Creation_QueryMatchOverridesFilter "HostMatch" $Cardify_Card_Creation_HostMatch) "HostMatch" (dict "ReadMoreLink" $Cardify_Card_HostMatch_ReadMoreLink "ListSandbox" $Cardify_Card_HostMatch_ListSandbox "PageSandbox" $Cardify_Card_HostMatch_PageSandbox "CustomSelector" $Cardify_Card_HostMatch_CustomSelector) "Style" (dict "SpacerY" $Cardify_Card_Style_SpacerY "SpacerX" $Cardify_Card_Style_SpacerX "TitleSpacerY" $Cardify_Card_Style_TitleSpacerY "BG" $Cardify_Card_Style_BG "BorderWidth" $Cardify_Card_Style_BorderWidth "BorderColor" $Cardify_Card_Style_BorderColor "BorderRadius" $Cardify_Card_Style_BorderRadius "TimeDateColor" $Cardify_Card_Style_TimeDateColor)) "Build" (dict "Fingerprint" $Cardify_Build_Fingerprint "SassOutput" $Cardify_Build_SassOutput "MinfiyScript" $Cardify_Build_MinifyScript)) -}}
+{{- $Parameters := dict "DebugPrint" $DebugPrint "TwitterOG" (dict "Enable" $TwitterOG_Enable "Images" $TwitterOG_Images "Video" (dict "Width" $TwitterOG_Video_Width "Height" $TwitterOG_Video_Height "Type" $TwitterOG_Video_Type) "Audio" (dict "Width" $TwitterOG_Audio_Width "Height" $TwitterOG_Audio_Height "Type" $TwitterOG_Audio_Type) "Twitter" (dict "Username" $TwitterOG_Twitter_Username "CardPreference" (dict "SinglePage" $TwitterOG_Twitter_CardPreference_SinglePage "ListPage" $TwitterOG_Twitter_CardPreference_ListPage "LargeSummaryRequiresImage" $TwitterOG_Twitter_CardPreference_LargeSummaryRequiresImage))) "StructuredData" (dict "Enable" $StructuredData_Enable "AuthorName" $StructuredData_AuthorName "ProfileURL" $StructuredData_ProfileURL) "Cardify" (dict "Card" (dict "Creation" (dict "QueryMatch" $Cardify_Card_Creation_QueryMatch "QueryParameter" $Cardify_Card_Creation_QueryParameter "QueryMatchOverridesFilter" $Cardify_Card_Creation_QueryMatchOverridesFilter "HostMatch" $Cardify_Card_Creation_HostMatch) "HostMatch" (dict "ReadMoreLink" $Cardify_Card_HostMatch_ReadMoreLink "ListSandbox" $Cardify_Card_HostMatch_ListSandbox "PageSandbox" $Cardify_Card_HostMatch_PageSandbox "CustomSelector" $Cardify_Card_HostMatch_CustomSelector) "Style" (dict "SpacerY" $Cardify_Card_Style_SpacerY "SpacerX" $Cardify_Card_Style_SpacerX "TitleSpacerY" $Cardify_Card_Style_TitleSpacerY "BG" $Cardify_Card_Style_BG "BorderWidth" $Cardify_Card_Style_BorderWidth "BorderColor" $Cardify_Card_Style_BorderColor "BorderRadius" $Cardify_Card_Style_BorderRadius "TimeDateColor" $Cardify_Card_Style_TimeDateColor)) "Build" (dict "Fingerprint" $Cardify_Build_Fingerprint "SassOutput" $Cardify_Build_SassOutput "MinfiyScript" $Cardify_Build_MinifyScript)) -}}
 
 
 {{- .Scratch.Set "plugin-cards.Parameters" $Parameters -}}
