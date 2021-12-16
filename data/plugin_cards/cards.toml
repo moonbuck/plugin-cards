@@ -1,0 +1,8 @@
+# Twitter Cards assignments by path.
+# The valid card options are player, summary, and summary_large_image
+#
+# For example, to generate a small summary card for an 'about' page
+# when configured to generated large summary cards for all non-list pages,
+# enter the path to the about page and the small summary card value: 'summary'
+#
+# '/about/' = 'summary'
