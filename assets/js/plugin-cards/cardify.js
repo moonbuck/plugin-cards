@@ -10,9 +10,6 @@
 // Whether to cardify links with the custom query string set
 const QUERY_MATCH_CARDS = {{ .Creation.QueryMatch }};
 
-// The query parameter to match
-const QUERY_PARAMETER = '{{ .Creation.QueryParameter }}';
-
 // Whether matching the query parameter overrides failing the url filter
 const QUERY_MATCH_OVERRIDES_FILTER = {{ .Creation.QueryMatchOverridesFilter }};
 
@@ -52,12 +49,14 @@ const CARDIFY_CARD_READING_TIME_CLASS = '{{ .ReadingTime }}';
 
 /* Selector composition */
 
+// The query parameter to match
+const QUERY_PARAMETER = 'cardify';
+
 // Select links inside a list of posts
 const LIST_ANCHOR = `${LIST_SANDBOX} a`;
 
 // Select links inside a post page
 const PAGE_ANCHOR = `${PAGE_SANDBOX} a`;
-
 
 // Match the custom query string
 const MATCH_QUERY = `href$="${QUERY_PARAMETER}"`;
