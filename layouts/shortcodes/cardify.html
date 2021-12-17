@@ -3,24 +3,37 @@
   Expects the address of a post for which a card shall be generated.
  
   */ -}}
-{{- with .Get 0 -}}
+{{- $page := false -}}
+{{- $horizontal := false -}}
+
+{{- if .IsNamedParams -}}
+{{- $page = .Get "page" -}}
+{{- with .Get "horizontal" }}{{ $horizontal = eq "true" . }}{{ end -}}
+{{- else -}}
+{{- $page = .Get 0 -}}
+{{- with .Get 1 }}{{ $horizontal = eq "horizontal" . }}{{ end -}}
+{{- end -}}
+
+{{- if $page -}}
 
 {{/* Retrieve the page from the provided path */}}
-  {{ with site.GetPage . }}
+  {{ with site.GetPage $page }}
   
   {{/* Grab the first available image */}}
   {{- $image := false -}}
   {{- with .Params.images }}{{ $image = index . 0 }}{{ end -}}
 
   {{/* Grab the page title */}}
-  {{- $title := .LinkTitle -}}
+  {{- $title := .LinkTitle | markdownify | safeHTML | truncate 70 -}}
   
   {{/* Generate a summary */}}
   {{- $summary := false -}}
   {{- if (findRE "<!--more-->" .Content) -}}
   {{- $summary = index (split .Content "<!--more-->") 0 -}}
-  {{- else -}}
+  {{- else if .Summary -}}
   {{- $summary = .Summary -}}
+  {{- else if .Description -}}
+  {{- $summary = .Description -}}
   {{- end -}}
   
   {{/* If we have an image, make sure it isn't in the summary */}}
@@ -39,6 +52,7 @@
   {{/* Insert the card-text class into summary p tags */}}
   {{- if $summary -}}
     {{- $summary = replace $summary "<p>" "<p class=\"card-text\">" -}}
+    {{- $summary = $summary | safeHTML | truncate 200 -}}
   {{- end -}}
   
   {{/* Grab the estimated reading time for the post */}}
@@ -48,9 +62,9 @@
   {{- end -}}
   
   {{/* Grab the publish date for the post */}}
-  {{- $publish_date := .PublishDate.Format site.Params.Theme.Date.Card -}}
+  {{- $publish_date := .PublishDate.Format "2 Jan 2006" -}}
  
-  <div class="cardify-card">
+  <div class="cardify-card{{ with $horizontal }} horizontal{{ end }}">
     {{ with $image }}<img src="{{ . }}" class="cardify-card-img" />{{ end }}
     <div class="cardify-card-body">
       {{ with $title }}<h3 class="cardify-card-title">{{ . }}</h3>{{ end }}

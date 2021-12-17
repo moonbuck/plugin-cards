@@ -108,10 +108,6 @@ ProfileURL = ''
 #
 QueryMatch = true
 
-# The query parameter used to match links for cardification.
-#
-QueryParameter = 'cardify'
-
 # Whether links matched via query parameter should be cardified even when
 # they do not match the 'URLFilter' regular expression.
 QueryMatchOverridesFilter = true

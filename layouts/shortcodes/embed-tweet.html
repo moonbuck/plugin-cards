@@ -1,0 +1,23 @@
+{{/* 
+  A compact version of this shortcode found in the Hugo GitHub
+  repository: /tpl/tplimpl/embedded/templates/shortcodes/twitter.html
+  */}}
+{{- $user := false -}}
+{{- $id := false -}}
+{{- $dnt := .Page.Site.Config.Privacy.Twitter.EnableDNT -}}
+
+{{- if .IsNamedParams -}}
+{{- $user = .Get "user" -}}
+{{- $id = .Get "id" -}}
+{{- else -}}
+{{- $user = .Get 0 -}}
+{{- $id = .Get 1 -}}
+{{- end -}}
+
+{{- if (and $user $id) -}}
+{{- $url := printf "https://twitter.com/%v/status/%v" $user $id -}}
+{{- $query := querify "url" $url "dnt" $dnt -}}
+{{- $request := printf "https://publish.twitter.com/oembed?%s" $query -}}
+{{- $json := getJSON $request -}}
+{{- $json.html | safeHTML -}}
+{{- end -}}
