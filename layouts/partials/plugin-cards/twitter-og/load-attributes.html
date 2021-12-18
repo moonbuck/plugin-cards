@@ -112,26 +112,24 @@
 {{- end -}} {{- /* if (reflect.IsSlice $image) */ -}}
 
 {{- /* 
-  Process the .Date page variable. Ideally we would want
-  to utilize the .Lastmod and .PublishDate page variables;
-  however, these values are not currently set in the page
-  front matter so they resolve to the value of .Date.
-  
-  For post pages we will call the value of date the 
-  published time and for all other pages we will call
-  it the updated time.
+  Process the dates. We'll use .PublishDate and .Lastmod
+  for post pages and .Lastmod for non-post pages.
   */ -}}
   
 {{- $published_time := false -}}
+{{- $modified_time := false -}}
 {{- $updated_time := false -}}
+{{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
 
-{{- if (not .Date.IsZero) -}}
-  {{- $time := .Date.Format "2006-01-02T15:04:05-07:00" -}}
-  {{- if .IsPage -}}
-    {{- $published_time = $time -}}
-  {{- else -}}
-    {{- $updated_time = $time -}}
-  {{- end -}}
+{{- if (eq .Type "post") -}}
+
+{{- $published_time = .PublishDate.Format $iso8601 -}}
+{{- $modified_time = .Lastmod.Format $iso8601 -}}
+
+{{- else -}}
+
+{{- $updated_time = .Lastmod.Format $iso8601 -}}
+
 {{- end -}}
 
 {{- /* 
@@ -228,6 +226,6 @@
     
 {{- end -}} {{- /* if not $card */ -}}
 
-{{- $Attributes := dict "reading_time" $reading_time "url" $url "site_name" $site_name "domain" $domain "section" $section "tags" $tags "site" $site "creator" $creator "description" $description "title" $title "image" $image "published_time" $published_time "updated_time" $updated_time "audio" $audio "video" $video "type" $type "width" $width "height" $height "card" $card "player" $player -}}
+{{- $Attributes := dict "reading_time" $reading_time "url" $url "site_name" $site_name "domain" $domain "section" $section "tags" $tags "site" $site "creator" $creator "description" $description "title" $title "image" $image "published_time" $published_time "modified_time" $modified_time "updated_time" $updated_time "audio" $audio "video" $video "type" $type "width" $width "height" $height "card" $card "player" $player -}}
 
 {{- .Scratch.Set "plugin-cards.TwitterOG" $Attributes -}}

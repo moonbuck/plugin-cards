@@ -155,26 +155,17 @@ PageSandbox = '#post-body'
 #   ListSandbox = '.post-body'
 #   PageSandbox = '#post-body'
 #
-# and a site.BaseURL equal to https://My.blog
+# and a site.BaseURL equal to https://my.blog
 #
 # the default value of the host match selector (shown split
 # across multiple lines in invalid CSS syntax for clarity) 
 # would be:
 #
-#   #post-body a[href*="My.blog"]
+#   #post-body a[href*="my.blog" i]
 #      :not(.cardify-card-link)
 #      :not([href$="cardify"]),
 #
-#   #post-body a[href*="my.blog"]
-#      :not(.cardify-card-link)
-#      :not([href$="cardify"]),
-#
-#   .post-body a[href*="My.blog"]
-#      :not(.read-more)
-#      :not(.cardify-card-link)
-#      :not([href$="cardify"]),
-#
-#   .post-body a[href*="my.blog"]
+#   .post-body a[href*="my.blog" i]
 #      :not(.read-more)
 #      :not(.cardify-card-link)
 #      :not([href$="cardify"])

@@ -28,15 +28,13 @@
 {{- end -}}
 
 {{- /* 
-  Process the .Date page variable. Ideally we would want
-  to utilize the .Lastmod and .PublishDate page variables;
-  however, these values are not currently set in the page
-  front matter so they resolve to the value of .Date.
+  Insert the published and modified dates.
   */ -}}
-{{- if (not .Date.IsZero) -}}
-{{- $date := .Date.Format "2006-01-02T15:04:05-07:00" -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "datePublished" $date -}}
-{{- end -}}
+{{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
+{{- $datePublished := .PublishDate.Format $iso8601 -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "datePublished" $datePublished -}}
+{{- $dateModified := .Lastmod.Format $iso8601 -}}
+{{- $scratch.SetInMap "StructuredData.JSON" "dateModified" $dateModified -}}
 
 {{- /* 
   Insert the post title as the headline.

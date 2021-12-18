@@ -1,8 +1,6 @@
 {{- with .Scratch.Get "plugin-cards.Cardify" -}}
-/* Plugin parameter values */
-
-/*
-{{ printf "%s" (jsonify .) }}
+/* 
+  Constants set to plugin parameter values.
 */
 
 {{- with .Parameters.Card -}}
@@ -34,7 +32,11 @@ const CUSTOM_SELECTOR = '{{ .HostMatch.CustomSelector }}';
 
 {{- end }}
 
-/* Shared variable values */
+/* 
+  Element specifiers used when generating preview cards.
+  We fetch these from page scratch to ensure they remain
+  in sync with the specifiers used in the Sass file.
+*/
   
 {{- with .Specifiers }}
 const CARDIFY_CARD_CLASS = '{{ .Card }}';
@@ -58,13 +60,6 @@ const LIST_ANCHOR = `${LIST_SANDBOX} a`;
 // Select links inside a post page
 const PAGE_ANCHOR = `${PAGE_SANDBOX} a`;
 
-// Match the custom query string
-const MATCH_QUERY = `href$="${QUERY_PARAMETER}"`;
-
-// The full selector for query string candidates
-const QUERY_MATCH_SEL = `${LIST_ANCHOR}[${MATCH_QUERY}],
-                         ${PAGE_ANCHOR}[${MATCH_QUERY}]`;
-
 // Match the hostname as it is configured in Hugo
 const MATCH_HOST = `[href*="${HOSTNAME}" i]`;
 
@@ -74,23 +69,27 @@ const NOT_CARD = ':not(.cardify-card-link)';
 // Match links that do not include the read-more class
 const NOT_SUMMARY = `:not(${READ_MORE_LINK})`;
 
-// Match links that do not match the query string
-const NOT_QUERY = `:not([${MATCH_QUERY}])`;
-
+// Construct the host match selector.
 const HOST_MATCH_SEL = (
   CUSTOM_SELECTOR.length > 0 
   ? CUSTOM_SELECTOR
-  : `${PAGE_ANCHOR}${MATCH_HOST}${NOT_CARD}${NOT_QUERY}, 
-     ${LIST_ANCHOR}${MATCH_HOST}${NOT_SUMMARY}${NOT_CARD}${NOT_QUERY}`
+  : `${PAGE_ANCHOR}${MATCH_HOST}${NOT_CARD}, 
+     ${LIST_ANCHOR}${MATCH_HOST}${NOT_SUMMARY}${NOT_CARD}`
 );
 
-// Selectors used to match meta tags
+/*
+  Helpers for constructing <meta> tag selectors.
+*/
 
 const meta = (attribute, platform, type) => `meta[${attribute}="${platform}:${type}"]`;
 const twitter = type => meta('name', 'twitter', type);
 const og = type => meta('property', 'og', type);
 const metaSelector = type => `${og(type)}, ${twitter(type)}`;
 const article = type => meta('property', 'article', type);
+
+/* 
+  Selectors used to scrape pages for <meta> tags.
+*/
 
 const URL_SEL = metaSelector('url');
 const IMG_SEL = metaSelector('image');
@@ -99,46 +98,57 @@ const DESC_SEL = metaSelector('description');
 const READING_TIME_SEL = article('reading_time');
 const PUBLISH_DATE_SEL = article('published_time');
 
-// Add the event listener for a loaded DOM
+/*
+  Add the event listener for a loaded DOM. When invoked,
+  the handler processes page links according to the
+  configuration of the query match and host match flags.
+*/
 document.addEventListener('DOMContentLoaded',() => {
   
-  // Return if we aren't meant to be generating cards
- if (!(QUERY_MATCH_CARDS || HOST_MATCH_CARDS)) {  return }
+  // Create an empty array to hold the links to be processed.
+  let links = [];
   
-  // Check whether we're only processing query tagged links
-  if (QUERY_MATCH_CARDS && !HOST_MATCH_CARDS) {
-
-    document.querySelectorAll(QUERY_MATCH_SEL)
-            .forEach(link => processLink(link));
-          
+  // If so flagged, append links retrieved by the host match selector.
+  if (HOST_MATCH_CARDS) {
+    links = links.concat(
+      Array.from(document.querySelectorAll(HOST_MATCH_SEL))
+    );
   }
   
-  // Check whether we're only processing host matches
-  else if (!QUERY_MATCH_CARDS && HOST_MATCH_CARDS) {
-
-    document.querySelectorAll(HOST_MATCH_SEL)
-            .forEach(link => processLink(link));
+  // If so flagged, append links containing the query parameter.
+  if (QUERY_MATCH_CARDS) {
+    links = links.concat(
+      Array.from(document.querySelectorAll(`a${MATCH_HOST}`))
+           .filter(link => new URL(link).searchParams.has(QUERY_PARAMETER))
+     );
   }
-    
-  // Fetch query tagged and host matched links
-  else {
-
-    document.querySelectorAll(`${QUERY_MATCH_SEL}, ${HOST_MATCH_SEL}`)
-            .forEach(link => processLink(link));
-
-  }
+  
+  // Process unique links.
+  [...new Set(links)].forEach(link => processLink(link));
   
 }) // document.addEventListener
 
-// Fetches page text and feeds it to scrapePage(html, link)
+/*
+  Fetches page text and feeds it to scrapePage(html, link)
+*/
 function processLink(link) {
+
+  // Convert the link into a URL.  
+  let url = new URL(link);
+  
+  // Grab the search parameters.
+  let searchParams = url.searchParams;
+  
+  // Check for the query parameter.
+  if (searchParams.has(QUERY_PARAMETER)) {
+    // Return if the parameter has a value set to 'false'.
+    if (searchParams.get(QUERY_PARAMETER) == 'false') { return; }
+  }
   
 {{- with .Parameters.Card.HostMatch.URLFilter }}
 
-  let url = new URL(link);
-  
   if (   url.pathname.match(/{{ . }}/)
-      || (QUERY_MATCH_OVERRIDES_FILTER && url.searchParams.has(QUERY_PARAMETER))) {
+      || (QUERY_MATCH_OVERRIDES_FILTER && searchParams.has(QUERY_PARAMETER))) {
      
 {{- end }}
   
@@ -154,10 +164,12 @@ function processLink(link) {
     
 }
 
-// Creates a DOM from the provided HTML text, 
-// queries for meta tags, and replaces the provided link
-// with a new div element containing child elements
-// displaying the information fetched from the meta tags.
+/*
+  Creates a DOM from the provided HTML text, 
+  queries for meta tags, and replaces the provided link
+  with a new div element containing child elements
+  displaying the information fetched from the meta tags.
+*/
 function scrapePage(html, link) {
   
   var parser = new DOMParser();
