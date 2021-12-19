@@ -3,9 +3,30 @@
 {{- with .Get "description" }}{{ printf "description=%s\n" . }}{{ end -}}
 {{- with .Get "card" }}{{ printf "card=%s\n" . }}{{ end -}}
 {{- with .Get "type" }}{{ printf "type=%s\n" . }}{{ end -}}
-{{- with .Get "image" }}{{ printf "image=%s\n" . }}{{ end -}}
-{{- with .Get "audo" }}{{ printf "audio=%s\n" . }}{{ end -}}
-{{- with .Get "video" }}{{ printf "video=%s\n" . }}{{ end -}}
+{{- with .Get "image" -}}
+  {{- $src := . -}}
+  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
+  {{- with (findRE $pattern $src) -}}
+    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
+  {{- end -}}
+  {{- printf "image=%s\n" $src -}}
+{{- end -}}
+{{- with .Get "audio" -}}
+  {{- $src := . -}}
+  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
+  {{- with (findRE $pattern $src) -}}
+    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
+  {{- end -}}
+  {{- printf "audio=%s\n" $src -}}
+{{- end -}}
+{{- with .Get "video" -}}
+  {{- $src := . -}}
+  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
+  {{- with (findRE $pattern $src) -}}
+    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
+  {{- end -}}
+  {{- printf "video=%s\n" $src -}}
+{{- end -}}
 {{- with .Get "video:width" }}{{ printf "video:width=%s\n" . }}{{ end -}}
 {{- with .Get "video:height" }}{{ printf "video:height=%s\n" . }}{{ end -}}
 {{ printf "-->" | safeHTML }}

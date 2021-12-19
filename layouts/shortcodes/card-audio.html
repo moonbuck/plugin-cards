@@ -1,5 +1,23 @@
-{{- with .Get "src" -}}
+{{- $src := false -}}
 
-<audio src="{{ . }}?card-audio" controls="controls" preload="metadata"></audio>
+{{- if .IsNamedParams -}}
+
+{{- $src = .Get "src" -}}
+
+{{- else -}}
+
+{{- $src = .Get 0 -}}
+{{- if $src -}}
+  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
+  {{- with (findRE $pattern $src) -}}
+    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- end -}}
+
+{{- if $src -}}
+
+<audio src="{{ $src }}?card-audio" controls="controls" preload="metadata"></audio>
 
 {{- end -}}

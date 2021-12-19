@@ -1,5 +1,41 @@
-{{- with .Get "src" -}}
+{{- $src := false -}}
+{{- $autoplay := false -}}
+{{- $loop := false -}}
 
-<video src="{{ . }}?card-video" playsinline {{ with $.Get "autoplay" }} autoplay muted{{ end }} {{ with $.Get "loop" }} loop{{ end }} {{ with $.Get "controls" }} controls{{ end }}></video>
+{{- if .IsNamedParams -}}
+
+{{- $src = .Get "src" -}}
+
+{{- $autoplay = .Get "autoplay" -}}
+{{- if (and $autoplay (eq "true" $autoplay)) -}}
+{{ $autoplay = true -}}
+{{- else -}}
+{{- $autoplay = false -}}
+{{- end -}}
+{{- $loop = .Get "loop" -}}
+{{- if (and $loop (eq "true" $loop)) -}}
+{{- $loop = true -}}
+{{- else -}}
+{{- $loop = false -}}
+{{- end -}}
+
+{{- else -}}
+
+{{- $src = .Get 0 -}}
+{{- if $src -}}
+  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
+  {{- with (findRE $pattern $src) -}}
+    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
+  {{- end -}}
+{{- end -}}
+{{- $rest := slice (.Get 1) (.Get 2) -}}
+{{- if (in $rest "autoplay") }}{{ $autoplay = true }}{{ end -}}
+{{- if (in $rest "loop") }}{{ $loop = true }}{{ end -}}
 
 {{- end -}}
+
+{{- if $src -}}
+
+<video controls playsinline src="{{ $src }}?card-video"{{ if $autoplay }} autoplay muted{{ end }}{{ if $loop }} loop{{ end }}></video>
+
+{{- end }}

@@ -2,7 +2,7 @@
   Insert the plugin version and build time 
   */ -}}
 {{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
-{{ printf "\n<!-- Cards v4.0.19 (built on %s) -->\n" $time | safeHTML }}
+{{ printf "\n<!-- Cards v4.0.20 (built on %s) -->\n" $time | safeHTML }}
 
 {{- /* 
   Load the config file values into the scratch 

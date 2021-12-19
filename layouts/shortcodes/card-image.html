@@ -1,5 +1,37 @@
-{{- with .Get "src" -}}
+{{- $src := false -}}
+{{- $hidden := false -}}
 
-<img src="{{ . }}?card-image"{{ with $.Get "hidden" }} style="display: none"{{ end }} />
+{{- if .IsNamedParams -}}
+
+{{- $src = .Get "src" -}}
+{{- $hidden = .Get "hidden" -}}
+{{- if (and $hidden (eq $hidden "true")) -}}
+{{- $hidden = true -}}
+{{- else -}}
+{{- $hidden = false -}}
+{{- end -}}
+
+{{- else -}}
+
+{{- $src = .Get 0 -}}
+{{- if $src -}}
+  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
+  {{- with (findRE $pattern $src) -}}
+    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $hidden = .Get 1 -}}
+{{- if (and $hidden (eq $hidden "hidden")) -}}
+{{- $hidden = true -}}
+{{- else -}}
+{{- $hidden = false -}}
+{{- end -}}
+
+{{- end -}}
+
+{{- if $src -}}
+
+<img src="{{ $src }}?card-image"{{ if $hidden }} hidden style="display:none"{{ end }} />
 
 {{- end -}}
