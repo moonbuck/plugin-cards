@@ -16,7 +16,7 @@
 
 {{- if (and $user $id) -}}
 {{- $url := printf "https://twitter.com/%v/status/%v" $user $id -}}
-{{- $query := querify "url" $url "dnt" $dnt -}}
+{{- $query := querify "url" $url "dnt" $dnt "hide_thread" true -}}
 {{- $request := printf "https://publish.twitter.com/oembed?%s" $query -}}
 {{- $json := getJSON $request -}}
 {{- $json.html | safeHTML -}}
