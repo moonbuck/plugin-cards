@@ -1,0 +1,14 @@
+# Audio parameters
+##################
+
+# Default width for Twitter player cards configured for audio.
+#
+Width = 338
+
+# Default height for Twitter player cards configured for audio.
+#
+Height = 338
+
+# The default og:type value for Open Graph audio tags.
+#
+Type = 'music.song'

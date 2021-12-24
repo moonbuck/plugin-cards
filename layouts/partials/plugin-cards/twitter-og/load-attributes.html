@@ -2,7 +2,7 @@
 {{- $Parameters := (.Scratch.Get "plugin-cards.Parameters").TwitterOG -}}
 
 {{- /* Retrieve the registration map from the page scratch. */ -}}
-{{- $Registered := .Scratch.Get "plugin-cards.TwitterOG" -}}
+{{- $Registered := (.Scratch.Get "plugin-cards.TwitterOG").Registered -}}
 
 {{- /* Capture the page path and trim off any query parameters */ -}}
 {{- $Path := (urls.Parse .Permalink).Path -}}
@@ -194,9 +194,9 @@
 
 
   {{- /* Check for card assignment in Parameters */ -}}
-  {{- if (and $Parameters.Cards (index $Parameters.Cards $Path)) -}}
+  {{- if (and $Parameters.Twitter.Card.Assignments (index $Parameters.Twitter.Card.Assignments $Path)) -}}
 
-  {{- $card = index $Parameters.Cards $Path -}}
+  {{- $card = index $Parameters.Twitter.Card.Assignments $Path -}}
     
   {{- /* Otherwise use attribute values to determine card  */ -}}
   {{- else  if $video -}}
@@ -220,7 +220,7 @@
   {{- else -}}
     
       {{- /* Fetch the preferences out of the parameters */ -}}
-      {{- with $Parameters.Twitter.CardPreference -}}
+      {{- with $Parameters.Twitter.Card.Preference -}}
       
         {{- $require_image := .LargeSummaryRequiresImage -}}
         {{- $preference := cond $.IsPage .SinglePage .ListPage -}}
@@ -246,4 +246,6 @@
 
 {{- $Attributes := dict "reading_time" $reading_time "url" $url "site_name" $site_name "domain" $domain "section" $section "tags" $tags "site" $site "creator" $creator "description" $description "title" $title "image" $image "published_time" $published_time "modified_time" $modified_time "updated_time" $updated_time "audio" $audio "video" $video "type" $type "width" $width "height" $height "card" $card "player" $player -}}
 
-{{- .Scratch.Set "plugin-cards.TwitterOG" $Attributes -}}
+{{- $TwitterOG := dict "Registered" $Registered "Attributes" $Attributes -}}
+
+{{- .Scratch.Set "plugin-cards.TwitterOG" $TwitterOG -}}

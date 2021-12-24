@@ -1,31 +1,17 @@
 {{ with .Scratch.Get "plugin-cards.Cardify" }}
 
-{{ with .Parameters.Card.Style -}}
 /// Plugin parameter values
-$spacer-y:             {{ .SpacerY }};
-$spacer-x:             {{ .SpacerX }};
-$title-spacer-y:       {{ .TitleSpacerY }};
-$bg:                   {{ .BG }};
-$border-width:         {{ .BorderWidth }};
-$border-color:         {{ .BorderColor }};
-$border-radius:        {{ .BorderRadius }};
+$spacer-y:             {{ .Parameters.Card.Style.Spacer.Y }};
+$spacer-x:             {{ .Parameters.Card.Style.Spacer.X }};
+$title-spacer-y:       {{ .Parameters.Card.Style.Spacer.TitleY }};
+$bg:                   {{ .Parameters.Card.Style.BG }};
+$border-width:         {{ .Parameters.Card.Style.Border.Width }};
+$border-color:         {{ .Parameters.Card.Style.Border.Color }};
+$border-radius:        {{ .Parameters.Card.Style.Border.Radius }};
 $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
-$time-date-color:      {{ .TimeDateColor }};
-{{ end }}
+$time-date-color:      {{ .Parameters.Card.Style.TimeDateColor }};
 
-{{ with .Specifiers }}
-/// Shared variable values
-$cardify-card-class: {{ .Card }};
-$cardify-card-img-class: {{ .Image }};
-$cardify-card-body-class: {{ .Body }};
-$cardify-card-title-class: {{ .Title }};
-$cardify-card-text-class: {{ .Text }};
-$cardify-card-link-class: {{ .Link }};
-$cardify-card-publish-date-class: {{ .PublishDate }};
-$cardify-card-reading-time-class: {{ .ReadingTime }};
-{{ end }}
-
-.#{$cardify-card-class} {
+.{{ .Specifiers.Card }} {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -37,16 +23,16 @@ $cardify-card-reading-time-class: {{ .ReadingTime }};
   border-radius: $border-radius;
 }
 
-.#{$cardify-card-body-class} {
+.{{ .Specifiers.Body }} {
   flex: 1 1 auto;
   padding: $spacer-y $spacer-x;
 }
 
-.#{$cardify-card-title-class} {
+.{{ .Specifiers.Title }} {
   margin-bottom: $title-spacer-y;
 }
 
-.#{$cardify-card-text-class} {
+.{{ .Specifiers.Text }} {
 
   &:last-child {
     display: flex;
@@ -58,7 +44,7 @@ $cardify-card-reading-time-class: {{ .ReadingTime }};
   
 }
 
-.#{$cardify-card-img-class} {
+.{{ .Specifiers.Image }} {
   width: 100%;
   border-top-left-radius: $inner-border-radius;
   border-top-right-radius: $inner-border-radius;
@@ -71,11 +57,11 @@ $cardify-card-reading-time-class: {{ .ReadingTime }};
   
 }
 
-.#{$cardify-card-reading-time-class} {
+.{{ .Specifiers.ReadingTime }} {
   color: #9091AB;
 }
 
-.#{$cardify-card-link-class} {
+.{{ .Specifiers.Link }} {
   &::after {
     position: absolute;
     top: 0;
@@ -87,12 +73,12 @@ $cardify-card-reading-time-class: {{ .ReadingTime }};
   }
 }
 
-.#{$cardify-card-class}.horizontal {
+.{{ .Specifiers.Card }}.horizontal {
   
   flex-direction: row;
   
   
-  .#{$cardify-card-img-class} {
+  .{{ .Specifiers.Image }} {
     width: 30%;
     height: auto;
     object-fit: cover;

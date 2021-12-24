@@ -1,27 +1,20 @@
-{{- /* 
-  Insert the plugin version and build time 
-  */ -}}
-{{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
-{{ printf "\n<!-- Cards v4.0.22 (built on %s) -->\n" $time | safeHTML }}
-
-{{- /* 
-  Load the config file values into the scratch 
-  */ -}}
+{{- /* Resolve plugin parameter values into the page scratch.*/ -}}
 {{- partial "plugin-cards/load-parameters.html" . -}}
 
+{{- /* Dump parameters to HTML comment when flagged. */ -}}
 {{- partial "plugin-cards/debug-print.html" (slice "" "plugin-cards.Parameters" .Scratch) -}}
 
-{{- /* 
-  Inject the Twitter / Open Graph meta tags 
-  */ -}}
+{{- /* Insert the plugin version and build time */ -}}
+{{- with (.Scratch.Get "plugin-cards.Parameters").Config.Version -}}
+{{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
+{{ printf "\n<!-- Cards v%s (built on %s) -->\n" . $time | safeHTML }}
+{{- end -}}
+
+{{- /* Inject the Twitter / Open Graph meta tags */ -}}
 {{- partial "plugin-cards/twitter-og/injection.html" . -}}
 
-{{- /* 
-  Inject the structured data meta tags 
-  */ -}}
+{{- /* Inject the structured data meta tags */ -}}
 {{- partial "plugin-cards/structured-data/injection.html" . -}}
 
-{{- /* 
-  Inject the cardify Javascript and stylesheet 
-  */ -}}
+{{- /* Inject the cardify Javascript and stylesheet */ -}}
 {{- partial "plugin-cards/cardify/injection.html" . -}}

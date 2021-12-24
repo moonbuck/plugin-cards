@@ -1,6 +1,6 @@
 {{- $Parameters := .Scratch.Get "plugin-cards.Parameters" -}}
   
-{{- if $Parameters.TwitterOG.Enable -}}
+{{- if $Parameters.TwitterOG.Config.Enable -}}
 
 {{- /* 
   Parse content for attribute values that have been
@@ -8,18 +8,17 @@
   */ -}}
 {{- partial "plugin-cards/twitter-og/load-registered.html" . -}}
 
-{{- $Registered := .Scratch.Get "plugin-cards.TwitterOG" -}}
-
-{{- partial "plugin-cards/debug-print.html" (slice "Registered" "plugin-cards.TwitterOG" .Scratch) -}}
+{{- partial "plugin-cards/debug-print.html" (slice "Meta Registered" "plugin-cards.TwitterOG" .Scratch) -}}
 
 {{- /* 
   Construct the attribute map from which the <meta> tags will draw.
   */ -}}
 {{- partial "plugin-cards/twitter-og/load-attributes.html" . -}}
 
-{{- $Attributes := .Scratch.Get "plugin-cards.TwitterOG" -}}
+{{- partial "plugin-cards/debug-print.html" (slice "Attributes Loaded" "plugin-cards.TwitterOG" .Scratch) -}}
 
-{{- partial "plugin-cards/debug-print.html" (slice "Attributes" "plugin-cards.TwitterOG" .Scratch) -}}
+{{- $Attributes := (.Scratch.Get "plugin-cards.TwitterOG").Attributes -}}
+
 
 {{- /* 
   Insert the custom reading time attribute for posts. 

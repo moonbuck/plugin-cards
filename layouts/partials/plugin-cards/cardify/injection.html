@@ -15,8 +15,8 @@
 {{- $target := path.Join "assets" $source -}}
 
 {{- $script := resources.Get $source | resources.ExecuteAsTemplate $target . -}}
-{{- if $Parameters.Build.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
-{{- if $Parameters.Build.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
+{{- if $Parameters.Config.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
+{{- if $Parameters.Config.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
 
 {{- print "\n" -}}
 <script src="{{ $script.Permalink }}"></script>
@@ -28,10 +28,10 @@
 {{- $style := resources.Get $source | resources.ExecuteAsTemplate $target . -}} 
 
 {{- $target = $target | replaceRE "sass|scss" "css" -}}
-{{- $options := dict "targetPath" $target  "outputStyle" $Parameters.Build.SassOutput -}}
+{{- $options := dict "targetPath" $target  "outputStyle" $Parameters.Config.SassOutput -}}
 {{- $style = $style | toCSS $options -}}
 
-{{- if $Parameters.Build.Fingerprint }}{{ $style = $style | fingerprint }}{{ end -}}
+{{- if $Parameters.Config.Fingerprint }}{{ $style = $style | fingerprint }}{{ end -}}
 
 {{- print "\n" -}}
 <link rel="stylesheet" href="{{ $style.Permalink }}">

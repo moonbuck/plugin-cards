@@ -1,0 +1,49 @@
+# Parameters for preview cards created automatically when the link 
+# points to another page of the Hugo generated site.
+##################################################################
+
+# A CSS selector specifying the links used by post summaries. This is
+# used to exclude such links from generating preview cards.
+#
+ReadMoreLink = '.read-more'
+
+# A CSS selector that leads right up to the <a> tags that should be 
+# eligible for automatic replacement in post lists. This becomes 
+# part of the final host match selector.
+#
+ListSandbox = '.post-body'
+
+# A CSS selector that leads right up to the <a> tags that should be 
+# eligible for automatic replacement in post pages. This becomes 
+# part of the final host match selector.
+#
+PageSandbox = '#post-body'
+
+# A custom CSS selector to use in place of the that which would be
+# generated using the three parameter values above.
+# 
+# Given the default values
+#
+#   ReadMoreLink = '.read-more'
+#   ListSandbox = '.post-body'
+#   PageSandbox = '#post-body'
+#
+# and a site.BaseURL equal to https://my.blog
+#
+# the default value of the host match selector (shown split
+# across multiple lines in invalid CSS syntax for clarity) 
+# would be:
+#
+#   #post-body a[href*="my.blog" i]
+#      :not(.cardify-card-link)
+#      :not([href$="cardify"]),
+#
+#   .post-body a[href*="my.blog" i]
+#      :not(.read-more)
+#      :not(.cardify-card-link)
+#      :not([href$="cardify"])
+#
+# Setting this value to a non-empty string will completely replace the
+# default selector with the custom selector value.
+#
+CustomSelector = ''

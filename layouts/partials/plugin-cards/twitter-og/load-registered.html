@@ -78,4 +78,6 @@
 
 {{- $Registered := dict "title" $title "description" $description "image" $image "audio" $audio "video" $video "type" $type "card" $card -}}
 
-{{- .Scratch.Set "plugin-cards.TwitterOG" $Registered -}}
+{{- $TwitterOG := dict "Registered" $Registered -}}
+
+{{- .Scratch.Set "plugin-cards.TwitterOG" $TwitterOG -}}

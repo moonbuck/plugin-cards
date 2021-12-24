@@ -77,7 +77,7 @@ function processLink(link) {
     if (searchParams.get(QUERY_PARAMETER) == 'false') { return; }
   }
   
-{{- with $params.HostMatch.URLFilter }}
+{{- with $params.Creation.URLFilter }}
 
   if (   url.pathname.match(/{{ . }}/)
       || ({{ $params.Creation.QueryMatchOverridesFilter }} && searchParams.has(QUERY_PARAMETER))) {
@@ -88,7 +88,7 @@ function processLink(link) {
     .then(response => response.text())
     .then(html => scrapePage(html, link));
     
-{{- if $params.HostMatch.URLFilter }}
+{{- if $params.Creation.URLFilter }}
 
   }
 

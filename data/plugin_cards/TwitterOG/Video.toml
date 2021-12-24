@@ -1,0 +1,14 @@
+# Video parameters
+##################
+
+# Default width for Open Graph and Twitter Card video tags.
+#
+Width = 600
+
+# Default height for Open Graph and Twitter Card video tags.
+#
+Height = 338
+
+# The default og:type value for Open Graph video tags.
+#
+Type = 'video.other'

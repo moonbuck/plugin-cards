@@ -1,67 +1,418 @@
-{{- /************************************************************ 
-  Resolves the config and data files into a single map and insert
-  the map into the page scratch.
-  ************************************************************/ -}}
+{{- /********************************************************
+  Resolves theme and plugin data files to build a map of 
+  parameter values and injects this map into the page scratch
+  ***********************************************************/ -}}
 
-{{- /* Resolve the config file provided to the plugin  */ -}}
-{{- $Config := site.Data.plugin_cards_config -}}
-{{- $Config  = $Config | default site.Data.plugin_cards.config -}}
-{{- $Config  = $Config | default dict -}}
-
-{{- /* Resolve the images file provided to the plugin  */ -}}
-{{- $Images := site.Data.plugin_cards_images -}}
-{{- $Images  = $Images | default site.Data.plugin_cards.images -}}
-{{- $Images  = $Images | default dict -}}
-
-{{- /* Resolve the cards file provided to the plugin  */ -}}
-{{- $Cards := site.Data.plugin_cards_cards -}}
-{{- $Cards  = $Cards | default site.Data.plugin_cards.cards -}}
-{{- $Cards  = $Cards | default dict -}}
-
-{{- /* 
+{{- /************************************************
+  Initialize variables with default parameter values
+  to ensure every parameter has a map entry. 
+  ***************************************************/ -}}
   
-  Resolve every possible parameter value since we can't trust
-  .Scratch.SetInMap not to blow itself up.
+{{- $Config_DebugPrint := false -}}
+{{- $Config_Version := "" -}}
+
+{{- $TwitterOG_Config_Enable := true -}}
+
+{{- $TwitterOG_Images := dict -}}
+
+{{- $TwitterOG_Video_Width := 600 -}}
+{{- $TwitterOG_Video_Height := 338 -}}
+{{- $TwitterOG_Video_Type := "video.other" -}}
+
+{{- $TwitterOG_Audio_Width := 338 -}}
+{{- $TwitterOG_Audio_Height := 112 -}}
+{{- $TwitterOG_Audio_Type := "music.song" -}}
+
+{{- $TwitterOG_Twitter_Config_Username := site.Params.twitter_username -}}
+
+{{- $TwitterOG_Twitter_Card_Preference_SinglePage := "large" -}}
+{{- $TwitterOG_Twitter_Card_Preference_ListPage := "small" -}}
+{{- $TwitterOG_Twitter_Card_Preference_LargeSummaryRequiresImage := true -}}
+{{- $TwitterOG_Twitter_Card_Assignments := dict -}}
+
+{{- $StructuredData_Config_Enable := true -}}
+{{- $StructuredData_Config_AuthorName := site.Author.name -}}
+{{- $StructuredData_Config_ProfileURL := site.Author.profileurl -}}
+
+{{- $Cardify_Config_Fingerprint := true -}}
+{{- $Cardify_Config_SassOutput := "nested" -}}
+{{- $Cardify_Config_MinifyScript := false -}}
+
+{{- $Cardify_Card_Creation_QueryMatch := true -}}
+{{- $Cardify_Card_Creation_HostMatch := false -}}
+{{- $Cardify_Card_Creation_URLFilter := ".*" -}}
+{{- $Cardify_Card_Creation_QueryMatchOverridesFilter :=  true -}}
+
+{{- $Cardify_Card_HostMatch_ReadMoreLink := ".read-more" -}}
+{{- $Cardify_Card_HostMatch_ListSandbox := ".post-body" -}}
+{{- $Cardify_Card_HostMatch_PageSandbox := "#post-body" -}}
+{{- $Cardify_Card_HostMatch_CustomSelector := "" -}}
+
+{{- $Cardify_Card_Style_BG := "white" -}}
+{{- $Cardify_Card_Style_TimeDateColor := "#666666" -}}
+
+{{- $Cardify_Card_Style_Spacer_Y := "1rem" -}}
+{{- $Cardify_Card_Style_Spacer_X := "1rem" -}}
+{{- $Cardify_Card_Style_Spacer_TitleY := ".5rem" -}}
+
+{{- $Cardify_Card_Style_Border_Width := "1px" -}}
+{{- $Cardify_Card_Style_Border_Color := "rgba(0,0,0,.125)" -}}
+{{- $Cardify_Card_Style_Border_Radius := ".5rem" -}}
+
+{{- /************************************************
+  Override the default parameter values with values
+  found in the plugin data files.
+  ***************************************************/ -}}
   
-  */ -}}
+{{- with site.Data.plugin_cards -}}
 
-{{- $DebugPrint := $Config.DebugPrint | default false -}}
-{{- $TwitterOG_Enable := $Config.TwitterOG.Enable | default true -}}
-{{- $TwitterOG_Images := $Images -}}
-{{- $TwitterOG_Cards := $Cards -}}
-{{- $TwitterOG_Video_Width := $Config.TwitterOG.Video.Width | default 600 -}}
-{{- $TwitterOG_Video_Height := $Config.TwitterOG.Video.Height | default 338 -}}
-{{- $TwitterOG_Video_Type := $Config.TwitterOG.Video.Type | default "video.other" -}}
-{{- $TwitterOG_Audio_Width := $Config.TwitterOG.Audio.Width | default 338 -}}
-{{- $TwitterOG_Audio_Height := $Config.TwitterOG.Audio.Height | default 112 -}}
-{{- $TwitterOG_Audio_Type := $Config.TwitterOG.Audio.Type | default "music.song" -}}
-{{- $TwitterOG_Twitter_Username := $Config.TwitterOG.Twitter.Username | default site.Params.twitter_username -}}
-{{- $TwitterOG_Twitter_CardPreference_SinglePage := $Config.TwitterOG.Twitter.CardPreference.SinglePage | default "large" -}}
-{{- $TwitterOG_Twitter_CardPreference_ListPage := $Config.TwitterOG.Twitter.CardPreference.ListPage | default "small" -}}
-{{- $TwitterOG_Twitter_CardPreference_LargeSummaryRequiresImage := $Config.TwitterOG.Twitter.CardPreference.LargeSummaryRequiresImage | default true -}}
-{{- $StructuredData_Enable := $Config.StructuredData.Enable | default true -}}
-{{- $StructuredData_AuthorName := $Config.StructuredData.AuthorName | default site.Author.name -}}
-{{- $StructuredData_ProfileURL := $Config.StructuredData.ProfileURL | default site.Author.profileurl -}}
-{{- $Cardify_Card_Creation_QueryMatch := $Config.Cardify.Card.Creation.QueryMatch | default true -}}
-{{- $Cardify_Card_Creation_QueryMatchOverridesFilter := $Config.Cardify.Card.Creation.QueryMatchOverridesFilter | default true -}}
-{{- $Cardify_Card_Creation_HostMatch := $Config.Cardify.Card.Creation.HostMatch | default false -}}
-{{- $Cardify_Card_HostMatch_ReadMoreLink := $Config.Cardify.Card.HostMatch.ReadMoreLink | default ".read-more" -}}
-{{- $Cardify_Card_HostMatch_ListSandbox := $Config.Cardify.Card.HostMatch.ListSandbox | default ".post-body" -}}
-{{- $Cardify_Card_HostMatch_PageSandbox := $Config.Cardify.Card.HostMatch.PageSandbox | default "#post-body" -}}
-{{- $Cardify_Card_HostMatch_CustomSelector := $Config.Cardify.Card.HostMatch.CustomSelector | default "" -}}
-{{- $Cardify_Card_Style_SpacerY := $Config.Cardify.Card.Style.SpacerY | default "1rem" -}}
-{{- $Cardify_Card_Style_SpacerX := $Config.Cardify.Card.Style.SpacerX | default "1rem" -}}
-{{- $Cardify_Card_Style_TitleSpacerY := $Config.Cardify.Card.Style.TitleSpacerY | default ".5rem" -}}
-{{- $Cardify_Card_Style_BG := $Config.Cardify.Card.Style.BG | default "white" -}}
-{{- $Cardify_Card_Style_BorderWidth := $Config.Cardify.Card.Style.BorderWidth | default "1px" -}}
-{{- $Cardify_Card_Style_BorderColor := $Config.Cardify.Card.Style.BorderColor | default "rgba(0,0,0,.125)" -}}
-{{- $Cardify_Card_Style_BorderRadius := $Config.Cardify.Card.Style.BorderRadius | default ".5rem" -}}
-{{- $Cardify_Card_Style_TimeDateColor := $Config.Cardify.Card.Style.TimeDateColor | default "#666" -}}
-{{- $Cardify_Build_Fingerprint := $Config.Cardify.Build.Fingerprint | default true -}}
-{{- $Cardify_Build_SassOutput := $Config.Cardify.Build.SassOutput | default "nested" -}}
-{{- $Cardify_Build_MinifyScript := $Config.Cardify.Build.MinifyScript | default false -}}
+{{- if (isset .Config "DebugPrint" -}}
+{{- $Config_DebugPrint = .Config.DebugPrint -}}
+{{- end -}}
+{{- with .Config.Version -}}
+{{- $Config_Version = . -}}
+{{- end -}}
 
-{{- $Parameters := dict "DebugPrint" $DebugPrint "TwitterOG" (dict "Enable" $TwitterOG_Enable "Images" $TwitterOG_Images "Cards" $TwitterOG_Cards "Video" (dict "Width" $TwitterOG_Video_Width "Height" $TwitterOG_Video_Height "Type" $TwitterOG_Video_Type) "Audio" (dict "Width" $TwitterOG_Audio_Width "Height" $TwitterOG_Audio_Height "Type" $TwitterOG_Audio_Type) "Twitter" (dict "Username" $TwitterOG_Twitter_Username "CardPreference" (dict "SinglePage" $TwitterOG_Twitter_CardPreference_SinglePage "ListPage" $TwitterOG_Twitter_CardPreference_ListPage "LargeSummaryRequiresImage" $TwitterOG_Twitter_CardPreference_LargeSummaryRequiresImage))) "StructuredData" (dict "Enable" $StructuredData_Enable "AuthorName" $StructuredData_AuthorName "ProfileURL" $StructuredData_ProfileURL) "Cardify" (dict "Card" (dict "Creation" (dict "QueryMatch" $Cardify_Card_Creation_QueryMatch "QueryMatchOverridesFilter" $Cardify_Card_Creation_QueryMatchOverridesFilter "HostMatch" $Cardify_Card_Creation_HostMatch) "HostMatch" (dict "ReadMoreLink" $Cardify_Card_HostMatch_ReadMoreLink "ListSandbox" $Cardify_Card_HostMatch_ListSandbox "PageSandbox" $Cardify_Card_HostMatch_PageSandbox "CustomSelector" $Cardify_Card_HostMatch_CustomSelector) "Style" (dict "SpacerY" $Cardify_Card_Style_SpacerY "SpacerX" $Cardify_Card_Style_SpacerX "TitleSpacerY" $Cardify_Card_Style_TitleSpacerY "BG" $Cardify_Card_Style_BG "BorderWidth" $Cardify_Card_Style_BorderWidth "BorderColor" $Cardify_Card_Style_BorderColor "BorderRadius" $Cardify_Card_Style_BorderRadius "TimeDateColor" $Cardify_Card_Style_TimeDateColor)) "Build" (dict "Fingerprint" $Cardify_Build_Fingerprint "SassOutput" $Cardify_Build_SassOutput "MinfiyScript" $Cardify_Build_MinifyScript)) -}}
+{{- if (isset .TwitterOG.Config "Enable" -}}
+{{- $TwitterOG_Config_Enable = .TwitterOG.Config.Enable -}}
+{{- end -}}
+
+{{- with .TwitterOG.Images -}}
+{{- $TwitterOG_Images = . -}}
+{{- end -}}
+
+{{- with .TwitterOG.Video.Width -}}
+{{- $TwitterOG_Video_Width = . -}}
+{{- end -}}
+{{- with .TwitterOG.Video.Height -}}
+{{- $TwitterOG_Video_Height = . -}}
+{{- end -}}
+{{- with .TwitterOG.Video.Type -}}
+{{- $TwitterOG_Video_Type = . -}}
+{{- end -}}
+
+{{- with .TwitterOG.Audio.Width -}}
+{{- $TwitterOG_Audio_Width = . -}}
+{{- end -}}
+{{- with .TwitterOG.Audio.Height -}}
+{{- $TwitterOG_Audio_Height = . -}}
+{{- end -}}
+{{- with .TwitterOG.Audio.Type -}}
+{{- $TwitterOG_Audio_Type = . -}}
+{{- end -}}
+
+{{- with .TwitterOG.Twitter.Config.Username -}}
+{{- $TwitterOG_Twitter_Config_Username = . -}}
+{{- end -}}
+
+{{- with .TwitterOG.Twitter.Card.Preference.SinglePage -}}
+{{- $TwitterOG_Twitter_Card_Preference_SinglePage = . -}}
+{{- end -}}
+{{- with .TwitterOG.Twitter.Card.Preference.ListPage -}}
+{{- $TwitterOG_Twitter_Card_Preference_ListPage = . -}}
+{{- end -}}
+{{- if (isset .TwitterOG.Twitter.Card.Preference "LargeSummaryRequiresImage" -}}
+{{- $TwitterOG_Twitter_Card_Preference_LargeSummaryRequiresImage = .TwitterOG.Twitter.Card.Preference.LargeSummaryRequiresImage -}}
+{{- end -}}
+{{- with .TwitterOG.Twitter.Card.Assignments -}}
+{{- $TwitterOG_Twitter_Card_Assignments = . -}}
+{{- end -}}
+
+{{- if (isset .StructuredData.Config "Enable" -}}
+{{- $StructuredData_Config_Enable = .StructuredData.Config.Enable -}}
+{{- end -}}
+{{- with .StructuredData.Config.AuthorName -}}
+{{- $StructuredData_Config_AuthorName = . -}}
+{{- end -}}
+{{- with .StructuredData.Config.ProfileURL -}}
+{{- $StructuredData_Config_ProfileURL = . -}}
+{{- end -}}
+
+{{- if (isset .Cardify.Config "Fingerprint" -}}
+{{- $Cardify_Config_Fingerprint = .Cardify.Config.Fingerprint -}}
+{{- end -}}
+{{- with .Cardify.Config.SassOutput -}}
+{{- $Cardify_Config_SassOutput = . -}}
+{{- end -}}
+{{- if (isset .Cardify.Config "MinifyScript" -}}
+{{- $Cardify_Config_MinifyScript = .Cardify.Config.MinifyScript -}}
+{{- end -}}
+
+{{- if (isset .Cardify.Card.Creation "QueryMatch" -}}
+{{- $Cardify_Card_Creation_QueryMatch = .Cardify.Card.Creation.QueryMatch -}}
+{{- end -}}
+{{- if (isset .Cardify.Card.Creation "HostMatch" -}}
+{{- $Cardify_Card_Creation_HostMatch = .Cardify.Card.Creation.HostMatch -}}
+{{- end -}}
+{{- with .Cardify.Card.Creation.URLFilter -}}
+{{- $Cardify_Card_Creation_URLFilter = . -}}
+{{- end -}}
+{{- if (isset .Cardify.Card.Creation "QueryMatchOverridesFilter" -}}
+{{- $Cardify_Card_Creation_QueryMatchOverridesFilter = .Cardify.Card.Creation.QueryMatchOverridesFilter -}}
+{{- end -}}
+
+{{- with .Cardify.Card.HostMatch.ReadMoreLink -}}
+{{- $Cardify_Card_HostMatch_ReadMoreLink = . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.ListSandbox -}}
+{{- $Cardify_Card_HostMatch_ListSandbox = . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.PageSandbox -}}
+{{- $Cardify_Card_HostMatch_PageSandbox = . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.CustomSelector -}}
+{{- $Cardify_Card_HostMatch_CustomSelector = . -}}
+{{- end -}}
+
+{{- with .Cardify.Card.Style.BG -}}
+{{- $Cardify_Card_Style_BG = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.TimeDateColor -}}
+{{- $Cardify_Card_Style_TimeDateColor = . -}}
+{{- end -}}
+
+{{- with .Cardify.Card.Style.Spacer.Y -}}
+{{- $Cardify_Card_Style_Spacer_Y = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.Spacer.X -}}
+{{- $Cardify_Card_Style_Spacer_X = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.Spacer.TitleY -}}
+{{- $Cardify_Card_Style_Spacer_TitleY = . -}}
+{{- end -}}
+
+{{- with .Cardify.Card.Style.Border.Width -}}
+{{- $Cardify_Card_Style_Border_Width = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.Border.Color -}}
+{{- $Cardify_Card_Style_Border_Color = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.Border.Radius -}}
+{{- $Cardify_Card_Style_Border_Radius = . -}}
+{{- end -}}
+
+{{- end -}} {{- /* with site.Data.plugin_cards */ -}}
+
+{{- /**********************************************
+  Override the default/plugin parameter values with
+  values found in the theme data file.
+  *************************************************/ -}}
+  
+{{- with (index site.Data "plugin-cards") -}}
+
+{{- if (isset .Config "DebugPrint" -}}
+{{- $Config_DebugPrint = .Config.DebugPrint -}}
+{{- end -}}
+{{- with .Config.Version -}}
+{{- $Config_Version = . -}}
+{{- end -}}
+
+{{- if (isset .TwitterOG.Config "Enable" -}}
+{{- $TwitterOG_Config_Enable = .TwitterOG.Config.Enable -}}
+{{- end -}}
+
+{{- with .TwitterOG.Images -}}
+{{- $TwitterOG_Images = . -}}
+{{- end -}}
+
+{{- with .TwitterOG.Video.Width -}}
+{{- $TwitterOG_Video_Width = . -}}
+{{- end -}}
+{{- with .TwitterOG.Video.Height -}}
+{{- $TwitterOG_Video_Height = . -}}
+{{- end -}}
+{{- with .TwitterOG.Video.Type -}}
+{{- $TwitterOG_Video_Type = . -}}
+{{- end -}}
+
+{{- with .TwitterOG.Audio.Width -}}
+{{- $TwitterOG_Audio_Width = . -}}
+{{- end -}}
+{{- with .TwitterOG.Audio.Height -}}
+{{- $TwitterOG_Audio_Height = . -}}
+{{- end -}}
+{{- with .TwitterOG.Audio.Type -}}
+{{- $TwitterOG_Audio_Type = . -}}
+{{- end -}}
+
+{{- with .TwitterOG.Twitter.Config.Username -}}
+{{- $TwitterOG_Twitter_Config_Username = . -}}
+{{- end -}}
+
+{{- with .TwitterOG.Twitter.Card.Preference.SinglePage -}}
+{{- $TwitterOG_Twitter_Card_Preference_SinglePage = . -}}
+{{- end -}}
+{{- with .TwitterOG.Twitter.Card.Preference.ListPage -}}
+{{- $TwitterOG_Twitter_Card_Preference_ListPage = . -}}
+{{- end -}}
+{{- if (isset .TwitterOG.Twitter.Card.Preference "LargeSummaryRequiresImage" -}}
+{{- $TwitterOG_Twitter_Card_Preference_LargeSummaryRequiresImage = .TwitterOG.Twitter.Card.Preference.LargeSummaryRequiresImage -}}
+{{- end -}}
+{{- with .TwitterOG.Twitter.Card.Assignments -}}
+{{- $TwitterOG_Twitter_Card_Assignments = . -}}
+{{- end -}}
+
+{{- if (isset .StructuredData.Config "Enable" -}}
+{{- $StructuredData_Config_Enable = .StructuredData.Config.Enable -}}
+{{- end -}}
+{{- with .StructuredData.Config.AuthorName -}}
+{{- $StructuredData_Config_AuthorName = . -}}
+{{- end -}}
+{{- with .StructuredData.Config.ProfileURL -}}
+{{- $StructuredData_Config_ProfileURL = . -}}
+{{- end -}}
+
+{{- if (isset .Cardify.Config "Fingerprint" -}}
+{{- $Cardify_Config_Fingerprint = .Cardify.Config.Fingerprint -}}
+{{- end -}}
+{{- with .Cardify.Config.SassOutput -}}
+{{- $Cardify_Config_SassOutput = . -}}
+{{- end -}}
+{{- if (isset .Cardify.Config "MinifyScript" -}}
+{{- $Cardify_Config_MinifyScript = .Cardify.Config.MinifyScript -}}
+{{- end -}}
+
+{{- if (isset .Cardify.Card.Creation "QueryMatch" -}}
+{{- $Cardify_Card_Creation_QueryMatch = .Cardify.Card.Creation.QueryMatch -}}
+{{- end -}}
+{{- if (isset .Cardify.Card.Creation "HostMatch" -}}
+{{- $Cardify_Card_Creation_HostMatch = .Cardify.Card.Creation.HostMatch -}}
+{{- end -}}
+{{- with .Cardify.Card.Creation.URLFilter -}}
+{{- $Cardify_Card_Creation_URLFilter = . -}}
+{{- end -}}
+{{- if (isset .Cardify.Card.Creation "QueryMatchOverridesFilter" -}}
+{{- $Cardify_Card_Creation_QueryMatchOverridesFilter = .Cardify.Card.Creation.QueryMatchOverridesFilter -}}
+{{- end -}}
+
+{{- with .Cardify.Card.HostMatch.ReadMoreLink -}}
+{{- $Cardify_Card_HostMatch_ReadMoreLink = . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.ListSandbox -}}
+{{- $Cardify_Card_HostMatch_ListSandbox = . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.PageSandbox -}}
+{{- $Cardify_Card_HostMatch_PageSandbox = . -}}
+{{- end -}}
+{{- with .Cardify.Card.HostMatch.CustomSelector -}}
+{{- $Cardify_Card_HostMatch_CustomSelector = . -}}
+{{- end -}}
+
+{{- with .Cardify.Card.Style.BG -}}
+{{- $Cardify_Card_Style_BG = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.TimeDateColor -}}
+{{- $Cardify_Card_Style_TimeDateColor = . -}}
+{{- end -}}
+
+{{- with .Cardify.Card.Style.Spacer.Y -}}
+{{- $Cardify_Card_Style_Spacer_Y = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.Spacer.X -}}
+{{- $Cardify_Card_Style_Spacer_X = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.Spacer.TitleY -}}
+{{- $Cardify_Card_Style_Spacer_TitleY = . -}}
+{{- end -}}
+
+{{- with .Cardify.Card.Style.Border.Width -}}
+{{- $Cardify_Card_Style_Border_Width = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.Border.Color -}}
+{{- $Cardify_Card_Style_Border_Color = . -}}
+{{- end -}}
+{{- with .Cardify.Card.Style.Border.Radius -}}
+{{- $Cardify_Card_Style_Border_Radius = . -}}
+{{- end -}}
+
+{{- end -}} {{- /* with (index site.Data "plugin-cards") */ -}}
+  
+{{- /**************************************************
+  Construct the intermediate maps (mostly for clarity).
+  
+  The map inserted into the page scratch will have the 
+  following key structure:
+  
+  Config
+  TwitterOG
+    Config
+    Images
+    Audio
+    Video
+    Twitter
+      Config
+      Card
+        Preference
+        Assignments
+  StructuredData
+    Config
+  Cardify
+    Config
+    Card
+      Creation
+      HostMatch
+      Style  
+  *********************************************************/ -}}
+
+{{- /* Cardify.Card.Style */ -}}
+{{- $Cardify_Card_Style_Border := dict "Width" $Cardify_Card_Style_Border_Width "Color" $Cardify_Card_Style_Border_Color "Radius" $Cardify_Card_Style_Border_Radius -}}
+{{- $Cardify_Card_Style_Spacer := dict "Y" $Cardify_Card_Style_Spacer_Y "X" $Cardify_Card_Style_Spacer_X "TitleY" $Cardify_Card_Style_Spacer_TitleY -}}
+{{- $Cardify_Card_Style := dict "BG" $Cardify_Card_Style_BG "TimeDateColor" $Cardify_Card_Style_TimeDateColor "Spacer" $Cardify_Card_Style_Spacer "Border" $Cardify_Card_Style_Border -}}
+
+{{- /* Cardify.Card.HostMatch */ -}}
+{{- $Cardify_Card_HostMatch := dict "ReadMoreLink" $Cardify_Card_HostMatch_ReadMoreLink "ListSandbox" $Cardify_Card_HostMatch_ListSandbox "PageSandbox" $Cardify_Card_HostMatch_PageSandbox "CustomSelector" $Cardify_Card_HostMatch_CustomSelector -}}
+
+{{- /* Cardify.Card.Creation */ -}}
+{{- $Cardify_Card_Creation := dict "QueryMatch" $Cardify_Card_Creation_QueryMatch "HostMatch" $Cardify_Card_Creation_HostMatch "URLFilter" $Cardify_Card_Creation_URLFilter "QueryMatchOverridesFilter" $Cardify_Card_Creation_QueryMatchOverridesFilter -}}
+
+{{- /* Cardify.Card */ -}}
+{{- $Cardify_Card := dict "Creation" $Cardify_Card_Creation "HostMatch" $Cardify_Card_HostMatch "Style" $Cardify_Card_Style -}}
+
+{{- /* Cardify.Config */ -}}
+{{- $Cardify_Config := dict "Fingerprint" $Cardify_Config_Fingerprint "SassOutput" $Cardify_Config_SassOutput "MinifyScript" $Cardify_Config_MinifyScript -}}
+
+{{- /* Cardify */ -}}
+{{- $Cardify := dict "Config" $Cardify_Config "Card" $Cardify_Card -}}
+
+{{- /* StructuredData.Config */ -}}
+{{- $StructuredData_Config := dict "Enable" $StructuredData_Config_Enable "AuthorName" $StructuredData_Config_AuthorName "ProfileURL" $StructuredData_Config_ProfileURL -}}
+
+{{- /* StructuredData */ -}}
+{{- $StructuredData := dict "Config" $StructuredData_Config -}}
+
+{{- /* TwitterOG.Twitter.Card.Preference */ -}}
+{{- $TwitterOG_Twitter_Card_Preference := dict "SinglePage" $TwitterOG_Twitter_Card_Preference_SinglePage "ListPage" $TwitterOG_Twitter_Card_Preference_ListPage "LargeSummaryRequiresImage" $TwitterOG_Twitter_Card_Preference_LargeSummaryRequiresImage -}}
+
+{{- /* TwitterOG.Twitter.Card */ -}}
+{{- $TwitterOG_Twitter_Card := dict "Preference" $TwitterOG_Twitter_Card_Preference "Assignments" $TwitterOG_Twitter_Card_Assignments -}}
+  
+{{- /* TwitterOG.Twitter.Config */ -}}
+{{- $TwitterOG_Twitter_Config := dict "Username" $TwitterOG_Twitter_Config_Username -}}
+
+{{- /* TwitterOG.Twitter */ -}}
+{{- $TwitterOG_Twitter := dict "Config" $TwitterOG_Twitter_Config "Card" $TwitterOG_Twitter_Card -}}
+
+{{- /* TwitterOG.Audio */ -}}
+{{- $TwitterOG_Audio := dict "Width" $TwitterOG_Audio_Width "Height" $TwitterOG_Audio_Height "Type" $TwitterOG_Audio_Type -}}
+
+{{- /* TwitterOG.Video */ -}}
+{{- $TwitterOG_Video := dict "Width" $TwitterOG_Video_Width "Height" $TwitterOG_Video_Height "Type" $TwitterOG_Video_Type -}}
+
+{{- /* TwitterOG.Config */ -}}
+{{- $TwitterOG_Config := dict "Enable" $TwitterOG_Config_Enable -}}
+
+{{- /* TwitterOG */ -}}
+{{- $TwitterOG := dict "Config" $TwitterOG_Config "Images" $TwitterOG_Images "Audio" $TwitterOG_Audio "Video" $TwitterOG_Video "Twitter" $TwitterOG_Twitter -}}
+
+{{- /* Config */ -}}
+{{- $Config := dict "DebugPrint" $Config_DebugPrint "Version" $Config_Version -}}
+
+{{- /* Final map */ -}}
+{{- $Parameters := dict "Config" $Config "TwitterOG" $TwitterOG "StructuredData" $StructuredData "Cardify" $Cardify -}}
 
 
+{{- /********************************************
+  Insert the parameter map into the page scratch.
+  ***********************************************/ -}}
+  
 {{- .Scratch.Set "plugin-cards.Parameters" $Parameters -}}

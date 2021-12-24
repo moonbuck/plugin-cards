@@ -16,7 +16,7 @@
   {{- $index = index . 1 -}}
   {{- $scratch = index . 2 -}}
 {{- end -}} {{- /* if (reflect.IsMap .) */ -}}
-{{- if ($scratch.Get "plugin-cards.Parameters").DebugPrint -}}
+{{- if ($scratch.Get "plugin-cards.Parameters").Config.DebugPrint -}}
   {{- if (and (and $label $index) $scratch) -}}
     {{- with $scratch.Get $index -}}
       {{- printf "\n<!--\n%s: %s: %s\n-->\n" $label $index (jsonify .) | safeHTML }}

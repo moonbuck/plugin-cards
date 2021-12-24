@@ -1,0 +1,18 @@
+# Twitter card type preferences
+###############################
+
+# The type of summary card to generate for single (non-list) pages.
+# Has not affect on post pages configured for Twitter player cards.
+# Valid options are small and large.
+#
+SinglePage = 'large'
+
+# The type of summary card to generate for list pages.
+# Valid options are small and large.
+#
+ListPage = 'small'
+
+# Whether the generation of a large summary card should require
+# an image (otherwise a small summary card will be generated instead).
+#
+LargeSummaryRequiresImage = true
