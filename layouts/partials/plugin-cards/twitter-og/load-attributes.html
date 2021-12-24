@@ -26,6 +26,7 @@
 {{- $title := $Registered.title -}}
 {{- $description := $Registered.description -}}
 {{- $image := $Registered.image -}}
+{{- $is_default_image := false -}}
 
 {{- /*
   Grab the Twitter username for the site and creator attributes.
@@ -105,7 +106,19 @@
   {{- with $Parameters.Images -}}
   
     {{- /* Fetch the entry falling back to the default entry */ -}}  
-    {{- $image = (index . $Path) | default (index . "default") -}}
+    {{- $image = (index . $Path) -}}
+    
+    {{- if (not $image) -}}
+    
+      {{- $image = default (index . "default") -}}
+      
+      {{- if $image -}}
+        
+        {{- $is_default_image = true -}}  
+      
+      {{- end -}}
+    
+    {{- end -}}
         
   {{- end -}} {{- /* with $Parameters.Images */ -}}
   
@@ -214,7 +227,12 @@
         
         {{- /* Override the large preference if we require a missing image */ -}}
         {{- if (and (and (eq $preference "large") (not $image)) $require_image) -}}      
-          {{- $preference = "small" -}}        
+          {{- $preference = "small" -}}
+          
+        {{- /* Or if we had to use the default image */ -}}
+        {{- else if $is_default_image -}}
+          {{- $preference = "small" -}}
+        
         {{- end -}}
         
         {{- /* Update the card variable value */ -}}
