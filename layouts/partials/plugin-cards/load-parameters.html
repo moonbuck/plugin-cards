@@ -66,14 +66,14 @@
   
 {{- with site.Data.plugin_cards -}}
 
-{{- if (isset .Config "DebugPrint" -}}
+{{- if (isset .Config "DebugPrint") -}}
 {{- $Config_DebugPrint = .Config.DebugPrint -}}
 {{- end -}}
 {{- with .Config.Version -}}
 {{- $Config_Version = . -}}
 {{- end -}}
 
-{{- if (isset .TwitterOG.Config "Enable" -}}
+{{- if (isset .TwitterOG.Config "Enable") -}}
 {{- $TwitterOG_Config_Enable = .TwitterOG.Config.Enable -}}
 {{- end -}}
 
@@ -111,14 +111,14 @@
 {{- with .TwitterOG.Twitter.Card.Preference.ListPage -}}
 {{- $TwitterOG_Twitter_Card_Preference_ListPage = . -}}
 {{- end -}}
-{{- if (isset .TwitterOG.Twitter.Card.Preference "LargeSummaryRequiresImage" -}}
+{{- if (isset .TwitterOG.Twitter.Card.Preference "LargeSummaryRequiresImage") -}}
 {{- $TwitterOG_Twitter_Card_Preference_LargeSummaryRequiresImage = .TwitterOG.Twitter.Card.Preference.LargeSummaryRequiresImage -}}
 {{- end -}}
 {{- with .TwitterOG.Twitter.Card.Assignments -}}
 {{- $TwitterOG_Twitter_Card_Assignments = . -}}
 {{- end -}}
 
-{{- if (isset .StructuredData.Config "Enable" -}}
+{{- if (isset .StructuredData.Config "Enable") -}}
 {{- $StructuredData_Config_Enable = .StructuredData.Config.Enable -}}
 {{- end -}}
 {{- with .StructuredData.Config.AuthorName -}}
@@ -128,26 +128,26 @@
 {{- $StructuredData_Config_ProfileURL = . -}}
 {{- end -}}
 
-{{- if (isset .Cardify.Config "Fingerprint" -}}
+{{- if (isset .Cardify.Config "Fingerprint") -}}
 {{- $Cardify_Config_Fingerprint = .Cardify.Config.Fingerprint -}}
 {{- end -}}
 {{- with .Cardify.Config.SassOutput -}}
 {{- $Cardify_Config_SassOutput = . -}}
 {{- end -}}
-{{- if (isset .Cardify.Config "MinifyScript" -}}
+{{- if (isset .Cardify.Config "MinifyScript") -}}
 {{- $Cardify_Config_MinifyScript = .Cardify.Config.MinifyScript -}}
 {{- end -}}
 
-{{- if (isset .Cardify.Card.Creation "QueryMatch" -}}
+{{- if (isset .Cardify.Card.Creation "QueryMatch") -}}
 {{- $Cardify_Card_Creation_QueryMatch = .Cardify.Card.Creation.QueryMatch -}}
 {{- end -}}
-{{- if (isset .Cardify.Card.Creation "HostMatch" -}}
+{{- if (isset .Cardify.Card.Creation "HostMatch") -}}
 {{- $Cardify_Card_Creation_HostMatch = .Cardify.Card.Creation.HostMatch -}}
 {{- end -}}
 {{- with .Cardify.Card.Creation.URLFilter -}}
 {{- $Cardify_Card_Creation_URLFilter = . -}}
 {{- end -}}
-{{- if (isset .Cardify.Card.Creation "QueryMatchOverridesFilter" -}}
+{{- if (isset .Cardify.Card.Creation "QueryMatchOverridesFilter") -}}
 {{- $Cardify_Card_Creation_QueryMatchOverridesFilter = .Cardify.Card.Creation.QueryMatchOverridesFilter -}}
 {{- end -}}
 
@@ -200,14 +200,14 @@
   
 {{- with (index site.Data "plugin-cards") -}}
 
-{{- if (isset .Config "DebugPrint" -}}
+{{- if (isset .Config "DebugPrint") -}}
 {{- $Config_DebugPrint = .Config.DebugPrint -}}
 {{- end -}}
 {{- with .Config.Version -}}
 {{- $Config_Version = . -}}
 {{- end -}}
 
-{{- if (isset .TwitterOG.Config "Enable" -}}
+{{- if (isset .TwitterOG.Config "Enable") -}}
 {{- $TwitterOG_Config_Enable = .TwitterOG.Config.Enable -}}
 {{- end -}}
 
@@ -245,14 +245,14 @@
 {{- with .TwitterOG.Twitter.Card.Preference.ListPage -}}
 {{- $TwitterOG_Twitter_Card_Preference_ListPage = . -}}
 {{- end -}}
-{{- if (isset .TwitterOG.Twitter.Card.Preference "LargeSummaryRequiresImage" -}}
+{{- if (isset .TwitterOG.Twitter.Card.Preference "LargeSummaryRequiresImage") -}}
 {{- $TwitterOG_Twitter_Card_Preference_LargeSummaryRequiresImage = .TwitterOG.Twitter.Card.Preference.LargeSummaryRequiresImage -}}
 {{- end -}}
 {{- with .TwitterOG.Twitter.Card.Assignments -}}
 {{- $TwitterOG_Twitter_Card_Assignments = . -}}
 {{- end -}}
 
-{{- if (isset .StructuredData.Config "Enable" -}}
+{{- if (isset .StructuredData.Config "Enable") -}}
 {{- $StructuredData_Config_Enable = .StructuredData.Config.Enable -}}
 {{- end -}}
 {{- with .StructuredData.Config.AuthorName -}}
@@ -262,26 +262,26 @@
 {{- $StructuredData_Config_ProfileURL = . -}}
 {{- end -}}
 
-{{- if (isset .Cardify.Config "Fingerprint" -}}
+{{- if (isset .Cardify.Config "Fingerprint") -}}
 {{- $Cardify_Config_Fingerprint = .Cardify.Config.Fingerprint -}}
 {{- end -}}
 {{- with .Cardify.Config.SassOutput -}}
 {{- $Cardify_Config_SassOutput = . -}}
 {{- end -}}
-{{- if (isset .Cardify.Config "MinifyScript" -}}
+{{- if (isset .Cardify.Config "MinifyScript") -}}
 {{- $Cardify_Config_MinifyScript = .Cardify.Config.MinifyScript -}}
 {{- end -}}
 
-{{- if (isset .Cardify.Card.Creation "QueryMatch" -}}
+{{- if (isset .Cardify.Card.Creation "QueryMatch") -}}
 {{- $Cardify_Card_Creation_QueryMatch = .Cardify.Card.Creation.QueryMatch -}}
 {{- end -}}
-{{- if (isset .Cardify.Card.Creation "HostMatch" -}}
+{{- if (isset .Cardify.Card.Creation "HostMatch") -}}
 {{- $Cardify_Card_Creation_HostMatch = .Cardify.Card.Creation.HostMatch -}}
 {{- end -}}
 {{- with .Cardify.Card.Creation.URLFilter -}}
 {{- $Cardify_Card_Creation_URLFilter = . -}}
 {{- end -}}
-{{- if (isset .Cardify.Card.Creation "QueryMatchOverridesFilter" -}}
+{{- if (isset .Cardify.Card.Creation "QueryMatchOverridesFilter") -}}
 {{- $Cardify_Card_Creation_QueryMatchOverridesFilter = .Cardify.Card.Creation.QueryMatchOverridesFilter -}}
 {{- end -}}
 
