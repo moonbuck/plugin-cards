@@ -1,53 +1,5 @@
-{{- with .Scratch.Get "plugin-cards.Cardify" -}}
-/* 
-  Constants set to plugin parameter values.
-*/
-
-{{- with .Parameters.Card -}}
-
-// Whether to cardify links with the custom query string set
-const QUERY_MATCH_CARDS = {{ .Creation.QueryMatch }};
-
-// Whether matching the query parameter overrides failing the url filter
-const QUERY_MATCH_OVERRIDES_FILTER = {{ .Creation.QueryMatchOverridesFilter }};
-
-// Selector for establishing containment of which links are eligible in list pages.
-const LIST_SANDBOX = '{{ .HostMatch.ListSandbox }}';
-
-// Selector for establishing containment of which links are eligible in post pages.
-const PAGE_SANDBOX = '{{ .HostMatch.PageSandbox }}';
-
-// Whether to automatically cardify links that match the site hostname.              
-const HOST_MATCH_CARDS = {{ .Creation.HostMatch }};
-
-// Matchable hosts with regard to link cardification.
-const HOSTNAME = '{{ (urls.Parse site.BaseURL).Host }}';
-
-// Selector for identifying post summary item "read more" links.
-const READ_MORE_LINK = '{{ .HostMatch.ReadMoreLink }}';
-
-// Selector to use for site hostname matching in place of 
-// the default selector.
-const CUSTOM_SELECTOR = '{{ .HostMatch.CustomSelector }}';
-
-{{- end }}
-
-/* 
-  Element specifiers used when generating preview cards.
-  We fetch these from page scratch to ensure they remain
-  in sync with the specifiers used in the Sass file.
-*/
-  
-{{- with .Specifiers }}
-const CARDIFY_CARD_CLASS = '{{ .Card }}';
-const CARDIFY_CARD_IMG_CLASS = '{{ .Image }}';
-const CARDIFY_CARD_BODY_CLASS = '{{ .Body }}';
-const CARDIFY_CARD_TITLE_CLASS = '{{ .Title }}';
-const CARDIFY_CARD_TEXT_CLASS = '{{ .Text }}';
-const CARDIFY_CARD_LINK_CLASS = '{{ .Link }}';
-const CARDIFY_CARD_PUBLISH_DATE_CLASS = '{{ .PublishDate }}';
-const CARDIFY_CARD_READING_TIME_CLASS = '{{ .ReadingTime }}';
-{{- end }}
+{{- $params := (.Scratch.Get "plugin-cards.Cardify").Parameters.Card -}}
+{{- $specifiers := (.Scratch.Get "plugin-cards.Cardify").Specifiers -}}
 
 /* Selector composition */
 
@@ -55,48 +7,28 @@ const CARDIFY_CARD_READING_TIME_CLASS = '{{ .ReadingTime }}';
 const QUERY_PARAMETER = 'cardify';
 
 // Select links inside a list of posts
-const LIST_ANCHOR = `${LIST_SANDBOX} a`;
+const LIST_ANCHOR = `{{ $params.HostMatch.ListSandbox }} a`;
 
 // Select links inside a post page
-const PAGE_ANCHOR = `${PAGE_SANDBOX} a`;
+const PAGE_ANCHOR = `{{ $params.HostMatch.PageSandbox }} a`;
 
 // Match the hostname as it is configured in Hugo
-const MATCH_HOST = `[href*="${HOSTNAME}" i]`;
+const MATCH_HOST = `[href*="{{ (urls.Parse site.BaseURL).Host }}" i]`;
 
 // Match links that do not include the cardify-link class
 const NOT_CARD = ':not(.cardify-card-link)';
 
 // Match links that do not include the read-more class
-const NOT_SUMMARY = `:not(${READ_MORE_LINK})`;
+const NOT_SUMMARY = `:not({{ $params.HostMatch.ReadMoreLink }})`;
 
 // Construct the host match selector.
-const HOST_MATCH_SEL = (
-  CUSTOM_SELECTOR.length > 0 
-  ? CUSTOM_SELECTOR
-  : `${PAGE_ANCHOR}${MATCH_HOST}${NOT_CARD}, 
-     ${LIST_ANCHOR}${MATCH_HOST}${NOT_SUMMARY}${NOT_CARD}`
-);
-
-/*
-  Helpers for constructing <meta> tag selectors.
-*/
-
-const meta = (attribute, platform, type) => `meta[${attribute}="${platform}:${type}"]`;
-const twitter = type => meta('name', 'twitter', type);
-const og = type => meta('property', 'og', type);
-const metaSelector = type => `${og(type)}, ${twitter(type)}`;
-const article = type => meta('property', 'article', type);
-
-/* 
-  Selectors used to scrape pages for <meta> tags.
-*/
-
-const URL_SEL = metaSelector('url');
-const IMG_SEL = metaSelector('image');
-const TITLE_SEL = metaSelector('title');
-const DESC_SEL = metaSelector('description');
-const READING_TIME_SEL = article('reading_time');
-const PUBLISH_DATE_SEL = article('published_time');
+{{ with $params.HostMatch.CustomSelector -}}
+const HOST_MATCH_SEL = '{{ . }}';
+{{ else -}}
+const HOST_MATCH_SEL = `\
+${PAGE_ANCHOR}${MATCH_HOST}${NOT_CARD}, \
+${LIST_ANCHOR}${MATCH_HOST}${NOT_SUMMARY}${NOT_CARD}`;
+{{- end }}
 
 /*
   Add the event listener for a loaded DOM. When invoked,
@@ -109,14 +41,14 @@ document.addEventListener('DOMContentLoaded',() => {
   let links = [];
   
   // If so flagged, append links retrieved by the host match selector.
-  if (HOST_MATCH_CARDS) {
+  if ({{ $params.Creation.HostMatch }}) {
     links = links.concat(
       Array.from(document.querySelectorAll(HOST_MATCH_SEL))
     );
   }
   
   // If so flagged, append links containing the query parameter.
-  if (QUERY_MATCH_CARDS) {
+  if ({{ $params.Creation.QueryMatch }}) {
     links = links.concat(
       Array.from(document.querySelectorAll(`a${MATCH_HOST}`))
            .filter(link => new URL(link).searchParams.has(QUERY_PARAMETER))
@@ -145,10 +77,10 @@ function processLink(link) {
     if (searchParams.get(QUERY_PARAMETER) == 'false') { return; }
   }
   
-{{- with .Parameters.Card.HostMatch.URLFilter }}
+{{- with $params.HostMatch.URLFilter }}
 
   if (   url.pathname.match(/{{ . }}/)
-      || (QUERY_MATCH_OVERRIDES_FILTER && searchParams.has(QUERY_PARAMETER))) {
+      || ({{ $params.Creation.QueryMatchOverridesFilter }} && searchParams.has(QUERY_PARAMETER))) {
      
 {{- end }}
   
@@ -156,7 +88,7 @@ function processLink(link) {
     .then(response => response.text())
     .then(html => scrapePage(html, link));
     
-{{- if .Parameters.Card.HostMatch.URLFilter }}
+{{- if $params.HostMatch.URLFilter }}
 
   }
 
@@ -172,14 +104,24 @@ function processLink(link) {
 */
 function scrapePage(html, link) {
   
+  /*
+    Helpers for constructing <meta> tag selectors.
+  */
+  
+  const meta = (attr, plat, type) => `meta[${attr}="${plat}:${type}"]`;
+  const twitter = type => meta('name', 'twitter', type);
+  const og = type => meta('property', 'og', type);
+  const metaSelector = type => `${og(type)}, ${twitter(type)}`;
+  const article = type => meta('property', 'article', type);
+  
   var parser = new DOMParser();
   var page = parser.parseFromString(html, 'text/html');
-  let urlTag = page.querySelector(URL_SEL);
-  let imgTag = page.querySelector(IMG_SEL);
-  let titleTag = page.querySelector(TITLE_SEL);
-  let descTag = page.querySelector(DESC_SEL);
-  let readingTimeTag = page.querySelector(READING_TIME_SEL);
-  let publishDateTag = page.querySelector(PUBLISH_DATE_SEL);
+  let urlTag = page.querySelector(metaSelector('url'));
+  let imgTag = page.querySelector(metaSelector('image'));
+  let titleTag = page.querySelector(metaSelector('title'));
+  let descTag = page.querySelector(metaSelector('description'));
+  let readingTimeTag = page.querySelector(article('reading_time'));
+  let publishDateTag = page.querySelector(article('published_time'));
   
   var url = null, img = null, title = null, desc = null;
   var readingTime = null, publishDate = null;
@@ -187,14 +129,18 @@ function scrapePage(html, link) {
   if (publishDateTag) { publishDate = new Date(publishDateTag.content) }
   if (readingTimeTag) { readingTime = readingTimeTag.content }
   if (descTag) { desc = descTag.content.trim() }
-  if (titleTag) { title = titleTag.content.trim() }
+  if (titleTag) {
+    let textarea = document.createElement('TEXTAREA');
+    textarea.innerHTML = titleTag.content.trim();
+    title = textarea.value;
+  }
   if (imgTag) { img = imgTag.content }
   if (urlTag) { url = urlTag.content }
   
   if (url && title && desc) {
     
     let cardDiv = document.createElement("DIV");
-    cardDiv.className = CARDIFY_CARD_CLASS;
+    cardDiv.className = '{{ $specifiers.Card }}';
     
     let queryValue = (new URL(link)).searchParams.get(QUERY_PARAMETER)
     if (queryValue) { cardDiv.classList.add(queryValue) }
@@ -202,34 +148,34 @@ function scrapePage(html, link) {
     if (img) {
       let cardImg = document.createElement("IMG");
       cardImg.src = img;
-      cardImg.className = CARDIFY_CARD_IMG_CLASS;
-      cardDiv.appendChild(cardImg);
+      cardImg.className = '{{ $specifiers.Image }}';
+      cardDiv.append(cardImg);
     }
     
     let cardBody = document.createElement("DIV");
-    cardBody.className = CARDIFY_CARD_BODY_CLASS;
-    cardDiv.appendChild(cardBody);
+    cardBody.className = '{{ $specifiers.Body }}';
+    cardDiv.append(cardBody);
     
     let cardTitle = document.createElement("H3");
-    cardTitle.className = CARDIFY_CARD_TITLE_CLASS;
-    cardTitle.innerText = title;
-    cardBody.appendChild(cardTitle);
+    cardTitle.className = '{{ $specifiers.Title }}';
+    cardTitle.innerHTML = title;
+    cardBody.append(cardTitle);
     
     let cardDescription = document.createElement("P");
-    cardDescription.className = CARDIFY_CARD_TEXT_CLASS;
-    cardDescription.innerText = desc;
-    cardBody.appendChild(cardDescription);
+    cardDescription.className = '{{ $specifiers.Text }}';
+    cardDescription.innerHTML = desc;
+    cardBody.append(cardDescription);
     
     let cardLink = document.createElement("A");
-    cardLink.className = CARDIFY_CARD_LINK_CLASS;
+    cardLink.className = '{{ $specifiers.Link }}';
     cardLink.href = url;
-    cardBody.appendChild(cardLink);
+    cardBody.append(cardLink);
     
     if (readingTime || publishDate) {
       
       let timeDateReadingTime = document.createElement("P");
-      timeDateReadingTime.className = CARDIFY_CARD_TEXT_CLASS;
-      cardBody.appendChild(timeDateReadingTime);
+      timeDateReadingTime.className = '{{ $specifiers.Text }}';
+      cardBody.append(timeDateReadingTime);
       
       if (publishDate) {
         let timeFormatter = new Intl.DateTimeFormat('en-US', { 
@@ -244,18 +190,18 @@ function scrapePage(html, link) {
         });
         let date = dateFormatter.format(publishDate);
         let publishDateElement = document.createElement("SMALL");
-        publishDateElement.className = CARDIFY_CARD_PUBLISH_DATE_CLASS;
-        publishDateElement.innerText = `${time} • ${date}`;
-        timeDateReadingTime.appendChild(publishDateElement);
+        publishDateElement.className = '{{ $specifiers.PublishDate }}';
+        publishDateElement.innerHTML = `${time} • ${date}`;
+        timeDateReadingTime.append(publishDateElement);
       }
   
       if (readingTime) {
         let readingTimeElement = document.createElement("SMALL");
-        readingTimeElement.className = CARDIFY_CARD_READING_TIME_CLASS;
+        readingTimeElement.className = '{{ $specifiers.ReadingTime }}';
         let value = parseInt(readingTime);
         let units = `minute${value > 1 ? 's' : ''}`;
-        readingTimeElement.innerText = `${value} ${units}`;
-        timeDateReadingTime.appendChild(readingTimeElement);
+        readingTimeElement.innerHTML = `${value} ${units}`;
+        timeDateReadingTime.append(readingTimeElement);
       }
       
     }
@@ -267,4 +213,3 @@ function scrapePage(html, link) {
   }
 
 }
-{{- end -}}
