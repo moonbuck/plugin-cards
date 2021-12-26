@@ -5,7 +5,9 @@
 #
 Card = '''
 background-color: white;
-border-color: rgba(black, .125);'''
+border-color: rgba(black, .125);
+border-style: solid;
+'''
 
 # Sass block to apply to the card body.
 #

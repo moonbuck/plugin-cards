@@ -2,7 +2,7 @@
 
 @mixin parameter { @content; }
 
-{{ with .Scratch.Get ("plugin-cards.Parameters").Cardify }}
+{{ with (.Scratch.Get "plugin-cards.Parameters").Cardify }}
 
 /// Plugin parameter values
 $border-width:         {{ .Style.Variables.BorderWidth }};
@@ -16,6 +16,8 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
   min-width: 0;
   word-wrap: break-word;
   background-clip: border-box;
+  border-width: $border-width;
+  border-radius: $border-radius;
   {{ with .Style.Card }}
   @include parameter { {{ template "rfs-wrap" . }} }
   {{ end }}

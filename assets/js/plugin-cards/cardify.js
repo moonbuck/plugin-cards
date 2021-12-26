@@ -1,28 +1,28 @@
-{{- with (.Scratch.Get "plugin-cards.Parameters").Cardify -}}
+{{ with (.Scratch.Get "plugin-cards.Parameters").Cardify }}
 
-{{- $host := (urls.Parse site.BaseURL).Host -}}
-{{- $match_host := printf "a[href*=\"%s\" i]" $host -}}
+{{ $host := (urls.Parse site.BaseURL).Host }}
+{{ $match_host := printf "a[href*=\"%s\" i]" $host }}
 
-{{- $auto_match := "" -}}
+{{ $auto_match := "" }}
 
-{{- with .Config.CustomSelector -}}
+{{ with .Config.CustomSelector }}
 
-{{- $auto_match = . -}}
+{{ $auto_match = . }}
 
-{{- else -}}
+{{ else }}
 
-{{- $not_card := printf ":not(.%s)" .Specifiers.LinkClassName -}}
-{{- $not_summary := printf ":not(%s)" .Config.ReadMoreLink -}}
+{{ $not_card := printf ":not(.%s)" .Specifiers.LinkClassName }}
+{{ $not_summary := printf ":not(%s)" .Config.ReadMoreLink }}
 
-{{- $auto_match = .Config.PageSandbox -}}
-{{- $auto_match = printf "%s %s" $auto_match $match_host -}}
-{{- $auto_match = printf "%s%s," $auto_match $not_card -}}
-{{- $auto_match = printf "%s %s" $auto_match .Config.PageSandbox -}}
-{{- $auto_match = printf "%s %s" $auto_match $match_host -}}
-{{- $auto_match = printf "%s%s" $auto_match $not_summary -}}
-{{- $auto_match = printf "%s%s" $auto_match $not_card -}}
+{{ $auto_match = .Config.PageSandbox }}
+{{ $auto_match = printf "%s %s" $auto_match $match_host }}
+{{ $auto_match = printf "%s%s," $auto_match $not_card }}
+{{ $auto_match = printf "%s %s" $auto_match .Config.ListSandbox }}
+{{ $auto_match = printf "%s %s" $auto_match $match_host }}
+{{ $auto_match = printf "%s%s" $auto_match $not_summary }}
+{{ $auto_match = printf "%s%s" $auto_match $not_card }}
 
-{{- end -}}
+{{ end }}
 
 /*
   Add the event listener for a loaded DOM. When invoked,
@@ -71,22 +71,22 @@ function processLink(link) {
     if (searchParams.get('{{ .Specifiers.QueryParameter }}') == 'false') { return; }
   }
   
-{{- with .Config.URLFilter }}
+{{ if .Config.URLFilter }}
 
-  if (   url.pathname.match(/{{ . }}/)
-      || ({{ .Config.QueryMatchOverridesFilter }} && searchParams.has('{{ .Specifiers.QueryParameter }}'))) {
+  if (   url.pathname.match(/{{ .Config.URLFilter }}/)
+      || ({{ $.Config.QueryMatchOverridesFilter }} && searchParams.has('{{ $.Specifiers.QueryParameter }}'))) {
      
-{{- end }}
+{{ end }}
   
   fetch(link)
     .then(response => response.text())
     .then(html => scrapePage(html, link));
     
-{{- if .Config.URLFilter }}
+{{ if .Config.URLFilter }}
 
   }
 
-{{- end }}
+{{ end }}
     
 }
 
@@ -143,25 +143,30 @@ function scrapePage(html, link) {
       let cardImg = document.createElement("IMG");
       cardImg.src = img;
       cardImg.className = '{{ .Specifiers.ImageClassName }}';
+      if (queryValue) { cardImg.classList.add(queryValue) }
       cardDiv.append(cardImg);
     }
     
     let cardBody = document.createElement("DIV");
     cardBody.className = '{{ .Specifiers.BodyClassName }}';
+    if (queryValue) { cardBody.classList.add(queryValue) }
     cardDiv.append(cardBody);
     
     let cardTitle = document.createElement("H3");
     cardTitle.className = '{{ .Specifiers.TitleClassName }}';
+    if (queryValue) { cardTitle.classList.add(queryValue) }
     cardTitle.innerHTML = title;
     cardBody.append(cardTitle);
     
     let cardDescription = document.createElement("P");
     cardDescription.className = '{{ .Specifiers.TextClassName }}';
+    if (queryValue) { cardDescription.classList.add(queryValue) }
     cardDescription.innerHTML = desc;
     cardBody.append(cardDescription);
     
     let cardLink = document.createElement("A");
     cardLink.className = '{{ .Specifiers.LinkClassName }}';
+    if (queryValue) { cardLink.classList.add(queryValue) }
     cardLink.href = url;
     cardBody.append(cardLink);
     
@@ -169,6 +174,7 @@ function scrapePage(html, link) {
       
       let timeDateReadingTime = document.createElement("P");
       timeDateReadingTime.className = '{{ .Specifiers.TextClassName }}';
+      if (queryValue) { timeDateReadingTime.classList.add(queryValue) }
       cardBody.append(timeDateReadingTime);
       
       if (publishDate) {
@@ -185,6 +191,7 @@ function scrapePage(html, link) {
         let date = dateFormatter.format(publishDate);
         let publishDateElement = document.createElement("SMALL");
         publishDateElement.className = '{{ .Specifiers.PublishDateClassName }}';
+        if (queryValue) { publishDateElement.classList.add(queryValue) }
         publishDateElement.innerHTML = `${time} • ${date}`;
         timeDateReadingTime.append(publishDateElement);
       }
@@ -192,6 +199,7 @@ function scrapePage(html, link) {
       if (readingTime) {
         let readingTimeElement = document.createElement("SMALL");
         readingTimeElement.className = '{{ .Specifiers.ReadingTimeClassName }}';
+        if (queryValue) { readingTimeElement.classList.add(queryValue) }
         let value = parseInt(readingTime);
         let units = `minute${value > 1 ? 's' : ''}`;
         readingTimeElement.innerHTML = `${value} ${units}`;
@@ -208,4 +216,4 @@ function scrapePage(html, link) {
 
 }
 
-{{- end }}
+{{ end }}

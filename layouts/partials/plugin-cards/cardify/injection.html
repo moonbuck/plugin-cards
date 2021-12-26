@@ -2,7 +2,7 @@
 
 {{- if (or .Config.QueryMatch .Config.HostMatch) -}}
 
-{{- partial "plugin-cards/debug-print.html" (slice "Cardify" "plugin-cards.Cardify" $.Scratch) -}}
+{{- partial "plugin-cards/debug-print.html" (slice "Cardify" "plugin-cards.Parameters" $.Scratch) -}}
 
 {{- $source_dir := "js/plugin-cards/" -}}
 {{- $template_name := "cardify.js" -}}
@@ -31,3 +31,5 @@
 {{- print "\n" -}}
 <link rel="stylesheet" href="{{ $style.Permalink }}">
 {{ end -}}
+
+{{- end }}
