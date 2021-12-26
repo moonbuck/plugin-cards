@@ -74,7 +74,7 @@ function processLink(link) {
 {{ if .Config.URLFilter }}
 
   if (   url.pathname.match(/{{ .Config.URLFilter }}/)
-      || ({{ $.Config.QueryMatchOverridesFilter }} && searchParams.has('{{ $.Specifiers.QueryParameter }}'))) {
+      || ({{ .Config.QueryMatchOverridesFilter }} && searchParams.has('{{ .Specifiers.QueryParameter }}'))) {
      
 {{ end }}
   
