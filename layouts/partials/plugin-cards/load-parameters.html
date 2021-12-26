@@ -8,8 +8,8 @@
   to ensure every parameter has a map entry. 
   ***************************************************/ -}}
   
-{{- $Config_DebugPrint := false -}}
 {{- $Config_Version := "" -}}
+{{- $Config_DebugPrint := false -}}
 
 {{- $TwitterOG_Config_Enable := true -}}
 
@@ -38,26 +38,34 @@
 {{- $Cardify_Config_SassOutput := "nested" -}}
 {{- $Cardify_Config_MinifyScript := false -}}
 
-{{- $Cardify_Card_Creation_QueryMatch := true -}}
-{{- $Cardify_Card_Creation_HostMatch := false -}}
-{{- $Cardify_Card_Creation_URLFilter := ".*" -}}
-{{- $Cardify_Card_Creation_QueryMatchOverridesFilter :=  true -}}
+{{- $Cardify_Config_QueryMatch := true -}}
+{{- $Cardify_Config_HostMatch := false -}}
+{{- $Cardify_Config_URLFilter := ".*" -}}
+{{- $Cardify_Config_QueryMatchOverridesFilter :=  true -}}
 
-{{- $Cardify_Card_HostMatch_ReadMoreLink := ".read-more" -}}
-{{- $Cardify_Card_HostMatch_ListSandbox := ".post-body" -}}
-{{- $Cardify_Card_HostMatch_PageSandbox := "#post-body" -}}
-{{- $Cardify_Card_HostMatch_CustomSelector := "" -}}
+{{- $Cardify_Config_ReadMoreLink := ".read-more" -}}
+{{- $Cardify_Config_ListSandbox := ".post-body" -}}
+{{- $Cardify_Config_PageSandbox := "#post-body" -}}
+{{- $Cardify_Config_CustomSelector := "" -}}
 
-{{- $Cardify_Card_Style_BG := "white" -}}
-{{- $Cardify_Card_Style_TimeDateColor := "#666666" -}}
+{{- $Cardify_Specifiers_CardClassName := "cardify-card" -}}
+{{- $Cardify_Specifiers_ImageClassName := "cardify-card-img" -}}
+{{- $Cardify_Specifiers_BodyClassName := "cardify-card-body" -}}
+{{- $Cardify_Specifiers_TitleClassName := "cardify-card-title" -}}
+{{- $Cardify_Specifiers_TextClassName := "cardify-card-text" -}}
+{{- $Cardify_Specifiers_LinkClassName := "cardify-card-link" -}}
+{{- $Cardify_Specifiers_PublishDateClassName := "cardify-card-publish-date" -}}
+{{- $Cardify_Specifiers_ReadingTimeClassName := "cardify-card-reading-time" -}}
+{{- $Cardify_Specifiers_QueryParameter := "cardify" -}}
 
-{{- $Cardify_Card_Style_Spacer_Y := "1rem" -}}
-{{- $Cardify_Card_Style_Spacer_X := "1rem" -}}
-{{- $Cardify_Card_Style_Spacer_TitleY := ".5rem" -}}
-
-{{- $Cardify_Card_Style_Border_Width := "1px" -}}
-{{- $Cardify_Card_Style_Border_Color := "rgba(0,0,0,.125)" -}}
-{{- $Cardify_Card_Style_Border_Radius := ".5rem" -}}
+{{- $Cardify_Style_Card := "" -}}
+{{- $Cardify_Style_Body := "" -}}
+{{- $Cardify_Style_Title := "" -}}
+{{- $Cardify_Style_Text := "" -}}
+{{- $Cardify_Style_ReadingTime := "" -}}
+{{- $Cardify_Style_PublishDate := "" -}}
+{{- $Cardify_Style_Variables_BorderWidth := "1px" -}}
+{{- $Cardify_Style_Variables_BorderRadius := ".5rem" -}}
 
 {{- /************************************************
   Override the default parameter values with values
@@ -66,11 +74,11 @@
   
 {{- with site.Data.plugin_cards -}}
 
-{{- if (isset .Config "DebugPrint") -}}
-{{- $Config_DebugPrint = .Config.DebugPrint -}}
-{{- end -}}
 {{- with .Config.Version -}}
 {{- $Config_Version = . -}}
+{{- end -}}
+{{- if (isset .Config "DebugPrint") -}}
+{{- $Config_DebugPrint = .Config.DebugPrint -}}
 {{- end -}}
 
 {{- if (isset .TwitterOG.Config "Enable") -}}
@@ -137,58 +145,82 @@
 {{- if (isset .Cardify.Config "MinifyScript") -}}
 {{- $Cardify_Config_MinifyScript = .Cardify.Config.MinifyScript -}}
 {{- end -}}
-
-{{- if (isset .Cardify.Card.Creation "QueryMatch") -}}
-{{- $Cardify_Card_Creation_QueryMatch = .Cardify.Card.Creation.QueryMatch -}}
+{{- if (isset .Cardify.Config "QueryMatch") -}}
+{{- $Cardify_Config_QueryMatch = .Cardify.Config.QueryMatch -}}
 {{- end -}}
-{{- if (isset .Cardify.Card.Creation "HostMatch") -}}
-{{- $Cardify_Card_Creation_HostMatch = .Cardify.Card.Creation.HostMatch -}}
+{{- if (isset .Cardify.Config "HostMatch") -}}
+{{- $Cardify_Config_HostMatch = .Cardify.Config.HostMatch -}}
 {{- end -}}
-{{- with .Cardify.Card.Creation.URLFilter -}}
-{{- $Cardify_Card_Creation_URLFilter = . -}}
+{{- with .Cardify.Config.URLFilter -}}
+{{- $Cardify_Config_URLFilter = . -}}
 {{- end -}}
-{{- if (isset .Cardify.Card.Creation "QueryMatchOverridesFilter") -}}
-{{- $Cardify_Card_Creation_QueryMatchOverridesFilter = .Cardify.Card.Creation.QueryMatchOverridesFilter -}}
+{{- if (isset .Cardify.Config "QueryMatchOverridesFilter") -}}
+{{- $Cardify_Config_QueryMatchOverridesFilter = .Cardify.Config.QueryMatchOverridesFilter -}}
 {{- end -}}
-
-{{- with .Cardify.Card.HostMatch.ReadMoreLink -}}
-{{- $Cardify_Card_HostMatch_ReadMoreLink = . -}}
+{{- with .Cardify.Config.ReadMoreLink -}}
+{{- $Cardify_Config_ReadMoreLink = . -}}
 {{- end -}}
-{{- with .Cardify.Card.HostMatch.ListSandbox -}}
-{{- $Cardify_Card_HostMatch_ListSandbox = . -}}
+{{- with .Cardify.Config.ListSandbox -}}
+{{- $Cardify_Config_ListSandbox = . -}}
 {{- end -}}
-{{- with .Cardify.Card.HostMatch.PageSandbox -}}
-{{- $Cardify_Card_HostMatch_PageSandbox = . -}}
+{{- with .Cardify.Config.PageSandbox -}}
+{{- $Cardify_Config_PageSandbox = . -}}
 {{- end -}}
-{{- with .Cardify.Card.HostMatch.CustomSelector -}}
-{{- $Cardify_Card_HostMatch_CustomSelector = . -}}
+{{- with .Cardify.Config.CustomSelector -}}
+{{- $Cardify_Config_CustomSelector = . -}}
 {{- end -}}
 
-{{- with .Cardify.Card.Style.BG -}}
-{{- $Cardify_Card_Style_BG = . -}}
+{{- with .Cardify.Specifiers.CardClassName -}}
+{{- $Cardify_Specifiers_CardClassName = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.TimeDateColor -}}
-{{- $Cardify_Card_Style_TimeDateColor = . -}}
+{{- with .Cardify.Specifiers.ImageClassName -}}
+{{- $Cardify_Specifiers_ImageClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.BodyClassName -}}
+{{- $Cardify_Specifiers_BodyClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.TitleClassName -}}
+{{- $Cardify_Specifiers_TitleClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.TextClassName -}}
+{{- $Cardify_Specifiers_TextClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.LinkClassName -}}
+{{- $Cardify_Specifiers_LinkClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.PublishDateClassName -}}
+{{- $Cardify_Specifiers_PublishDateClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.ReadingTimeClassName -}}
+{{- $Cardify_Specifiers_ReadingTimeClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.QueryParameter -}}
+{{- $Cardify_Specifiers_QueryParameter = . -}}
 {{- end -}}
 
-{{- with .Cardify.Card.Style.Spacer.Y -}}
-{{- $Cardify_Card_Style_Spacer_Y = . -}}
+{{- with .Cardify.Style.Card -}}
+{{- $Cardify_Style_Card = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.Spacer.X -}}
-{{- $Cardify_Card_Style_Spacer_X = . -}}
+{{- with .Cardify.Style.Body -}}
+{{- $Cardify_Style_Body = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.Spacer.TitleY -}}
-{{- $Cardify_Card_Style_Spacer_TitleY = . -}}
+{{- with .Cardify.Style.Title -}}
+{{- $Cardify_Style_Title = . -}}
 {{- end -}}
-
-{{- with .Cardify.Card.Style.Border.Width -}}
-{{- $Cardify_Card_Style_Border_Width = . -}}
+{{- with .Cardify.Style.Text -}}
+{{- $Cardify_Style_Text = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.Border.Color -}}
-{{- $Cardify_Card_Style_Border_Color = . -}}
+{{- with .Cardify.Style.ReadingTime -}}
+{{- $Cardify_Style_ReadingTime = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.Border.Radius -}}
-{{- $Cardify_Card_Style_Border_Radius = . -}}
+{{- with .Cardify.Style.PublishDate -}}
+{{- $Cardify_Style_PublishDate = . -}}
+{{- end -}}
+{{- with .Cardify.Style.Variables.BorderWidth -}}
+{{- $Cardify_Style_Variables_BorderWidth = . -}}
+{{- end -}}
+{{- with .Cardify.Style.Variables.BorderRadius -}}
+{{- $Cardify_Style_Variables_BorderRadius = . -}}
 {{- end -}}
 
 {{- end -}} {{- /* with site.Data.plugin_cards */ -}}
@@ -200,11 +232,11 @@
   
 {{- with (index site.Data "plugin-cards") -}}
 
-{{- if (isset .Config "DebugPrint") -}}
-{{- $Config_DebugPrint = .Config.DebugPrint -}}
-{{- end -}}
 {{- with .Config.Version -}}
 {{- $Config_Version = . -}}
+{{- end -}}
+{{- if (isset .Config "DebugPrint") -}}
+{{- $Config_DebugPrint = .Config.DebugPrint -}}
 {{- end -}}
 
 {{- if (isset .TwitterOG.Config "Enable") -}}
@@ -271,58 +303,82 @@
 {{- if (isset .Cardify.Config "MinifyScript") -}}
 {{- $Cardify_Config_MinifyScript = .Cardify.Config.MinifyScript -}}
 {{- end -}}
-
-{{- if (isset .Cardify.Card.Creation "QueryMatch") -}}
-{{- $Cardify_Card_Creation_QueryMatch = .Cardify.Card.Creation.QueryMatch -}}
+{{- if (isset .Cardify.Config "QueryMatch") -}}
+{{- $Cardify_Config_QueryMatch = .Cardify.Config.QueryMatch -}}
 {{- end -}}
-{{- if (isset .Cardify.Card.Creation "HostMatch") -}}
-{{- $Cardify_Card_Creation_HostMatch = .Cardify.Card.Creation.HostMatch -}}
+{{- if (isset .Cardify.Config "HostMatch") -}}
+{{- $Cardify_Config_HostMatch = .Cardify.Config.HostMatch -}}
 {{- end -}}
-{{- with .Cardify.Card.Creation.URLFilter -}}
-{{- $Cardify_Card_Creation_URLFilter = . -}}
+{{- with .Cardify.Config.URLFilter -}}
+{{- $Cardify_Config_URLFilter = . -}}
 {{- end -}}
-{{- if (isset .Cardify.Card.Creation "QueryMatchOverridesFilter") -}}
-{{- $Cardify_Card_Creation_QueryMatchOverridesFilter = .Cardify.Card.Creation.QueryMatchOverridesFilter -}}
+{{- if (isset .Cardify.Config "QueryMatchOverridesFilter") -}}
+{{- $Cardify_Config_QueryMatchOverridesFilter = .Cardify.Config.QueryMatchOverridesFilter -}}
 {{- end -}}
-
-{{- with .Cardify.Card.HostMatch.ReadMoreLink -}}
-{{- $Cardify_Card_HostMatch_ReadMoreLink = . -}}
+{{- with .Cardify.Config.ReadMoreLink -}}
+{{- $Cardify_Config_ReadMoreLink = . -}}
 {{- end -}}
-{{- with .Cardify.Card.HostMatch.ListSandbox -}}
-{{- $Cardify_Card_HostMatch_ListSandbox = . -}}
+{{- with .Cardify.Config.ListSandbox -}}
+{{- $Cardify_Config_ListSandbox = . -}}
 {{- end -}}
-{{- with .Cardify.Card.HostMatch.PageSandbox -}}
-{{- $Cardify_Card_HostMatch_PageSandbox = . -}}
+{{- with .Cardify.Config.PageSandbox -}}
+{{- $Cardify_Config_PageSandbox = . -}}
 {{- end -}}
-{{- with .Cardify.Card.HostMatch.CustomSelector -}}
-{{- $Cardify_Card_HostMatch_CustomSelector = . -}}
+{{- with .Cardify.Config.CustomSelector -}}
+{{- $Cardify_Config_CustomSelector = . -}}
 {{- end -}}
 
-{{- with .Cardify.Card.Style.BG -}}
-{{- $Cardify_Card_Style_BG = . -}}
+{{- with .Cardify.Specifiers.CardClassName -}}
+{{- $Cardify_Specifiers_CardClassName = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.TimeDateColor -}}
-{{- $Cardify_Card_Style_TimeDateColor = . -}}
+{{- with .Cardify.Specifiers.ImageClassName -}}
+{{- $Cardify_Specifiers_ImageClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.BodyClassName -}}
+{{- $Cardify_Specifiers_BodyClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.TitleClassName -}}
+{{- $Cardify_Specifiers_TitleClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.TextClassName -}}
+{{- $Cardify_Specifiers_TextClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.LinkClassName -}}
+{{- $Cardify_Specifiers_LinkClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.PublishDateClassName -}}
+{{- $Cardify_Specifiers_PublishDateClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.ReadingTimeClassName -}}
+{{- $Cardify_Specifiers_ReadingTimeClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.QueryParameter -}}
+{{- $Cardify_Specifiers_QueryParameter = . -}}
 {{- end -}}
 
-{{- with .Cardify.Card.Style.Spacer.Y -}}
-{{- $Cardify_Card_Style_Spacer_Y = . -}}
+{{- with .Cardify.Style.Card -}}
+{{- $Cardify_Style_Card = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.Spacer.X -}}
-{{- $Cardify_Card_Style_Spacer_X = . -}}
+{{- with .Cardify.Style.Body -}}
+{{- $Cardify_Style_Body = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.Spacer.TitleY -}}
-{{- $Cardify_Card_Style_Spacer_TitleY = . -}}
+{{- with .Cardify.Style.Title -}}
+{{- $Cardify_Style_Title = . -}}
 {{- end -}}
-
-{{- with .Cardify.Card.Style.Border.Width -}}
-{{- $Cardify_Card_Style_Border_Width = . -}}
+{{- with .Cardify.Style.Text -}}
+{{- $Cardify_Style_Text = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.Border.Color -}}
-{{- $Cardify_Card_Style_Border_Color = . -}}
+{{- with .Cardify.Style.ReadingTime -}}
+{{- $Cardify_Style_ReadingTime = . -}}
 {{- end -}}
-{{- with .Cardify.Card.Style.Border.Radius -}}
-{{- $Cardify_Card_Style_Border_Radius = . -}}
+{{- with .Cardify.Style.PublishDate -}}
+{{- $Cardify_Style_PublishDate = . -}}
+{{- end -}}
+{{- with .Cardify.Style.Variables.BorderWidth -}}
+{{- $Cardify_Style_Variables_BorderWidth = . -}}
+{{- end -}}
+{{- with .Cardify.Style.Variables.BorderRadius -}}
+{{- $Cardify_Style_Variables_BorderRadius = . -}}
 {{- end -}}
 
 {{- end -}} {{- /* with (index site.Data "plugin-cards") */ -}}
@@ -348,31 +404,24 @@
     Config
   Cardify
     Config
-    Card
-      Creation
-      HostMatch
-      Style  
+    Specifiers
+    Style
   *********************************************************/ -}}
 
-{{- /* Cardify.Card.Style */ -}}
-{{- $Cardify_Card_Style_Border := dict "Width" $Cardify_Card_Style_Border_Width "Color" $Cardify_Card_Style_Border_Color "Radius" $Cardify_Card_Style_Border_Radius -}}
-{{- $Cardify_Card_Style_Spacer := dict "Y" $Cardify_Card_Style_Spacer_Y "X" $Cardify_Card_Style_Spacer_X "TitleY" $Cardify_Card_Style_Spacer_TitleY -}}
-{{- $Cardify_Card_Style := dict "BG" $Cardify_Card_Style_BG "TimeDateColor" $Cardify_Card_Style_TimeDateColor "Spacer" $Cardify_Card_Style_Spacer "Border" $Cardify_Card_Style_Border -}}
+{{- /* Cardify.Style.Variables */ -}}
+{{- $Cardify_Style_Variables := dict "BorderWidth" $Cardify_Style_Variables_BorderWidth "BorderRadius" $Cardify_Style_Variables_BorderRadius -}}
 
-{{- /* Cardify.Card.HostMatch */ -}}
-{{- $Cardify_Card_HostMatch := dict "ReadMoreLink" $Cardify_Card_HostMatch_ReadMoreLink "ListSandbox" $Cardify_Card_HostMatch_ListSandbox "PageSandbox" $Cardify_Card_HostMatch_PageSandbox "CustomSelector" $Cardify_Card_HostMatch_CustomSelector -}}
+{{- /* Cardify.Style */ -}}
+{{- $Cardify_Style := dict "Card" $Cardify_Style_Card "Body" $Cardify_Style_Body "Title" $Cardify_Style_Title "Text" $Cardify_Style_Text "ReadingTime" $Cardify_Style_ReadingTime "PublishDate" $Cardify_Style_PublishDate "Variables" $Cardify_Style_Variables -}}
 
-{{- /* Cardify.Card.Creation */ -}}
-{{- $Cardify_Card_Creation := dict "QueryMatch" $Cardify_Card_Creation_QueryMatch "HostMatch" $Cardify_Card_Creation_HostMatch "URLFilter" $Cardify_Card_Creation_URLFilter "QueryMatchOverridesFilter" $Cardify_Card_Creation_QueryMatchOverridesFilter -}}
-
-{{- /* Cardify.Card */ -}}
-{{- $Cardify_Card := dict "Creation" $Cardify_Card_Creation "HostMatch" $Cardify_Card_HostMatch "Style" $Cardify_Card_Style -}}
+{{- /* Cardify.Specifiers */ -}}
+{{- $Cardify_Specifiers := dict "CardClassName" $Cardify_Specifiers_CardClassName "ImageClassName" $Cardify_Specifiers_ImageClassName "BodyClassName" $Cardify_Specifiers_BodyClassName "TitleClassName" $Cardify_Specifiers_TitleClassName "TextClassName" $Cardify_Specifiers_TextClassName "LinkClassName" $Cardify_Specifiers_LinkClassName "PublishDateClassName" $Cardify_Specifiers_PublishDateClassName "ReadingTimeClassName" $Cardify_Specifiers_ReadingTimeClassName "QueryParameter" $Cardify_Specifiers_QueryParameter -}}
 
 {{- /* Cardify.Config */ -}}
-{{- $Cardify_Config := dict "Fingerprint" $Cardify_Config_Fingerprint "SassOutput" $Cardify_Config_SassOutput "MinifyScript" $Cardify_Config_MinifyScript -}}
+{{- $Cardify_Config := dict "Fingerprint" $Cardify_Config_Fingerprint "SassOutput" $Cardify_Config_SassOutput "MinifyScript" $Cardify_Config_MinifyScript "QueryMatch" $Cardify_Config_QueryMatch "HostMatch" $Cardify_Config_HostMatch "URLFilter" $Cardify_Config_URLFilter "QueryMatchOverridesFilter" $Cardify_Config_QueryMatchOverridesFilter "ReadMoreLink" $Cardify_Config_ReadMoreLink "ListSandbox" $Cardify_Config_ListSandbox "PageSandbox" $Cardify_Config_PageSandbox "CustomSelector" $Cardify_Config_CustomSelector -}}
 
 {{- /* Cardify */ -}}
-{{- $Cardify := dict "Config" $Cardify_Config "Card" $Cardify_Card -}}
+{{- $Cardify := dict "Config" $Cardify_Config "Specifiers" $Cardify_Specifiers "Style" $Cardify_Style -}}
 
 {{- /* StructuredData.Config */ -}}
 {{- $StructuredData_Config := dict "Enable" $StructuredData_Config_Enable "AuthorName" $StructuredData_Config_AuthorName "ProfileURL" $StructuredData_Config_ProfileURL -}}
@@ -405,9 +454,9 @@
 {{- $TwitterOG := dict "Config" $TwitterOG_Config "Images" $TwitterOG_Images "Audio" $TwitterOG_Audio "Video" $TwitterOG_Video "Twitter" $TwitterOG_Twitter -}}
 
 {{- /* Config */ -}}
-{{- $Config := dict "DebugPrint" $Config_DebugPrint "Version" $Config_Version -}}
+{{- $Config := dict "Version" $Config_Version "DebugPrint" $Config_DebugPrint -}}
 
-{{- /* Final map */ -}}
+{{- /* Parameters */ -}}
 {{- $Parameters := dict "Config" $Config "TwitterOG" $TwitterOG "StructuredData" $StructuredData "Cardify" $Cardify -}}
 
 

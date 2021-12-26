@@ -1,89 +1,104 @@
-{{ with .Scratch.Get "plugin-cards.Cardify" }}
+@import "vendor/rfs";
+
+@mixin parameter { @content; }
+
+{{ with .Scratch.Get ("plugin-cards.Parameters").Cardify }}
 
 /// Plugin parameter values
-$spacer-y:             {{ .Parameters.Card.Style.Spacer.Y }};
-$spacer-x:             {{ .Parameters.Card.Style.Spacer.X }};
-$title-spacer-y:       {{ .Parameters.Card.Style.Spacer.TitleY }};
-$bg:                   {{ .Parameters.Card.Style.BG }};
-$border-width:         {{ .Parameters.Card.Style.Border.Width }};
-$border-color:         {{ .Parameters.Card.Style.Border.Color }};
-$border-radius:        {{ .Parameters.Card.Style.Border.Radius }};
+$border-width:         {{ .Style.Variables.BorderWidth }};
+$border-radius:        {{ .Style.Variables.BorderRadius }};
 $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
-$time-date-color:      {{ .Parameters.Card.Style.TimeDateColor }};
 
-.{{ .Specifiers.Card }} {
+.{{ .Specifiers.CardClassName }} {
   position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: $bg;
   background-clip: border-box;
-  border: $border-width solid $border-color;
-  border-radius: $border-radius;
-}
+  {{ with .Style.Card }}
+  @include parameter { {{ template "rfs-wrap" . }} }
+  {{ end }}
 
-.{{ .Specifiers.Body }} {
-  flex: 1 1 auto;
-  padding: $spacer-y $spacer-x;
-}
-
-.{{ .Specifiers.Title }} {
-  margin-bottom: $title-spacer-y;
-}
-
-.{{ .Specifiers.Text }} {
-
-  &:last-child {
-    display: flex;
-    justify-content: space-between;
-    align-content: stretch;
-    margin-bottom: 0;
-    color: $time-date-color;
-  }
+  .{{ .Specifiers.ImageClassName }} {
+    width: 100%;
+    border-top-left-radius: $inner-border-radius;
+    border-top-right-radius: $inner-border-radius;
+  } // ImageClassName
   
-}
+  .{{ .Specifiers.BodyClassName }} {
+    flex: 1 1 auto;
+  {{ with .Style.Body }}
+    @include parameter { {{ template "rfs-wrap" . }} }
+  {{ end }}
+    
+    .{{ .Specifiers.TitleClassName }} {
+  {{ with .Style.Title }}
+      @include parameter { {{ template "rfs-wrap" . }} }
+  {{ end }}
+    } // TitleClassName
 
-.{{ .Specifiers.Image }} {
-  width: 100%;
-  border-top-left-radius: $inner-border-radius;
-  border-top-right-radius: $inner-border-radius;
-  
-  &.left {
-    width: 30%;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: $inner-border-radius;
-  }
-  
-}
+    .{{ .Specifiers.TextClassName }} {
+    
+      &:not(&:last-child) {
+  {{ with .Style.Text }}
+        @include parameter { {{ template "rfs-wrap" . }} }
+  {{ end }}
+      }
+      
+      &:last-child {
+        display: flex;
+        justify-content: space-between;
+        align-content: stretch;
+        margin-bottom: 0;
+      }
+      
+      .{{ .Specifiers.ReadingTimeClassName }} {
+  {{ with .Style.ReadingTime }}
+        @include parameter { {{ template "rfs-wrap" . }} }
+  {{ end }}
+      } // ReadingTimeClassName
+      
+      .{{ .Specifiers.PublishDateClassName }} {
+   {{ with .Style.PublishDate }}
+        @include parameter { {{ template "rfs-wrap" . }} }
+   {{ end }}
+      } // PublishDateClassName
+      
+    } // TextClassName
+    
+    .{{ .Specifiers.LinkClassName }}::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      content: "";
+    } // LinkClassName
+    
+  } // BodyClassName
 
-.{{ .Specifiers.ReadingTime }} {
-  color: #9091AB;
-}
+  &.horizontal {
+    
+    flex-direction: row;      
+    
+    .{{ .Specifiers.ImageClassName }} {
+      width: 30%;
+      height: auto;
+      object-fit: cover;
+      border-top-right-radius: 0;
+      border-bottom-left-radius: $inner-border-radius;
+    } // ImageClassName
+    
+  } // CardClassName.horizontal
 
-.{{ .Specifiers.Link }} {
-  &::after {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-    content: "";
-  }
-}
+} // CardClassName
 
-.{{ .Specifiers.Card }}.horizontal {
-  
-  flex-direction: row;
-  
-  
-  .{{ .Specifiers.Image }} {
-    width: 30%;
-    height: auto;
-    object-fit: cover;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: $inner-border-radius;
-  }
-}
+{{ end }}
+
+{{ define "rfs-wrap" }}
+{{ $pattern := `(font-size|padding|padding-top|padding-right|padding-bottom|padding-left|margin|margin-top|margin-right|margin-bottom|margin-left):\w*([^;]+)` }}
+{{ $replacement := `@include $1($2)` }}
+{{ replaceRE $pattern $replacement . }}
 {{ end }}

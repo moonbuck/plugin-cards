@@ -1,0 +1,38 @@
+# Parameters for styling preview cards
+######################################
+
+# Sass block to apply to the card container.
+#
+Card = '''
+background-color: white;
+border-color: rgba(black, .125);'''
+
+# Sass block to apply to the card body.
+#
+Body = 'padding: 1rem;'
+
+# Sass block to apply to the card title.
+#
+Title = 'margin-bottom: .5rem;'
+
+# Sass block to apply to the card text.
+#
+Text = ''
+
+# Sass block to apply to the reading time element.
+#
+ReadingTime = 'color: #9091AB;'
+
+# Sass block to apply to the publish date element.
+#
+PublishDate = 'color: #666;'
+
+[Variables]
+
+# Width value for the border applied to card container.
+#
+BorderWidth = '1px'
+
+# border-radius value for the card container.
+#
+BorderRadius = '.5rem'

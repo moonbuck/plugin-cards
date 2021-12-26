@@ -1,22 +1,17 @@
-{{- $Parameters := (.Scratch.Get "plugin-cards.Parameters").Cardify -}}
+{{- with (.Scratch.Get "plugin-cards.Parameters").Cardify -}}
 
-{{- if (or $Parameters.Card.Creation.QueryMatch $Parameters.Card.Creation.HostMatch) -}}
+{{- if (or .Config.QueryMatch .Config.HostMatch) -}}
 
-{{- $Specifiers := dict "Card" "cardify-card" "Image" "cardify-card-img" "Body" "cardify-card-body" "Title" "cardify-card-title" "Text" "cardify-card-text" "Link" "cardify-card-link" "PublishDate" "cardify-card-publish-date" "ReadingTime" "cardify-card-reading-time" -}}
-
-{{- $Cardify := dict "Parameters" $Parameters "Specifiers" $Specifiers -}}
-{{- .Scratch.Set "plugin-cards.Cardify" $Cardify -}}
-
-{{- partial "plugin-cards/debug-print.html" (slice "Cardify" "plugin-cards.Cardify" .Scratch) -}}
+{{- partial "plugin-cards/debug-print.html" (slice "Cardify" "plugin-cards.Cardify" $.Scratch) -}}
 
 {{- $source_dir := "js/plugin-cards/" -}}
 {{- $template_name := "cardify.js" -}}
 {{- $source := path.Join $source_dir $template_name -}}
 {{- $target := path.Join "assets" $source -}}
 
-{{- $script := resources.Get $source | resources.ExecuteAsTemplate $target . -}}
-{{- if $Parameters.Config.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
-{{- if $Parameters.Config.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
+{{- $script := resources.Get $source | resources.ExecuteAsTemplate $target $ -}}
+{{- if .Config.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
+{{- if .Config.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
 
 {{- print "\n" -}}
 <script src="{{ $script.Permalink }}"></script>
@@ -25,13 +20,13 @@
 {{- $template_name = "cardify.scss" -}}
 {{- $source = path.Join $source_dir $template_name -}}
 {{- $target := path.Join "assets" $source -}}
-{{- $style := resources.Get $source | resources.ExecuteAsTemplate $target . -}} 
+{{- $style := resources.Get $source | resources.ExecuteAsTemplate $target $ -}} 
 
 {{- $target = $target | replaceRE "sass|scss" "css" -}}
-{{- $options := dict "targetPath" $target  "outputStyle" $Parameters.Config.SassOutput -}}
+{{- $options := dict "targetPath" $target  "outputStyle" .Config.SassOutput -}}
 {{- $style = $style | toCSS $options -}}
 
-{{- if $Parameters.Config.Fingerprint }}{{ $style = $style | fingerprint }}{{ end -}}
+{{- if .Config.Fingerprint }}{{ $style = $style | fingerprint }}{{ end -}}
 
 {{- print "\n" -}}
 <link rel="stylesheet" href="{{ $style.Permalink }}">
