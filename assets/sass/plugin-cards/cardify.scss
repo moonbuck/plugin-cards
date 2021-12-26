@@ -9,6 +9,7 @@ $border-width:         {{ .Style.Variables.BorderWidth }};
 $border-radius:        {{ .Style.Variables.BorderRadius }};
 $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
 
+/// The card container
 .{{ .Specifiers.CardClassName }} {
   position: relative;
   display: flex;
@@ -16,59 +17,128 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
   min-width: 0;
   word-wrap: break-word;
   background-clip: border-box;
+  background-color: white;
+  border-color: rgba(black, .125);
+  border-style: solid;  
   border-width: $border-width;
   border-radius: $border-radius;
+  
   {{ with .Style.Card }}
   @include parameter { {{ template "rfs-wrap" . }} }
   {{ end }}
+  
+  &.horizontal { flex-direction: row; }
+  
 
+  /// The card image
   .{{ .Specifiers.ImageClassName }} {
     width: 100%;
+    padding: 0;
+    margin: 0;
     border-top-left-radius: $inner-border-radius;
     border-top-right-radius: $inner-border-radius;
+    
+    &.horizontal {
+      width: 30%;
+      height: auto;
+      object-fit: cover;
+      border-top-right-radius: 0;
+      border-bottom-left-radius: $inner-border-radius;
+    }
+    
   } // ImageClassName
   
+  /// The card body containing the title, description, 
+  /// date and reading time.
   .{{ .Specifiers.BodyClassName }} {
     flex: 1 1 auto;
+    @include margin(.125rem .25rem);
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    
   {{ with .Style.Body }}
     @include parameter { {{ template "rfs-wrap" . }} }
   {{ end }}
     
+    /// The card title
     .{{ .Specifiers.TitleClassName }} {
+      padding: 0;
+      margin: 0;
+      @include font-size(1rem);
+      line-height: 1.1;
+      
   {{ with .Style.Title }}
       @include parameter { {{ template "rfs-wrap" . }} }
   {{ end }}
+  
+      &.horizontal {
+        @media (max-width: 600px) { text-align: center; }
+      }
+  
     } // TitleClassName
 
-    .{{ .Specifiers.TextClassName }} {
-    
+    /// The remaining card text (description and time/date/reading-time) 
+    .{{ .Specifiers.TextClassName }} {    
+      padding: 0;
+      margin: 0;
+      line-height: 1;
+      @include font-size(.9rem);
+      
+      /// Just the description
       &:not(&:last-child) {
+        
   {{ with .Style.Text }}
         @include parameter { {{ template "rfs-wrap" . }} }
   {{ end }}
+  
+        &.horizontal {
+          @media (max-width: 600px) { display: none; }
+        }
       }
       
+      /// Just the time/date/reading-time
       &:last-child {
         display: flex;
         justify-content: space-between;
         align-content: stretch;
-        margin-bottom: 0;
+        @include padding-top(.5em);
+        border-top-width: $border-width;
+        border-top-color: rgba(black, .125);
+        border-top-style: solid;
+        
+        &.horizontal {
+          @media (max-width: 600px) { justify-content: center; }
+        }
       }
       
+      /// The reading time.
       .{{ .Specifiers.ReadingTimeClassName }} {
+        color: #9091AB;
+        
   {{ with .Style.ReadingTime }}
         @include parameter { {{ template "rfs-wrap" . }} }
   {{ end }}
+  
+        &.horizontal {
+          @media (max-width: 600px) { display: none; }
+        }
+  
       } // ReadingTimeClassName
       
+      /// The publish date.
       .{{ .Specifiers.PublishDateClassName }} {
+        color: #666;
+        
    {{ with .Style.PublishDate }}
         @include parameter { {{ template "rfs-wrap" . }} }
    {{ end }}
+   
       } // PublishDateClassName
       
     } // TextClassName
     
+    /// Stretching the invisble link across the entire card.
     .{{ .Specifiers.LinkClassName }}::after {
       position: absolute;
       top: 0;
@@ -80,20 +150,6 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
     } // LinkClassName
     
   } // BodyClassName
-
-  &.horizontal {
-    
-    flex-direction: row;      
-    
-    .{{ .Specifiers.ImageClassName }} {
-      width: 30%;
-      height: auto;
-      object-fit: cover;
-      border-top-right-radius: 0;
-      border-bottom-left-radius: $inner-border-radius;
-    } // ImageClassName
-    
-  } // CardClassName.horizontal
 
 } // CardClassName
 

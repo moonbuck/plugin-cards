@@ -14,6 +14,8 @@
 {{- with .Get 1 }}{{ $horizontal = eq "horizontal" . }}{{ end -}}
 {{- end -}}
 
+{{- $specifiers := site.Data.plugin_cards.Cardify.Specifiers -}}
+
 {{- if $page -}}
 
 {{/* Retrieve the page from the provided path */}}
@@ -51,7 +53,8 @@
   
   {{/* Insert the card-text class into summary p tags */}}
   {{- if $summary -}}
-    {{- $summary = replace $summary "<p>" "<p class=\"card-text\">" -}}
+    {{- $replacement := printf "<p class=\"%s%s\">" $specifiers.TextClassName (cond $horizontal " horizontal" "") -}}
+    {{- $summary = replace $summary "<p>" $replacement -}}
     {{- $summary = $summary | safeHTML | truncate 200 -}}
   {{- end -}}
   
@@ -64,15 +67,15 @@
   {{/* Grab the publish date for the post */}}
   {{- $publish_date := .PublishDate.Format "2 Jan 2006" -}}
  
-  <div class="cardify-card{{ with $horizontal }} horizontal{{ end }}">
-    {{ with $image }}<img src="{{ . }}" class="cardify-card-img" />{{ end }}
-    <div class="cardify-card-body">
-      {{ with $title }}<h3 class="cardify-card-title">{{ . }}</h3>{{ end }}
+  <div class="{{ $specifiers.CardClassName }}{{ with $horizontal }} horizontal{{ end }}">
+  {{ with $image }}<img src="{{ . }}" class="{{ $specifiers.ImageClassName }}{{ with $horizontal }} horizontal{{ end }}" />{{ end }}
+    <div class="{{ $specifiers.BodyClassName }}{{ with $horizontal }} horizontal{{ end }}">
+      {{ with $title }}<h3 class="{{ $specifiers.TitleClassName }}{{ with $horizontal }} horizontal{{ end }}">{{ . }}</h3>{{ end }}
       {{ $summary | safeHTML }}
-      <a href="{{ .Permalink }}" class="cardify-card-link"></a>
-      <p class="cardify-card-text">
-        <small><span class="cardify-card-publish-date">{{ $publish_date }}</span></small>
-        <small class="cardify-card-reading-time">reading time <span>{{ $reading_time }}</span></small>
+      <a href="{{ .Permalink }}" class="{{ $specifiers.LinkClassName }}{{ with $horizontal }} horizontal{{ end }}"></a>
+      <p class="{{ $specifiers.TextClassName }}{{ with $horizontal }} horizontal{{ end }}">
+        <small><span class="{{ $specifiers.PublishDateClassName }}{{ with $horizontal }} horizontal{{ end }}">{{ $publish_date }}</span></small>
+        <small class="{{ $specifiers.ReadingTimeClassName }}{{ with $horizontal }} horizontal{{ end }}">reading time <span>{{ $reading_time }}</span></small>
       </p>
     </div>
   </div>
