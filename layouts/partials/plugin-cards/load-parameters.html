@@ -7,6 +7,7 @@
   Initialize variables with default parameter values
   to ensure every parameter has a map entry. 
   ***************************************************/ -}}
+{{- if not (.Page.Scratch.Get "plugin-cards.Parameters") -}}
   
 {{- $Config_Version := "" -}}
 {{- $Config_DebugPrint := false -}}
@@ -50,6 +51,8 @@
 
 {{- $Cardify_Specifiers_CardClassName := "cardify-card" -}}
 {{- $Cardify_Specifiers_ImageClassName := "cardify-card-img" -}}
+{{- $Cardify_Specifiers_AudioClassName := "cardify-card-audio" -}}
+{{- $Cardify_Specifiers_VideoClassName := "cardify-card-video" -}}
 {{- $Cardify_Specifiers_BodyClassName := "cardify-card-body" -}}
 {{- $Cardify_Specifiers_TitleClassName := "cardify-card-title" -}}
 {{- $Cardify_Specifiers_TextClassName := "cardify-card-text" -}}
@@ -175,6 +178,12 @@
 {{- end -}}
 {{- with .Cardify.Specifiers.ImageClassName -}}
 {{- $Cardify_Specifiers_ImageClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.AudioClassName -}}
+{{- $Cardify_Specifiers_AudioClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.VideoClassName -}}
+{{- $Cardify_Specifiers_VideoClassName = . -}}
 {{- end -}}
 {{- with .Cardify.Specifiers.BodyClassName -}}
 {{- $Cardify_Specifiers_BodyClassName = . -}}
@@ -334,6 +343,12 @@
 {{- with .Cardify.Specifiers.ImageClassName -}}
 {{- $Cardify_Specifiers_ImageClassName = . -}}
 {{- end -}}
+{{- with .Cardify.Specifiers.AudioClassName -}}
+{{- $Cardify_Specifiers_AudioClassName = . -}}
+{{- end -}}
+{{- with .Cardify.Specifiers.VideoClassName -}}
+{{- $Cardify_Specifiers_VideoClassName = . -}}
+{{- end -}}
 {{- with .Cardify.Specifiers.BodyClassName -}}
 {{- $Cardify_Specifiers_BodyClassName = . -}}
 {{- end -}}
@@ -415,7 +430,7 @@
 {{- $Cardify_Style := dict "Card" $Cardify_Style_Card "Body" $Cardify_Style_Body "Title" $Cardify_Style_Title "Text" $Cardify_Style_Text "ReadingTime" $Cardify_Style_ReadingTime "PublishDate" $Cardify_Style_PublishDate "Variables" $Cardify_Style_Variables -}}
 
 {{- /* Cardify.Specifiers */ -}}
-{{- $Cardify_Specifiers := dict "CardClassName" $Cardify_Specifiers_CardClassName "ImageClassName" $Cardify_Specifiers_ImageClassName "BodyClassName" $Cardify_Specifiers_BodyClassName "TitleClassName" $Cardify_Specifiers_TitleClassName "TextClassName" $Cardify_Specifiers_TextClassName "LinkClassName" $Cardify_Specifiers_LinkClassName "PublishDateClassName" $Cardify_Specifiers_PublishDateClassName "ReadingTimeClassName" $Cardify_Specifiers_ReadingTimeClassName "QueryParameter" $Cardify_Specifiers_QueryParameter -}}
+{{- $Cardify_Specifiers := dict "CardClassName" $Cardify_Specifiers_CardClassName "ImageClassName" $Cardify_Specifiers_ImageClassName "AudioClassName" $Cardify_Specifiers_AudioClassName "VideoClassName" $Cardify_Specifiers_VideoClassName "BodyClassName" $Cardify_Specifiers_BodyClassName "TitleClassName" $Cardify_Specifiers_TitleClassName "TextClassName" $Cardify_Specifiers_TextClassName "LinkClassName" $Cardify_Specifiers_LinkClassName "PublishDateClassName" $Cardify_Specifiers_PublishDateClassName "ReadingTimeClassName" $Cardify_Specifiers_ReadingTimeClassName "QueryParameter" $Cardify_Specifiers_QueryParameter -}}
 
 {{- /* Cardify.Config */ -}}
 {{- $Cardify_Config := dict "Fingerprint" $Cardify_Config_Fingerprint "SassOutput" $Cardify_Config_SassOutput "MinifyScript" $Cardify_Config_MinifyScript "QueryMatch" $Cardify_Config_QueryMatch "HostMatch" $Cardify_Config_HostMatch "URLFilter" $Cardify_Config_URLFilter "QueryMatchOverridesFilter" $Cardify_Config_QueryMatchOverridesFilter "ReadMoreLink" $Cardify_Config_ReadMoreLink "ListSandbox" $Cardify_Config_ListSandbox "PageSandbox" $Cardify_Config_PageSandbox "CustomSelector" $Cardify_Config_CustomSelector -}}
@@ -465,3 +480,5 @@
   ***********************************************/ -}}
   
 {{- .Scratch.Set "plugin-cards.Parameters" $Parameters -}}
+
+{{- end }}

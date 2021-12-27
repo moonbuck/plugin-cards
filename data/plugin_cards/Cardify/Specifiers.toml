@@ -1,5 +1,7 @@
 CardClassName = 'cardify-card'
 ImageClassName = 'cardify-card-img'
+AudioClassName = 'cardify-card-audio'
+VideoClassName = 'cardify-card-video'
 BodyClassName = 'cardify-card-body'
 TitleClassName = 'cardify-card-title'
 TextClassName = 'cardify-card-text'
