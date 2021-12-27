@@ -33,6 +33,8 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
   /// The card image
   .{{ .Specifiers.ImageClassName }} {
     width: 100%;
+    aspect-ratio: 1200 / 628;
+    object-fit: cover;
     padding: 0;
     margin: 0;
     border-top-left-radius: $inner-border-radius;
@@ -40,6 +42,7 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
     
     &.horizontal {
       width: 30%;
+      aspect-ratio: 1 / 1;
       height: auto;
       object-fit: cover;
       border-top-right-radius: 0;
