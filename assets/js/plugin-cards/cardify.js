@@ -112,13 +112,16 @@ function scrapePage(html, link) {
   var page = parser.parseFromString(html, 'text/html');
   let urlTag = page.querySelector(metaSelector('url'));
   let imgTag = page.querySelector(metaSelector('image'));
+  let audioTag = page.querySelector(og('audio'));
+  let videoTag = page.querySelector(og('video'));
   let titleTag = page.querySelector(metaSelector('title'));
   let descTag = page.querySelector(metaSelector('description'));
   let readingTimeTag = page.querySelector(article('reading_time'));
   let publishDateTag = page.querySelector(article('published_time'));
   
-  var url = null, img = null, title = null, desc = null;
-  var readingTime = null, publishDate = null;
+  let img = null, audio = null, video = null;
+  let url = null, title = null, desc = null;
+  let readingTime = null, publishDate = null;
   
   if (publishDateTag) { publishDate = new Date(publishDateTag.content) }
   if (readingTimeTag) { readingTime = readingTimeTag.content }
@@ -129,6 +132,8 @@ function scrapePage(html, link) {
     title = textarea.value;
   }
   if (imgTag) { img = imgTag.content }
+  if (audioTag) { audio = audioTag.content }
+  if (videoTag) { video = videoTag.content }
   if (urlTag) { url = urlTag.content }
   
   if (url && title && desc) {
@@ -139,7 +144,29 @@ function scrapePage(html, link) {
     let queryValue = (new URL(link)).searchParams.get('{{ .Specifiers.QueryParameter }}')
     if (queryValue) { cardDiv.classList.add(queryValue) }
     
-    if (img) {
+    if (audio) {
+      let cardAudio = document.createElement("AUDIO");
+      cardAudio.src = audio;
+      cardAudio.className = '{{ .Specifiers.AudioClassName }}';
+      cardAudio.controls = 'controls';
+      cardAudio.preload = 'metadata';
+      if (queryValue) { cardAudio.classList.add(queryValue) }
+      cardDiv.append(cardAudio);
+    } 
+    
+    else if (video) {
+      let cardVideo = document.createElement("VIDEO");
+      cardVideo.src = video;
+      cardVideo.className = '{{ .Specifiers.VideoClassName }}';
+      cardVideo.controls = 'controls';
+      cardVideo.muted = 'muted';
+      cardVideo.autoplay = 'autoplay';
+      cardVideo.loop = 'loop';
+      if (queryValue) { cardVideo.classList.add(queryValue) }
+      cardDiv.append(cardVideo);
+    }
+    
+    else if (img) {
       let cardImg = document.createElement("IMG");
       cardImg.src = img;
       cardImg.className = '{{ .Specifiers.ImageClassName }}';

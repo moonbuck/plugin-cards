@@ -21,6 +21,8 @@
 {{- $tags := .Params.categories -}}
 {{- $audio := $Registered.audio -}}
 {{- $video := $Registered.video -}}
+{{- $width := $Registered.width -}}
+{{- $height := $Registered.height -}}
 {{- $card := $Registered.card -}}
 {{- $type := $Registered.type -}}
 {{- $title := $Registered.title -}}
@@ -183,11 +185,7 @@
   configure Twitter summary card.
   */ -}}
   
-{{- $width := false -}}
-{{- $height := false -}}
 {{- $player := false -}}
-
-
 
 {{- /* Check whether a Twitter card has been registered */ -}}
 {{- if not $card -}}
@@ -199,18 +197,18 @@
   {{- $card = index $Parameters.Twitter.Card.Assignments $Path -}}
     
   {{- /* Otherwise use attribute values to determine card  */ -}}
-  {{- else  if $video -}}
+  {{- else if $video -}}
     
-    {{- $width = $Parameters.Video.Width -}}
-    {{- $height = $Parameters.Video.Height -}}
+    {{- $width = $width | default $Parameters.Video.Width -}}
+    {{- $height = $height | default $Parameters.Video.Height -}}
     {{- $card = "player" -}}
     {{- $player = $video -}}
     
   {{- /* Configure for audio if registered */ -}}
   {{- else if $audio -}}
     
-    {{- $width = $Parameters.Audio.Width -}}
-    {{- $height = $Parameters.Audio.Height -}}
+    {{- $width = $width | default $Parameters.Audio.Width -}}
+    {{- $height = $height | default $Parameters.Audio.Height -}}
     {{- $card = "player" -}}
     {{- $player = $audio -}}
     

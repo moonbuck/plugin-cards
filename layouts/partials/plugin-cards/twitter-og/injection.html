@@ -59,7 +59,7 @@
 {{ end -}}
 
 {{- with $Attributes.url -}}
-<meta property="og:url" content="{{ . }}" />
+<meta property="og:url" content="{{ . | absURL }}" />
 {{ end -}}
 
 {{- with $Attributes.title -}}
@@ -75,7 +75,7 @@
 {{ end -}}
 
 {{- with $Attributes.image -}}
-<meta property="og:image" content="{{ . }}" />
+<meta property="og:image" content="{{ . | absURL }}" />
 {{ end -}}
 
 {{- /* 
@@ -86,7 +86,7 @@
 
 
 {{- with $Attributes.audio -}}
-<meta property="og:audio" content="{{ . }}" />
+<meta property="og:audio" content="{{ . | absURL }}" />
 {{ end -}}
 
 {{- /* 
@@ -104,7 +104,7 @@
 {{ end -}}
 
 {{- with $Attributes.video -}}
-<meta property="og:video" content="{{ . }}" />
+<meta property="og:video" content="{{ . | absURL }}" />
 {{ end -}}
 
 {{- end -}}
@@ -114,7 +114,7 @@
   */ -}}
 
 {{- with $Attributes.url -}}
-<meta name="twitter:url" content="{{ . }}">  
+<meta name="twitter:url" content="{{ . | absURL }}">  
 {{ end -}}
 
 {{- with $Attributes.title -}}
@@ -138,7 +138,7 @@
 {{ end -}}
 
 {{- with $Attributes.image -}}
-<meta name="twitter:image" content="{{ . }}" />
+<meta name="twitter:image" content="{{ . | absURL }}" />
 {{ end -}}
 
 {{- with $Attributes.card -}}
@@ -152,7 +152,7 @@
 {{- if (eq $Attributes.card "player") -}}
   
 {{- with $Attributes.player -}}
-<meta name="twitter:player" content="{{ . }}" />
+<meta name="twitter:player" content="{{ . | absURL }}" />
 {{ end -}}
 
 {{- with $Attributes.width -}}

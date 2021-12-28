@@ -1,32 +1,68 @@
-{{ printf "<!--card-config\n" | safeHTML }}
-{{- with .Get "title" }}{{ printf "title=%s\n" . }}{{ end -}}
-{{- with .Get "description" }}{{ printf "description=%s\n" . }}{{ end -}}
-{{- with .Get "card" }}{{ printf "card=%s\n" . }}{{ end -}}
-{{- with .Get "type" }}{{ printf "type=%s\n" . }}{{ end -}}
-{{- with .Get "image" -}}
-  {{- $src := . -}}
-  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
-  {{- with (findRE $pattern $src) -}}
-    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
+{{- /* Open the HTML comment. */ -}}
+{{- printf "\n<!--card-config\n" | safeHTML -}}
+
+{{- /* 
+  Create the regex pattern for extracting 
+  the URL from autolinked Markdown.
+  */ -}}
+{{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
+  
+{{- /* Create a list of supported keys. */ -}}
+{{- $supported_keys := slice "title" "description" "card" "type" "image" "audio" "video" "width" "height" -}}
+  
+{{- /* Check whether named parameters have been provided. */ -}}
+{{- if .IsNamedParams -}}
+
+  {{- /* Iterate the supported keys. */ -}}
+  {{- range $key := $supported_keys -}}
+
+    {{- /* Check for a parameter value. */ -}}
+    {{- with $.Get $key -}}
+      
+      {{- /* Extract the URL if value was autolinked. */ -}}
+      {{- $value := replaceRE $pattern "$1" . -}}
+      
+      {{- /* Print the verified key-value pair. */ -}}
+      {{- printf "%s=%s\n" $key $value | safeHTML -}}
+    
+    {{- end -}}
+  
   {{- end -}}
-  {{- printf "image=%s\n" $src -}}
-{{- end -}}
-{{- with .Get "audio" -}}
-  {{- $src := . -}}
-  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
-  {{- with (findRE $pattern $src) -}}
-    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
+
+{{- /* Otherwise, parse the inner content. */ -}}
+{{- else -}}
+
+  {{- /* Iterate the lines of inner content. */ -}}
+  {{- range $line := split .Inner "\n" -}}
+  
+    {{- /* Split the line into key and value. */ -}}
+    {{- $key_value := split $line "=" -}}
+  
+    {{- /* Ensure we have a key and a value. */ -}}
+    {{- if (eq 2 (len $key_value)) -}}
+    
+      {{- /* Grab the key, chomping off whitespace. */ -}}
+      {{- $key := index $key_value 0 | chomp -}}
+      
+      {{- /* Ensure the key is supported. */ -}}
+      {{- if (in $supported_keys $key) -}}
+      
+        {{- /* Grab the value, chomping off whitespace. */ -}}
+        {{- $value := index $key_value 1 | chomp -}}
+  
+        {{- /* Extract the URL if value was autolinked. */ -}}
+        {{- $value = replaceRE $pattern "$1" $value -}}
+        
+        {{- /* Print the verified key-value pair. */ -}}
+        {{- printf "%s=%s\n" $key $value | safeHTML -}}
+      
+      {{- end -}}
+      
+    {{- end -}}
+    
   {{- end -}}
-  {{- printf "audio=%s\n" $src -}}
+  
 {{- end -}}
-{{- with .Get "video" -}}
-  {{- $src := . -}}
-  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
-  {{- with (findRE $pattern $src) -}}
-    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
-  {{- end -}}
-  {{- printf "video=%s\n" $src -}}
-{{- end -}}
-{{- with .Get "video:width" }}{{ printf "video:width=%s\n" . }}{{ end -}}
-{{- with .Get "video:height" }}{{ printf "video:height=%s\n" . }}{{ end -}}
-{{ printf "-->" | safeHTML }}
+
+{{- /* Close the HTML comment. */ -}}
+{{- printf "-->\n" | safeHTML -}}
