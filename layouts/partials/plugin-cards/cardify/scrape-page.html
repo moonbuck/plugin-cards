@@ -1,0 +1,58 @@
+{{/* 
+  This partial expects a remote page resource to be
+  scraped for Twitter / Open Graph <meta> tags.
+  */}}
+{{- $attributes := newScratch -}}
+{{- with .Content -}}
+
+{{/* Define a pattern for matching twitter tags. */}}
+{{- $pattern := `<meta\s+name=['"]twitter:([^'"]+)['"]\s+content=['"]([^'"]+)['"].*?>` -}}
+
+{{- range findRE $pattern . -}}
+
+{{- $key := replaceRE $pattern "$1" . -}}
+{{- $value := replaceRE $pattern "$2" . -}}
+{{- $attributes.SetInMap "twitter" $key $value -}}
+
+{{- end -}}
+
+{{/* Adjust for matching og tags. */}}
+{{- $pattern = `<meta\s+property=['"]og:([^'"]+)['"]\s+content=['"]([^'"]+)['"].*?>` -}}
+
+{{- range findRE $pattern . -}}
+
+{{- $key := replaceRE $pattern "$1" . -}}
+{{- $value := replaceRE $pattern "$2" . -}}
+{{- $attributes.SetInMap "og" $key $value -}}
+
+{{- end -}}
+
+{{/* Adjust for matching article tags. */}}
+{{- $pattern = `<meta\s+property=['"]article:([^'"]+)['"]\s+content=['"]([^'"]+)['"].*?>` -}}
+
+{{- range findRE $pattern . -}}
+
+{{- $key := replaceRE $pattern "$1" . -}}
+{{- $value := replaceRE $pattern "$2" . -}}
+
+{{- if (eq $key "tag") -}}
+
+{{- $tags := ($attributes.Get "article").tag | default slice -}}
+{{- $tags = $tags | append $value -}}
+{{- $attributes.SetInMap "article" "tag" $tags -}}
+
+{{- else -}}
+
+{{- $attributes.SetInMap "article" $key $value -}}
+
+{{- end -}}
+
+{{- end -}}
+
+{{- end }}
+
+{{- $twitter := $attributes.Get "twitter" | default dict -}}
+{{- $og := $attributes.Get "og" | default dict -}}
+{{- $article := $attributes.Get "article" | default dict -}}
+
+{{- return merge $twitter $og $article -}}

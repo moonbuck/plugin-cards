@@ -4,8 +4,6 @@
 
 {{- partial "plugin-cards/structured-data/load-ld-json.html" . -}}
 
-{{- partial "plugin-cards/debug-print.html" (slice "JSON" "plugin-cards.StructuredData" .Scratch) -}}
-
 {{- $JSON := .Scratch.Get "plugin-cards.StructuredData" -}}
 
 <script type="application/ld+json">{{ $JSON | jsonify | safeHTML }}</script>

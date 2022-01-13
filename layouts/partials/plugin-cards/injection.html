@@ -1,20 +1,51 @@
-{{- /* Resolve plugin parameter values into the page scratch.*/ -}}
+{{/* Resolve plugin parameter values into the page scratch.*/}}
 {{- partial "plugin-cards/load-parameters.html" . -}}
 
-{{- /* Dump parameters to HTML comment when flagged. */ -}}
-{{- partial "plugin-cards/debug-print.html" (slice "" "plugin-cards.Parameters" .Scratch) -}}
+{{- with .Scratch.Get "plugin-cards.Parameters" -}}
 
-{{- /* Insert the plugin version and build time */ -}}
-{{- with (.Scratch.Get "plugin-cards.Parameters").Config.Version -}}
-{{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
-{{ printf "\n<!-- Cards v%s (built on %s) -->\n" . $time | safeHTML }}
+  {{- if .Config.DebugPrint -}}
+    {{- printf "\n<!--\nplugin-cards.Parameters:\n%s\n-->" (jsonify .) | safeHTML -}}
+  {{- end -}}
+
+  {{/* Insert the plugin version and build time */}}
+  {{- $time := (time (sub now.Unix 28800)).Format "Jan 2 at 15:04" -}}
+  {{ printf "\n<!-- Cards v%s (built on %s) -->\n" .Config.Version $time | safeHTML }}
+
 {{- end -}}
-
-{{- /* Inject the Twitter / Open Graph meta tags */ -}}
+  
+{{/* Inject the Twitter / Open Graph meta tags */}}
 {{- partial "plugin-cards/twitter-og/injection.html" . -}}
 
-{{- /* Inject the structured data meta tags */ -}}
+{{/* Inject the structured data meta tags */}}
 {{- partial "plugin-cards/structured-data/injection.html" . -}}
 
-{{- /* Inject the cardify Javascript and stylesheet */ -}}
+{{/* Check for use of cardify module shortcode */}}
+{{- $include_cardify := false -}}
+{{- if .IsNode -}}
+  {{- if .HasShortcode "card" -}}
+    {{- $include_cardify = true -}}
+  {{- else -}}
+    {{- range .Pages -}}     
+      {{- if .HasShortcode "card" -}} 
+        {{- $include_cardify = true -}}
+      {{- else -}}  
+        {{- range .Pages -}}
+          {{- if .HasShortcode "card" -}} 
+            {{- $include_cardify = true -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- else -}}
+  {{- if .HasShortcode "card" -}} 
+    {{- $include_cardify = true -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $include_cardify -}}
+
+{{- /* Inject the cardify stylesheet */ -}}
 {{- partial "plugin-cards/cardify/injection.html" . -}}
+
+{{- end }}

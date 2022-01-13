@@ -41,16 +41,7 @@
 {{- $Cardify := dict
   "Config" (dict
     "Fingerprint" true
-    "SassOutput" "nested"
-    "MinifyScript" false
-    "QueryMatch" true
-    "HostMatch" false
-    "URLFilter" ".*"
-    "QueryMatchOverridesFilter" true
-    "ReadMoreLink" ".read-more"
-    "ListSandbox" ".post-body"
-    "PageSandbox" "#post-body"
-    "CustomSelector" "")
+    "SassOutput" "nested")
   "Specifiers" (dict 
     "CardClassName" "cardify-card"
     "ImageClassName" "cardify-card-img"
@@ -102,6 +93,6 @@
   Insert the parameter map into the page scratch.
   ***********************************************/ -}}
   
-{{- .Scratch.Set "plugin-cards.Parameters" $Parameters -}}
+{{- .Page.Scratch.Set "plugin-cards.Parameters" $Parameters -}}
 
 {{- end }}

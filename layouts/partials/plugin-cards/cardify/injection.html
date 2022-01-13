@@ -1,24 +1,8 @@
 {{- with (.Scratch.Get "plugin-cards.Parameters").Cardify -}}
 
-{{- if (or .Config.QueryMatch .Config.HostMatch) -}}
-
-{{- partial "plugin-cards/debug-print.html" (slice "Cardify" "plugin-cards.Parameters" $.Scratch) -}}
-
-{{- $source_dir := "js/plugin-cards/" -}}
-{{- $template_name := "cardify.js" -}}
+{{- $source_dir := "sass/plugin-cards/" -}}
+{{- $template_name := "cardify.scss" -}}
 {{- $source := path.Join $source_dir $template_name -}}
-{{- $target := path.Join "assets" $source -}}
-
-{{- $script := resources.Get $source | resources.ExecuteAsTemplate $target $ -}}
-{{- if .Config.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
-{{- if .Config.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
-
-{{- print "\n" -}}
-<script src="{{ $script.Permalink }}"></script>
-
-{{- $source_dir = "sass/plugin-cards/" -}}
-{{- $template_name = "cardify.scss" -}}
-{{- $source = path.Join $source_dir $template_name -}}
 {{- $target := path.Join "assets" $source -}}
 {{- $style := resources.Get $source | resources.ExecuteAsTemplate $target $ -}} 
 
@@ -30,6 +14,5 @@
 
 {{- print "\n" -}}
 <link rel="stylesheet" href="{{ $style.Permalink }}">
-{{ end -}}
 
 {{- end }}

@@ -8,14 +8,10 @@
   */ -}}
 {{- partial "plugin-cards/twitter-og/load-registered.html" . -}}
 
-{{- partial "plugin-cards/debug-print.html" (slice "Meta Registered" "plugin-cards.TwitterOG" .Scratch) -}}
-
 {{- /* 
   Construct the attribute map from which the <meta> tags will draw.
   */ -}}
 {{- partial "plugin-cards/twitter-og/load-attributes.html" . -}}
-
-{{- partial "plugin-cards/debug-print.html" (slice "Attributes Loaded" "plugin-cards.TwitterOG" .Scratch) -}}
 
 {{- $Attributes := (.Scratch.Get "plugin-cards.TwitterOG").Attributes -}}
 
