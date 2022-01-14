@@ -2,31 +2,35 @@
   
 {{- if $Parameters.TwitterOG.Config.Enable -}}
 
-{{- /* 
+{{/* 
   Parse content for attribute values that have been
   registered via shortcode or query parameter.
-  */ -}}
-{{- partial "plugin-cards/twitter-og/load-registered.html" . -}}
+  */}}
+{{- partial "plugin-cards/twitter-og/parse-registered.html" . -}}
 
-{{- /* 
+{{- if $Parameters.Config.DebugPrint -}}
+{{- $Registered := (.Scratch.Get "plugin-cards.Parameters").TwitterOG.Registered -}}
+{{- printf "\n<!--plugin-cards.Parameters.TwitterOG.Registered:\n%s\n-->" ($Registered | jsonify) | safeHTML -}}
+{{- end -}}
+
+{{/* 
   Construct the attribute map from which the <meta> tags will draw.
-  */ -}}
+  */}}
 {{- partial "plugin-cards/twitter-og/load-attributes.html" . -}}
 
-{{- $Attributes := (.Scratch.Get "plugin-cards.TwitterOG").Attributes -}}
+{{- $Attributes := (.Scratch.Get "plugin-cards.Parameters").TwitterOG.Attributes -}}
 
+{{- if $Parameters.Config.DebugPrint -}}
+{{- printf "\n<!--plugin-cards.Parameters.TwitterOG.Attributes\n%s\n-->" ($Attributes | jsonify) | safeHTML -}}
+{{- end -}}
 
-{{- /* 
-  Insert the custom reading time attribute for posts. 
-  */ -}}
+{{/* Insert the custom reading time attribute for posts. */}}
   
 {{- if (eq .Type "post") -}}
 <meta property="article:reading_time" content="{{ $Attributes.reading_time }}" />
 {{ end -}}
 
-{{- /* 
-  Insert the shared Open Graph attributes 
-  */ -}}
+{{/* Insert the shared Open Graph attributes */}}
   
 {{- with $Attributes.published_time -}}
 <meta property="article:published_time" content="{{ . }}" />
@@ -74,9 +78,7 @@
 <meta property="og:image" content="{{ . | absURL }}" />
 {{ end -}}
 
-{{- /* 
-  Insert tags applicable for audio 
-  */ -}}
+{{/* Insert tags applicable for audio */}}
   
 {{- if (eq $Attributes.type $Parameters.Audio.Type) -}}
 
@@ -85,9 +87,7 @@
 <meta property="og:audio" content="{{ . | absURL }}" />
 {{ end -}}
 
-{{- /* 
-  Insert tags applicable for video 
-  */ -}}
+{{/* Insert tags applicable for video */}}
   
 {{- else if (eq $Attributes.type $Parameters.Video.Type) -}}
 
@@ -105,9 +105,7 @@
 
 {{- end -}}
 
-{{- /* 
-  Insert shared Twitter Card attributes 
-  */ -}}
+{{/* Insert shared Twitter Card attributes */}}
 
 {{- with $Attributes.url -}}
 <meta name="twitter:url" content="{{ . | absURL }}">  
@@ -141,9 +139,7 @@
 <meta name="twitter:card" content="{{ . }}"/>
 {{ end -}}
 
-{{- /* 
-  Insert attributes specific to player cards 
-  */ -}}
+{{/* Insert attributes specific to player cards */}}
   
 {{- if (eq $Attributes.card "player") -}}
   
@@ -159,6 +155,6 @@
 <meta name="twitter:player:height" content="{{ . }}" />
 {{ end -}}
 
-{{- end -}} {{- /* if (eq $Attributes.card "player") */ -}}
+{{- end -}} {{/* if (eq $Attributes.card "player") */}}
 
-{{- end -}} {{- /* if $parameters.Enable */ -}}
+{{- end -}} {{/* if $parameters.Enable */}}

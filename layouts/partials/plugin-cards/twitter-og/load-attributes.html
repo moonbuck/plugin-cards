@@ -1,249 +1,248 @@
 {{- /* Retrieve the parameter values */ -}}
-{{- $Parameters := (.Scratch.Get "plugin-cards.Parameters").TwitterOG -}}
+{{- $Parameters := .Scratch.Get "plugin-cards.Parameters" -}}
 
-{{- /* Retrieve the registration map from the page scratch. */ -}}
-{{- $Registered := (.Scratch.Get "plugin-cards.TwitterOG").Registered -}}
-
-{{- /* Capture the page path and trim off any query parameters */ -}}
-{{- $Path := (urls.Parse .Permalink).Path -}}
-{{- $Path = replaceRE "^([^?]+)(?:[?].+)?" "$1" $Path -}}
-    
-
-{{- /*
-  Grab attribute values that require no logic.
-  */ -}}
-
-{{- $reading_time := .ReadingTime -}}
-{{- $url := .Permalink -}}
-{{- $site_name := site.Title -}}
-{{- $domain := (urls.Parse site.BaseURL).Host -}}
-{{- $section := .Section -}}
-{{- $tags := .Params.categories -}}
-{{- $audio := $Registered.audio -}}
-{{- $video := $Registered.video -}}
-{{- $width := $Registered.width -}}
-{{- $height := $Registered.height -}}
-{{- $card := $Registered.card -}}
-{{- $type := $Registered.type -}}
-{{- $title := $Registered.title -}}
-{{- $description := $Registered.description -}}
-{{- $image := $Registered.image -}}
-{{- $is_default_image := false -}}
-
-{{- /*
-  Grab the Twitter username for the site and creator attributes.
-  */ -}}
+{{/* Grab attribute values that require no logic. */}}
   
+{{- $Attributes := dict 
+  "reading_time" .ReadingTime 
+  "url" .Permalink 
+  "site_name" site.Title
+  "domain" (urls.Parse site.BaseURL).Host
+  "section" .Section 
+  "tags" .Params.categories
+  -}}
+
+{{/* Merge in registered values. */}}
+{{- $Attributes = merge $Attributes $Parameters.TwitterOG.Registered -}}
+
+{{/* Grab the Twitter username for the site and creator attributes. */}}
 {{- $site := false -}}
 {{- $creator := false -}}
-{{- with $Parameters.Twitter.Username -}}
+{{- with $Parameters.TwitterOG.Twitter.Username -}}
 {{- $handle := printf "@%s" . -}}
-{{- $site = $handle -}}
-{{- $creator = $handle -}}
+{{- $Attributes = merge $Attributes (dict "site" $handle "creator" $handle) -}}
 {{- end -}}
 
-{{- /* 
-  
+{{/* 
   Determine content for the description using the following lookup order:
   
   1) A description value registered via shortcode.
   2) The page summary.
   3) The page description.
   4) A description value residing in the site parameters.
-  
-  */ -}}
-  
-{{- $description = $description | default .Summary -}}
-{{- $description = $description | default .Description -}}
-{{- $description = $description | default site.Params.description -}}
+  */}}
+{{- if not $Attributes.description -}}
 
-{{- /* 
-  Normalize the description value to plain text 
-  that is 200 characters or less before inserting. 
-  */ -}}
+  {{- $description := .Summary 
+                      | default .Description 
+                      | default site.Params.description -}}
   
-{{- with $description -}}
-{{- $description = . | markdownify | plainify | truncate 200 | chomp -}}  
+  {{/* 
+    Normalize the description value to plain text 
+    that is 200 characters or less before inserting. 
+    */}}
+    
+  {{- with $description -}}
+  {{- $description = . | markdownify | plainify | truncate 200 | chomp -}}  
+  {{- end -}}
+
+  {{- $Attributes = merge $Attributes (dict "description" $description) -}}
+
 {{- end -}}
 
-{{- /* 
+{{/* 
   Determine content for title using the following lookup order:
   1) A title value registered via shortcode or data attribute.
   2) The value of the title page variable.
   3) The description.
-  */ -}}
-  
-{{- $title = $title | default .Title -}}
-{{- $title = $title | default $description -}}
+  */}}
+{{- if not $Attributes.title -}}
+  {{- $title := .Title | default $description -}}
 
-{{- /* 
-  Normalize the title value to plain text 
-  that is 70 characters or less before inserting. 
-  */ -}}
+  {{/* 
+    Normalize the title value to plain text 
+    that is 70 characters or less before inserting. 
+    */}}
+    
+  {{- with $title -}}
+  {{- $title = . | markdownify | plainify | truncate 70 | chomp -}}
+  {{- end -}}
   
-{{- with $title -}}
-{{- $title = . | markdownify | plainify | truncate 70 | chomp -}}
+  {{- $Attributes = merge $Attributes (dict "title" $title) -}}
+  
 {{- end -}}
 
-{{- /* 
+{{/* Create a flag for whether the default image is used. */}}
+{{- $is_default_image := false -}}
+
+{{/* Capture the page path and trim off any query parameters */}}
+{{- $Path := (urls.Parse .Permalink).Path -}}
+{{- $Path = replaceRE "^([^?]+)(?:[?].+)?" "$1" $Path -}}
+
+{{/* 
   Grab the image using the following lookup order:
   1) The first image registered via shortcode or query parameter.
   2) The first image found in the page front matter.
   3) The image set in the card data for this page.
   4) The default image set in the card data.
-  */ -}}
+  */}}
+{{- if not $Attributes.image -}}
+  {{- $image := .Params.images -}}
   
-{{- $image = $image | default $Registered.images -}}
-{{- $image = $image | default .Params.images -}}
-
-{{- /* If we have a slice of images, grab the first one. */ -}}
-{{- if (reflect.IsSlice $image) -}}
-
-  {{- $image = index $image 0 -}}
-
-{{- /* If we still don't have an image */ -}}
-{{- else if (not $image) -}}
-
-  {{- /* Check for provided card images */ -}}
-  {{- with $Parameters.Images -}}
+  {{/* If we have a slice of images, grab the first one. */}}
+  {{- if (reflect.IsSlice $image) -}}
   
-    {{- /* Fetch the entry falling back to the default entry */ -}}  
-    {{- $image = (index . $Path) -}}
+    {{- $image = index $image 0 -}}
+  
+  {{/* If we still don't have an image */}}
+  {{- else if (not $image) -}}
     
-    {{- if (not $image) -}}
+    {{/* Check for provided card images */}}
+    {{- with $Parameters.TwitterOG.Images -}}
     
-      {{- $image = default (index . "default") -}}
+      {{/* Fetch the entry */}}  
+      {{- $image = (index . $Path) -}}
       
-      {{- if $image -}}
-        
-        {{- $is_default_image = true -}}  
-      
+      {{/* Fallback to the default image. */}}
+      {{- if (not $image) -}}
+        {{- $image = default (index . "default") -}}   
+        {{- if $image }}{{ $is_default_image = true }}{{ end -}}   
       {{- end -}}
+          
+    {{- end -}} {{/* with $Parameters.TwitterOG.Images */}}
     
-    {{- end -}}
-        
-  {{- end -}} {{- /* with $Parameters.Images */ -}}
+  {{- end -}} {{/* if (reflect.IsSlice $image) */}}
   
-{{- end -}} {{- /* if (reflect.IsSlice $image) */ -}}
+  {{- $Attributes = merge $Attributes (dict "image" $image) -}}
+  
+{{- end -}} {{/* if not $Attributes.image */}}
 
-{{- /* 
+{{/* 
   Process the dates. We'll use .PublishDate and .Lastmod
   for post pages and .Lastmod for non-post pages.
-  */ -}}
+  */}}
   
-{{- $published_time := false -}}
-{{- $modified_time := false -}}
-{{- $updated_time := false -}}
 {{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
 
 {{- if (eq .Type "post") -}}
 
-{{- $published_time = .PublishDate.Format $iso8601 -}}
-{{- $modified_time = .Lastmod.Format $iso8601 -}}
+  {{- $times := dict 
+    "published_time" (.PublishDate.Format $iso8601)
+    "modified_time" (.Lastmod.Format $iso8601) 
+    -}}
+  
+  {{- $Attributes = merge $Attributes $times -}}
 
 {{- else -}}
 
-{{- $updated_time = .Lastmod.Format $iso8601 -}}
+  {{- $Attributes = merge $Attributes (dict "updated_time" (.Lastmod.Format $iso8601)) -}}
 
 {{- end -}}
 
-{{- /* 
+{{/* 
   Resolve the Open Graph type.
-  */ -}}
+  */}}
 
-{{- /* Check whether an Open Graph type has been registered. */ -}}
-{{- if not $type -}}
+{{/* Check whether an Open Graph type has been registered. */}}
+{{- if not $Attributes.type -}}
 
-  {{- /* Otherwise look for registered audio */ -}}
-  {{- if $audio -}}
+  {{/* Otherwise look for registered audio */}}
+  {{- if $Attributes.audio -}}
   
-  {{- $type = $Parameters.Audio.Type -}}
+    {{- $Attributes = merge $Attributes (dict "type" $Parameters.TwitterOG.Audio.Type) -}}
   
   {{- /* Otherwise look for registered video */ -}}
-  {{- else if $video -}}
+  {{- else if $Attributes.video -}}
   
-  {{- $type = $Parameters.Video.Type -}}
+    {{- $Attributes = merge $Attributes (dict "type" $Parameters.TwitterOG.Video.Type) -}}
   
   {{- /* Otherwise check whether this is a single page */ -}}
   {{- else if .IsPage -}}
   
-  {{- $type = "article" -}}
+    {{- $Attributes = merge $Attributes (dict "type" "article") -}}
   
   {{- else -}}
   
-  {{- $type = "website" -}}
+    {{- $Attributes = merge $Attributes (dict "type" "website") -}}
   
-  {{- end -}} {{- /* if $Registered.audio */ -}}
+  {{- end -}}
   
-{{- end -}} {{- /* if not $type */ -}}
+{{- end -}}
 
-{{- /*
+{{/*
   Resolve the Twitter card attributes
   
   Configure width, height and player attributes 
   if video or audio has been registered; otherwise,
   configure Twitter summary card.
-  */ -}}
+  */}}
   
 {{- $player := false -}}
 
 {{- /* Check whether a Twitter card has been registered */ -}}
-{{- if not $card -}}
+{{- if not $Attributes.card -}}
 
+  {{/* Check for card assignment in Parameters */}}
+  {{- if (and $Parameters.TwitterOG.Twitter.Card.Assignments 
+              (index $Parameters.TwitterOG.Twitter.Card.Assignments $Path)) -}}
 
-  {{- /* Check for card assignment in Parameters */ -}}
-  {{- if (and $Parameters.Twitter.Card.Assignments (index $Parameters.Twitter.Card.Assignments $Path)) -}}
-
-  {{- $card = index $Parameters.Twitter.Card.Assignments $Path -}}
+    {{- $card := index $Parameters.TwitterOG.Twitter.Card.Assignments $Path -}}
+    {{- $Attributes = merge $Attributes (dict "card" $card) -}}
     
   {{- /* Otherwise use attribute values to determine card  */ -}}
-  {{- else if $video -}}
+  {{- else if $Attributes.video -}}
     
-    {{- $width = $width | default $Parameters.Video.Width -}}
-    {{- $height = $height | default $Parameters.Video.Height -}}
-    {{- $card = "player" -}}
-    {{- $player = $video -}}
+    {{- $player := dict
+      "width" ($Attributes.width | default $Parameters.TwitterOG.Video.Width)
+      "height" ($Attributes.height | default $Parameters.TwitterOG.Video.Height)
+      "card" "player"
+      "player" $Attributes.video
+      -}}
+    {{- $Attributes = merge $Attributes $player -}}
+      
+  {{/* Configure for audio if registered */}}
+  {{- else if $Attributes.audio -}}
     
-  {{- /* Configure for audio if registered */ -}}
-  {{- else if $audio -}}
+    {{- $player := dict
+      "width" ($Attributes.width | default $Parameters.TwitterOG.Audio.Width)
+      "height" ($Attributes.height | default $Parameters.TwitterOG.Audio.Height)
+      "card" "player"
+      "player" $Attributes.audio
+      -}}
+    {{- $Attributes = merge $Attributes $player -}}
     
-    {{- $width = $width | default $Parameters.Audio.Width -}}
-    {{- $height = $height | default $Parameters.Audio.Height -}}
-    {{- $card = "player" -}}
-    {{- $player = $audio -}}
-    
-  {{- /* 
+  {{/* 
     Otherwise configure for summary using card preference settings 
-    */ -}}
+    */}}
   {{- else -}}
     
-      {{- /* Fetch the preferences out of the parameters */ -}}
-      {{- with $Parameters.Twitter.Card.Preference -}}
+      {{/* Fetch the preferences out of the parameters */}}
+      {{- with $Parameters.TwitterOG.Twitter.Card.Preference -}}
       
         {{- $require_image := .LargeSummaryRequiresImage -}}
         {{- $preference := cond $.IsPage .SinglePage .ListPage -}}
         
-        {{- /* Override the large preference if we require a missing image */ -}}
+        {{/* Override the large preference if we require a missing image */}}
         {{- if (and (and (eq $preference "large") (not $image)) $require_image) -}}      
           {{- $preference = "small" -}}
           
-        {{- /* Or if we had to use the default image */ -}}
+        {{/* Or if we had to use the default image */}}
         {{- else if $is_default_image -}}
           {{- $preference = "small" -}}
         
         {{- end -}}
         
-        {{- /* Update the card variable value */ -}}
-        {{- $card = cond (eq $preference "large") "summary_large_image" "summary" -}}
+        {{/* Update the card variable value */}}
+        {{- $card := cond (eq $preference "large") "summary_large_image" "summary" -}}
+        
+        {{- $Attributes = merge $Attributes (dict "card" $card) -}}
       
-      {{- end -}} {{- /* with $Parameters.Twitter.CardPreference */ -}}
+      {{- end -}}
       
-  {{- end -}} {{- /* if (and $Parameters.Cards (index $Parameters.Cards $Path)) */ -}}
+  {{- end -}}
     
-{{- end -}} {{- /* if not $card */ -}}
+{{- end -}}
 
-{{- $Attributes := dict "reading_time" $reading_time "url" $url "site_name" $site_name "domain" $domain "section" $section "tags" $tags "site" $site "creator" $creator "description" $description "title" $title "image" $image "published_time" $published_time "modified_time" $modified_time "updated_time" $updated_time "audio" $audio "video" $video "type" $type "width" $width "height" $height "card" $card "player" $player -}}
+{{- $Parameters = merge $Parameters (dict (slice "TwitterOG" "Attributes") $Attributes) -}}
 
-{{- $TwitterOG := dict "Registered" $Registered "Attributes" $Attributes -}}
-
-{{- .Scratch.Set "plugin-cards.TwitterOG" $TwitterOG -}}
+{{- .Scratch.Set "plugin-cards.Parameters" $Parameters -}}
