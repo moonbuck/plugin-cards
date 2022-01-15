@@ -8,61 +8,67 @@
 
 {{/* Parse the card-config comment key-value pairs if present. */}}
 
-{{- $pattern := `<!--card-config\n(.|\n)+\n-->` -}}
+{{- $pattern := `<!--card-config(.|\n)+-->` -}}
 {{- with findRE $pattern $content -}}
 
-  {{- $inner := replaceRE $pattern "$1" (index . 0) | chomp -}}
+  {{- $text := index . 0 -}}  
+  {{- $inner := substr $text 16 -4 -}}
+  {{- printf "\n<!-- inner = %#v -->\n" $inner | safeHTML -}}
+  
   {{- $lines := split $inner "\n" -}}
+  {{- printf "\n<!-- lines = %#v -->\n" $lines | safeHTML -}}
   
   {{- range $lines -}}
 
-  {{/* Separate the key and value */}}
+  <!-- Separate the key and value -->
   {{- $key_value := split . "=" -}}
-  {{- if (len $key_value 2) -}}
+  {{- if (eq (len $key_value) 2) -}}
   
     {{- $key := index $key_value 0 -}}
     
-    {{/* Correct for autolinking */}}
+    <!-- Correct for autolinking -->
     {{- $url_re := `[[][^]]+[]][(]([^)]+)[)]` -}}
     {{- $value := replaceRE $url_re "$1" (index $key_value 1) -}}
     
-    {{/* Load the entry into the map */}}
+    {{- printf "\n<!-- %s = %s -->\n" $key $value | safeHTML -}}
+    
+    <!-- Load the entry into the map -->
     {{- $registered = merge $registered (dict $key $value) -}}
     
-  {{- end -}} {{/* if (len $key_value 2) */}}
+  {{- end -}} <!-- if (len $key_value 2) -->
   
-  {{- end -}} {{/* range $lines */}}
+  {{- end -}} <!-- range $lines -->
 
-{{- end -}} {{/* with findRE $pattern $content */}}
+{{- end -}} <!-- with findRE $pattern $content -->
 
 {{/* Check for a standalone title declaration. */}}
-{{- $pattern = `<h[0-9][^>]+data-card-title="([^"]+)"` -}}
+{{- $pattern = `data-card-title=["']([^"']+)["']` -}}
 {{- with findRE $pattern $content -}}
 {{- $title := replaceRE $pattern "$1" (index . 0) -}}
 {{- $registered = merge $registered (dict "title" $title) -}}
 {{- end -}}
 
 {{/* Check for a standalone image declaration. */}}
-{{- $pattern = `<img[^>]+src="([^"]+)\?[^"]*card-image[^"]*"` -}}
+{{- $pattern = `["']([^"']+)\?card-image["']` -}}
 {{- with findRE $pattern $content -}}
 {{- $image := replaceRE $pattern "$1" (index . 0) -}}
 {{- $registered = merge $registered (dict "image" $image) -}}
 {{- end -}}
 
 {{/* Check for a standalone audio declaration. */}}
-{{- $pattern = `<audio[^>]+src="([^"]+)\?[^"]*card-audio[^"]*"` -}}
+{{- $pattern = `["']([^"']+)\?card-audio["']` -}}
 {{- with findRE $pattern $content -}}
 {{- $audio := replaceRE $pattern "$1" (index . 0) -}}
 {{- $registered = merge $registered (dict "audio" $audio)  -}}
 {{- end -}}
 
 {{/* Check for a standalone video declaration. */}}
-{{- $pattern = `<video[^>]+src="([^"]+)\?[^"]*card-video[^"]*"` -}}
+{{- $pattern = `["']([^"']+)\?card-video["']` -}}
 {{- with findRE $pattern $content -}}
 {{- $video := replaceRE $pattern "$1" (index . 0) -}}
 {{- $registered = merge $registered  (dict "video" $video) -}}
 {{- end -}}
 
-{{- $Parameters := .Scratch.Get "plugin-cards.Parameters" -}}
+{{- $Parameters := .Scratch.Get "plugin-cards.Parameters" | default dict -}}
 {{- $Parameters = merge $Parameters (dict (slice "TwitterOG" "Registered") $registered) -}}
 {{- .Scratch.Set "plugin-cards.Parameters" $Parameters -}}

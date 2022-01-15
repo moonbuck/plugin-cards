@@ -55,7 +55,7 @@
   
     {{/* Scrape the page for meta tag attributes. */}}
     {{- $tags := partial "plugin-cards/cardify/scrape-page.html" . -}}
-    
+
     {{- with $tags.description -}}  
     {{- $tags = merge $tags (dict "summary" .) -}}
     {{- end -}}

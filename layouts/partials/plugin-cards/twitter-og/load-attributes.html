@@ -57,7 +57,7 @@
   3) The description.
   */}}
 {{- if not $Attributes.title -}}
-  {{- $title := .Title | default $description -}}
+  {{- $title := .Title | default $Attributes.description -}}
 
   {{/* 
     Normalize the title value to plain text 
@@ -223,7 +223,7 @@
         {{- $preference := cond $.IsPage .SinglePage .ListPage -}}
         
         {{/* Override the large preference if we require a missing image */}}
-        {{- if (and (and (eq $preference "large") (not $image)) $require_image) -}}      
+        {{- if (and (and (eq $preference "large") (not $Attributes.image)) $require_image) -}}      
           {{- $preference = "small" -}}
           
         {{/* Or if we had to use the default image */}}

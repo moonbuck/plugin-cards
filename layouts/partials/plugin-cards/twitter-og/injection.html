@@ -80,7 +80,7 @@
 
 {{/* Insert tags applicable for audio */}}
   
-{{- if (eq $Attributes.type $Parameters.Audio.Type) -}}
+{{- if (eq $Attributes.type $Parameters.TwitterOG.Audio.Type) -}}
 
 
 {{- with $Attributes.audio -}}
@@ -89,7 +89,7 @@
 
 {{/* Insert tags applicable for video */}}
   
-{{- else if (eq $Attributes.type $Parameters.Video.Type) -}}
+{{- else if (eq $Attributes.type $Parameters.TwitterOG.Video.Type) -}}
 
 {{- with $Attributes.width -}}
 <meta property="og:video:width" content="{{ . }}" />

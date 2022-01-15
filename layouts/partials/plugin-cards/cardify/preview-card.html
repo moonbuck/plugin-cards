@@ -61,7 +61,7 @@
 {{- else if (and (eq .type "audio") .audio) -}}
 <audio src="{{ .audio }}" class="{{ $audio_class }}" controls preload="metadata"></audio>
 {{- else if (and (eq .type "video") .video) -}}
-<video src="{{ .video }}" class="{{ $video_class }}" playsinline autoplay muted loop controls></video>
+<video src="{{ .video }}" class="{{ $video_class }}" playsinline autoplay muted loop></video>
 {{- end }}
 <div class="{{ $body_class }}">
     {{ with .title }}<h3 class="{{ $title_class }}">{{ . }}</h3>{{ end }}

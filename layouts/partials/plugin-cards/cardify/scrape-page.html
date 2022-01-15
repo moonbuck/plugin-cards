@@ -11,7 +11,7 @@
 {{- range findRE $pattern . -}}
 
 {{- $key := replaceRE $pattern "$1" . -}}
-{{- $value := replaceRE $pattern "$2" . -}}
+{{- $value := replaceRE $pattern "$2" . | htmlUnescape -}}
 {{- $attributes.SetInMap "twitter" $key $value -}}
 
 {{- end -}}
@@ -22,7 +22,7 @@
 {{- range findRE $pattern . -}}
 
 {{- $key := replaceRE $pattern "$1" . -}}
-{{- $value := replaceRE $pattern "$2" . -}}
+{{- $value := replaceRE $pattern "$2" . | htmlUnescape -}}
 {{- $attributes.SetInMap "og" $key $value -}}
 
 {{- end -}}
@@ -33,7 +33,7 @@
 {{- range findRE $pattern . -}}
 
 {{- $key := replaceRE $pattern "$1" . -}}
-{{- $value := replaceRE $pattern "$2" . -}}
+{{- $value := replaceRE $pattern "$2" . | htmlUnescape -}}
 
 {{- if (eq $key "tag") -}}
 
