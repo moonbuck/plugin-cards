@@ -148,9 +148,9 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
         justify-content: space-between;
         align-content: stretch;
         @include padding-top(.5em);
-        border-top-width: $border-width;
-        border-top-color: rgba(black, .125);
-        border-top-style: solid;
+        //border-top-width: $border-width;
+        //border-top-color: rgba(black, .125);
+        //border-top-style: solid;
         
         &.horizontal {
           @media (max-width: 600px) { justify-content: center; }
