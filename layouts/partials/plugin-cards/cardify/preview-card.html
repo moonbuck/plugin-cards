@@ -4,73 +4,40 @@
   
   Parameters:
   
-    url: The URL of the card's target.
-    
-    specifiers: The specifiers as loaded into the page scratch.
-    
-    layout: horizontal or vertical.
-    
-    type: summary, video, or audio.
-    
-    image: The image URL for summary cards.
-    
-    audio: The audio URL for audio cards.
-    
-    video: The video URL for video cards.
-    
+    url: The URL of the card's target.    
+    class:        The class name to assign to the wrapper.
+    layout:       horizontal or vertical.
+    type:         summary, video, or audio.
+    image:        The image URL for summary cards.
+    audio:        The audio URL for audio cards.
+    video:        The video URL for video cards.
     reading_time: The reading time value.
-    
     publish_date: The linked content's publish date.
   
   */}}
 
-{{- if (and .specifiers (and .layout (and .url .type))) -}}
+{{- if (and .class (and .layout (and .url .type))) -}}
 
-{{/* Grab the individual specifiers. */}}
-{{- $card_class := .specifiers.CardClassName -}}
-{{- $image_class := .specifiers.ImageClassName -}}
-{{- $audio_class := .specifiers.AudioClassName -}}
-{{- $video_class := .specifiers.VideoClassName -}}
-{{- $body_class := .specifiers.BodyClassName -}}
-{{- $title_class := .specifiers.TitleClassName -}}
-{{- $text_class := .specifiers.TextClassName -}}
-{{- $link_class := .specifiers.LinkClassName -}}
-{{- $reading_time_class := .specifiers.ReadingTimeClassName -}}
-{{- $publish_date_class := .specifiers.PublishDateClassName -}}
-
-{{/* Determine whether the card is meant to be horizontal */}}
-{{- $horizontal := eq .layout "horizontal" -}}
-
-{{/* Adjust class names if so */}}
-{{- if $horizontal -}}
-
-{{- $card_class = printf "%s horizontal" $card_class -}}
-{{- $image_class = printf "%s horizontal" $image_class -}}
-{{- $body_class = printf "%s horizontal" $body_class -}}
-{{- $title_class = printf "%s horizontal" $title_class -}}
-{{- $text_class = printf "%s horizontal" $text_class -}}
-{{- $link_class = printf "%s horizontal" $link_class -}}
-{{- $reading_time_class = printf "%s horizontal" $reading_time_class -}}
-{{- $publish_date_class = printf "%s horizontal" $publish_date_class -}}
-
-{{- end -}}
-
-<div class="{{ $card_class }}">
-{{- if (and (eq .type "summary") .image) -}}
-<img src="{{ .image }}" class="{{ $image_class }}" />
-{{- else if (and (eq .type "audio") .audio) -}}
-<audio src="{{ .audio }}" class="{{ $audio_class }}" controls preload="metadata"></audio>
-{{- else if (and (eq .type "video") .video) -}}
-<video src="{{ .video }}" class="{{ $video_class }}" playsinline autoplay muted loop></video>
-{{- end }}
-<div class="{{ $body_class }}">
-    {{ with .title }}<h3 class="{{ $title_class }}">{{ . }}</h3>{{ end }}
-    {{ with .summary }}<p class="{{ $text_class }}">{{ . | safeHTML }}</p>{{ end }}
-    <a href="{{ .url }}" class="{{ $link_class }}"></a>
-    <p class="{{ $text_class }}">
-      {{ with .publish_date }}<small><span class="{{ $publish_date_class }}">{{ . }}</span></small>{{ end }}
-      {{ with .reading_time }}<small class="{{ $reading_time_class }}">reading time <span>{{ . }}</span></small>{{ end }}
-    </p>
+<div class="{{ .class }}{{ if (eq .layout "horizontal") }} horizontal{{ end }}">
+  {{- if (and (eq .type "summary") .image) -}}
+  <img src="{{ .image }}" />
+  {{- else if (and (eq .type "audio") .audio) -}}
+  <audio src="{{ .audio }}" controls preload="metadata"></audio>
+  {{- else if (and (eq .type "video") .video) -}}
+  <video src="{{ .video }}" playsinline autoplay muted loop></video>
+  {{- end }}
+  <div>
+      {{ with .title }}<h3>{{ . }}</h3>{{ end }}
+      {{ with .summary }}<p>{{ . | safeHTML }}</p>{{ end }}
+      <a href="{{ .url }}"></a>
+      <p>
+      {{- with .publish_date -}}
+        <small>{{ . }}</small>
+      {{- end -}}
+      {{- if (and (eq .type "summary") .reading_time) -}}
+        <small>reading time {{ .reading_time }}</small>
+      {{- end -}}
+      </p>
   </div>
 </div>
 

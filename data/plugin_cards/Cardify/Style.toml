@@ -1,6 +1,10 @@
 # Parameters for styling preview cards
 ######################################
 
+# The class name to assign to the card wrapper.
+#
+ClassName = 'cardify-card'
+
 # Sass block to apply to the card container.
 #
 Card = '''

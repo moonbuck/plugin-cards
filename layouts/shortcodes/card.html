@@ -81,7 +81,7 @@
     {{- $params := dict
       "type" $type
       "layout" $layout
-      "specifiers" ($.Page.Scratch.Get "plugin-cards.Parameters").Cardify.Specifiers
+      "class" ($.Page.Scratch.Get "plugin-cards.Parameters").Cardify.Style.ClassName
       -}}
     {{- $params := merge $tags $params -}}
        

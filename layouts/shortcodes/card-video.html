@@ -1,41 +1,15 @@
-{{- $src := false -}}
-{{- $autoplay := false -}}
-{{- $loop := false -}}
-
-{{- if .IsNamedParams -}}
-
-{{- $src = .Get "src" -}}
-
-{{- $autoplay = .Get "autoplay" -}}
-{{- if (and $autoplay (eq "true" $autoplay)) -}}
-{{ $autoplay = true -}}
-{{- else -}}
-{{- $autoplay = false -}}
-{{- end -}}
-{{- $loop = .Get "loop" -}}
-{{- if (and $loop (eq "true" $loop)) -}}
-{{- $loop = true -}}
-{{- else -}}
-{{- $loop = false -}}
-{{- end -}}
-
-{{- else -}}
-
-{{- $src = .Get 0 -}}
-{{- if $src -}}
-  {{- $pattern := `^[[][^]]*[]][(]([^)]+)[)]` -}}
-  {{- with (findRE $pattern $src) -}}
-    {{- $src = replaceRE $pattern "$1" (index . 0) -}}
-  {{- end -}}
-{{- end -}}
-{{- $rest := slice (.Get 1) (.Get 2) -}}
-{{- if (in $rest "autoplay") }}{{ $autoplay = true }}{{ end -}}
-{{- if (in $rest "loop") }}{{ $loop = true }}{{ end -}}
-
-{{- end -}}
-
+{{- $src := cond .IsNamedParams 
+  .Get "src"
+  (.Get 0 | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1") 
+  -}}
+  
+{{- $attr := cond .IsNamedParams 
+ .Get "attr"
+ (delimit ($.Params | after 1) " ") 
+ -}}
+  
 {{- if $src -}}
 
-<video controls playsinline src="{{ $src }}?card-video"{{ if $autoplay }} autoplay muted{{ end }}{{ if $loop }} loop{{ end }}></video>
+<video playsinline src="{{ $src }}?card-video" {{ $attr }}></video>
 
 {{- end }}
