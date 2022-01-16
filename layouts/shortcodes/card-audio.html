@@ -1,8 +1,6 @@
 {{- $src := cond .IsNamedParams 
-  .Get "src"
-  (.Get 0 | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1") 
-  -}}
-  
+  (.Get "src")
+  (.Get 0 | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1") -}}
 {{- if $src -}}
 
 <audio src="{{ $src }}?card-audio" preload="metadata" controls></audio>

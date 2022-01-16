@@ -1,5 +1,5 @@
 {{- $src := cond .IsNamedParams 
-  .Get "src"
+  (.Get "src")
   (.Get 0 | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1") 
   -}}
   

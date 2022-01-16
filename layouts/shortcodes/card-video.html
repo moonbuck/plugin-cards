@@ -1,10 +1,10 @@
 {{- $src := cond .IsNamedParams 
-  .Get "src"
+  (.Get "src")
   (.Get 0 | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1") 
   -}}
   
 {{- $attr := cond .IsNamedParams 
- .Get "attr"
+ (.Get "attr")
  (delimit ($.Params | after 1) " ") 
  -}}
   
