@@ -2,14 +2,19 @@
   (.Get "src")
   (.Get 0 | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1") 
   -}}
-  
-{{- $attr := cond .IsNamedParams 
- (.Get "attr")
- (delimit ($.Params | after 1) " ") 
- -}}
-  
+
+{{- $attr := .Get "attr" -}}
+{{- if not .IsNamedParams -}}
+  {{- $attr = delimit ($.Params | after 1) " " -}}
+{{- end -}}
+
 {{- if $src -}}
 
-<video playsinline src="{{ $src }}?card-video" {{ $attr }}></video>
+<video src="{{ $src }}?card-video"
+{{- if not (in $attr "no-playsinline") -}} playsinline{{ end -}}
+{{- if (in $attr "autoplay") }} autoplay muted{{ end -}}
+{{- if not (in $attr "no-controls") }} controls{{ end -}}
+{{- if (in $attr "loop") }} loop{{ end -}}
+></video>
 
 {{- end }}
