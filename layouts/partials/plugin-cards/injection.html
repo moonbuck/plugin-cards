@@ -43,6 +43,13 @@
   {{- end -}}
 {{- end -}}
 
+{{/* Check for a link with the cardify query parameter. */}}
+{{- if not $include_cardify -}}
+  {{- if findRE `\?cardify` .Content -}}
+    {{- $include_cardify = true -}}
+  {{- end -}}
+{{- end -}}
+
 {{- if $include_cardify -}}
 
 {{- /* Inject the cardify stylesheet */ -}}
