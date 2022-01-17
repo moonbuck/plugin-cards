@@ -45,9 +45,28 @@
 
 {{/* Check for a link with the cardify query parameter. */}}
 {{- if not $include_cardify -}}
-  {{- if findRE `\?cardify` .Content -}}
-    {{- $include_cardify = true -}}
-  {{- end -}}
+  {{- if .IsNode -}}
+    {{- if (findRE `\?cardify` .Content) -}}
+      {{- $include_cardify = true -}}
+    {{- else -}}
+      {{- range .Pages -}}     
+        {{- if (findRE `\?cardify` .Content) -}} 
+          {{- $include_cardify = true -}}
+        {{- else -}}  
+          {{- range .Pages -}}
+            {{- if (findRE `\?cardify` .Content) -}} 
+              {{- $include_cardify = true -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- if (findRE `\?cardify` .Content) -}} 
+      {{- $include_cardify = true -}}
+    {{- end -}}
+{{- end -}}
+
 {{- end -}}
 
 {{- if $include_cardify -}}

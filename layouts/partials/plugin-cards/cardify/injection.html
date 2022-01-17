@@ -1,30 +1,56 @@
+{{- $include_script := false -}}
+{{- if .IsNode -}}
+  {{- if (findRE `\?cardify` .Content) -}}
+    {{- $include_script = true -}}
+  {{- else -}}
+    {{- range .Pages -}}     
+      {{- if (findRE `\?cardify` .Content) -}} 
+        {{- $include_script = true -}}
+      {{- else -}}  
+        {{- range .Pages -}}
+          {{- if (findRE `\?cardify` .Content) -}} 
+            {{- $include_script = true -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- else -}}
+  {{- if (findRE `\?cardify` .Content) -}} 
+    {{- $include_script = true -}}
+  {{- end -}}
+{{- end -}}
 {{- with (.Scratch.Get "plugin-cards.Parameters").Cardify -}}
 
-{{- $source_dir := "js/plugin-cards/" -}}
-{{- $template_name := "cardify.js" -}}
-{{- $source := path.Join $source_dir $template_name -}}
-{{- $target := path.Join "assets" $source -}}
-
-{{- $script := resources.Get $source | resources.ExecuteAsTemplate $target $ -}}
-{{- if .Config.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
-{{- if .Config.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
-
-{{- print "\n" -}}
-<script src="{{ $script.Permalink }}"></script>
-
-{{- $source_dir = "sass/plugin-cards/" -}}
-{{- $template_name = "cardify.scss" -}}
-{{- $source = path.Join $source_dir $template_name -}}
-{{- $target = path.Join "assets" $source -}}
-{{- $style := resources.Get $source | resources.ExecuteAsTemplate $target $ -}} 
-
-{{- $target = $target | replaceRE "sass|scss" "css" -}}
-{{- $options := dict "targetPath" $target  "outputStyle" .Config.SassOutput -}}
-{{- $style = $style | toCSS $options -}}
-
-{{- if .Config.Fingerprint }}{{ $style = $style | fingerprint }}{{ end -}}
-
-{{- print "\n" -}}
+  {{- $source_dir := "sass/plugin-cards/" -}}
+  {{- $template_name := "cardify.scss" -}}
+  {{- $source := path.Join $source_dir $template_name -}}
+  {{- $target := path.Join "assets" $source -}}
+  {{- $style := resources.Get $source | resources.ExecuteAsTemplate $target $ -}} 
+  
+  {{- $target = $target | replaceRE "sass|scss" "css" -}}
+  {{- $options := dict "targetPath" $target  "outputStyle" .Config.SassOutput -}}
+  {{- $style = $style | toCSS $options -}}
+  
+  {{- if .Config.Fingerprint }}{{ $style = $style | fingerprint }}{{ end -}}
+  
+  {{- print "\n" -}}
 <link rel="stylesheet" href="{{ $style.Permalink }}">
+
+
+  {{- if $include_script -}}
+    {{- $source_dir = "js/plugin-cards/" -}}
+    {{- $template_name = "cardify.js" -}}
+    {{- $source = path.Join $source_dir $template_name -}}
+    {{- $target = path.Join "assets" $source -}}
+    
+    {{- $script := resources.Get $source | resources.ExecuteAsTemplate $target $ -}}
+    {{- if .Config.MinifyScript }}{{ $script = $script | minify }}{{ end -}}
+    {{- if .Config.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
+    
+    {{- print "\n" -}}
+<script src="{{ $script.Permalink }}"></script>
+  
+  {{- end -}}
 
 {{- end }}
