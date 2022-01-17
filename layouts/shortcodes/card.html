@@ -5,6 +5,7 @@
   Parameters:
     url: The page's URL.
     layout: (optional) horizontal or vertical. The default is vertical.
+    cross: (optional) true or false. The default is false.
   
   */}}
   
@@ -14,31 +15,17 @@
 {{- end -}}
  
 {{/* Declare the variables with their default values. */}}
-{{- $url := "" -}}
-{{- $layout := "vertical" -}}
-
-{{/* Check for named parameters. */}}
-{{- if .IsNamedParams -}}
-
-{{- $url = .Get "url" -}}
-
-{{- if (eq (.Get "layout") "horizontal") -}}
-{{- $layout = "horizontal" -}}
-{{- end -}}
-
-{{/* Otherwise process positional parameters. */}}
-{{- else -}}
-
-{{- $url = .Get 0 -}}
-
-{{- if (and (len .Params | eq 2) (.Get 1 | eq "horizontal")) -}}
-{{- $layout = "horizontal" -}}
-{{- end -}}
-
-{{- end -}}
-
-{{/* Extract URL value if autolinked. */}}
-{{- $url = replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1" $url -}}
+{{- $url := cond .IsNamedParams
+  (.Get "url")
+  (.Get 0 | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1") -}}
+  
+{{- $layout := (cond .IsNamedParams
+  (.Get "layout")
+  (.Get 1)) | default "vertical" -}}
+  
+{{- $cross := cond .IsNamedParams 
+  (and (.Get "cross") (eq (.Get "cross") "true"))
+  (and (.Get 2) (eq (.Get 2) "cross")) -}}
 
 {{/* Fetch the page. */}}
 {{- with resources.GetRemote $url -}}
@@ -84,8 +71,24 @@
       "class" ($.Page.Scratch.Get "plugin-cards.Parameters").Cardify.Style.ClassName
       -}}
     {{- $params := merge $tags $params -}}
-       
-    {{- partial "plugin-cards/cardify/preview-card.html" $params -}}
+    
+    {{/* 
+      If flagged for cross posting, drop an anchor 
+      and comment out the generated preview card 
+      */}}
+    {{- if $cross -}}
+    
+      <a class="cardify" href="{{ $url | safeHTMLAttr }}">{{ $url | safeHTML }}
+        {{- printf "<!--" | safeHTML -}}
+        {{- partial "plugin-cards/cardify/preview-card.html" $params -}}
+        {{- printf "-->" | safeHTML -}} </a>
+      
+    {{/* Otherwise just drop the generated preview card */}}
+    {{- else -}}
+    
+      {{- partial "plugin-cards/cardify/preview-card.html" $params -}}
+    
+    {{- end -}}
      
   {{- end -}} {{/* with .Err */}}
 
