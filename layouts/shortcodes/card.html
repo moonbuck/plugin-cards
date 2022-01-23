@@ -16,7 +16,7 @@
  
 {{/* Declare the variables with their default values. */}}
 {{- $url := cond .IsNamedParams
-  (.Get "url")
+  (.Get "url" | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1")
   (.Get 0 | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1") -}}
   
 {{- $layout := (cond .IsNamedParams
