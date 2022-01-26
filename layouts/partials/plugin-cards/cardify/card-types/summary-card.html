@@ -1,0 +1,34 @@
+{{/* 
+ 
+  Generates a summary preview card.
+  
+  Required parameters:
+    url:          The URL of the card's target.    
+    class:        The class name to assign to the wrapper.
+    layout:       horizontal or vertical.
+    type:         summary, video, or audio.
+    
+  Optional parameters:
+    image:        The image URL for summary cards.
+    audio:        The audio URL for audio cards.
+    video:        The video URL for video cards.
+    reading_time: The reading time value.
+    publish_date: The linked content's publish date.
+  
+  */}}
+
+{{- /* Check that a url was provided. */ -}}
+{{ if .url -}}
+  {{- with .image }}<img src="{{ . }}" />{{ end -}}
+  <div>
+    {{- with .title }}<h3>{{ . }}</h3>{{ end -}}
+    {{- with .summary }}<p>{{ . | safeHTML }}</p>{{ end -}}
+    <a href="{{ .url }}"></a>
+  {{- if (or .publish_date .reading_time) -}}
+    <p>
+      {{- with .publish_date }}<small>{{ . }}</small>{{ end -}}
+      {{- with .reading_time }}<small>reading time {{ . }}</small>{{ end -}}
+    </p>
+  {{- end -}} {{- /* if (or .publish_date .reading_time) */ -}}
+  </div>
+{{- end }}

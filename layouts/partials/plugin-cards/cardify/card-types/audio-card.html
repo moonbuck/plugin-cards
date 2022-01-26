@@ -1,0 +1,28 @@
+{{/* 
+ 
+  Generates a summary preview card.
+  
+  Required parameters:
+    url:          The URL of the card's target.    
+    audio:        The audio URL for audio cards.
+    
+  Optional parameters:
+    image:        The image URL for summary cards.
+    
+  */}}
+
+{{- /* Check that a url and some audio were provided. */ -}}
+{{ if (and .url .audio) -}}
+
+  {{- with .image }}<img src="{{ . }}" />{{ end -}}
+  {{- with .audio -}}
+  <audio src="{{ . }}" controls preload="metadata"></audio>
+  {{- end -}}
+  <div>
+    {{- with .title }}<h3>{{ . }}</h3>{{ end -}}
+    {{- with .summary }}<p>{{ . | safeHTML }}</p>{{ end -}}
+    <a href="{{ .url }}"></a>    
+    {{- with .publish_date }}<p><small>{{ . }}</small></p>{{ end -}}    
+    </div>
+    
+{{- end }}

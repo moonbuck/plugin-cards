@@ -41,7 +41,6 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
   border-style: solid;  
   border-width: $border-width;
   border-radius: $border-radius;
-  
   {{ with .Style.Card }}{{ template "rfs-wrap" . }}{{ end }}
 
   // The card image
@@ -55,17 +54,6 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
     border-top-right-radius: $inner-border-radius;
   }
   
-  // The card audio
-  audio {
-    width: 100%;
-    aspect-ratio: 1200 / 628;
-    object-fit: cover;
-    padding: 0;
-    margin: 0;
-    border-top-left-radius: $inner-border-radius;
-    border-top-right-radius: $inner-border-radius;
-  }
-
   // The card video
   video {
     width: 100%;
@@ -76,7 +64,13 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
     border-top-left-radius: $inner-border-radius;
     border-top-right-radius: $inner-border-radius;    
   }
-
+  
+  audio {
+    width: 100%;
+    position: relative;
+    top: -24px;
+  }
+  
   // The card body containing the title, description, 
   // date and reading time.
   div {
@@ -122,12 +116,6 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
         &:empty { display: none; }       
       }
       
-      // The reading time.
-      small:last-child {
-        color: #9091AB;        
-        {{ with .Style.ReadingTime }}{{ template "rfs-wrap" . }}{{ end }}    
-      }
-      
       // The publish date.
       small:first-child {
         color: #666;        
@@ -135,6 +123,10 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
       }
       
     } // p
+        
+  } // div
+  
+  &.type-summary div {
     
     // Stretching the invisble link across the entire card.
     a::after {
@@ -147,8 +139,45 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
       content: "";
     }
     
-  } // div
+    // The reading time.
+    p small:last-child {
+      color: #9091AB;        
+      {{ with .Style.ReadingTime }}{{ template "rfs-wrap" . }}{{ end }}    
+    }  
+    
+  }
 
+  &.type-video div {
+  
+    // Stretching the invisble link across the entire card.
+    a::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      content: "";
+    }
+      
+  }
+  
+  &.type-audio div {
+    position: relative; 
+
+    // Stretching the invisble link across the entire card.
+    a::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      content: "";
+    }
+    
+  }
+  
 } // .Style.ClassName
 
 // Overrides for horizontal cards
@@ -165,16 +194,6 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
     border-bottom-left-radius: $inner-border-radius;
   }
   
-  // The card audio
-  audio {
-    width: 30%;
-    aspect-ratio: 1 / 1;
-    height: auto;
-    object-fit: cover;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: $inner-border-radius;
-  }
-
   // The card video
   video {
     width: 30%;
@@ -184,7 +203,7 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
     border-top-right-radius: 0;
     border-bottom-left-radius: $inner-border-radius;      
   }
-
+  
   /// The card title
   h3 { @media (max-width: 600px) { text-align: center; } }
 
@@ -195,13 +214,25 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
     &:not(&:last-child) { @media (max-width: 600px) { display: none; } }
     
     // Just the time/date/reading-time
-    &:last-child { @media (max-width: 600px) { justify-content: center; } }
-    
-    // The reading time.
-    small:last-child { @media (max-width: 600px) { display: none; } }
+    &:last-child { 
+      @media (max-width: 600px) { justify-content: center; } 
+    }
             
     } // p
     
+  &.type-summary p {
+    
+    // The reading time.
+    small:last-child { @media (max-width: 600px) { display: none; } }
+    
+  }
+  
+  &.type-audio audio {
+    width: 100px;
+    position: absolute;
+    left: calc(15% - 25px);
+    top: calc(50% - 25px);
+  }
 } // .Style.ClassName
   
 {{ end }}

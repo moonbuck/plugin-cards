@@ -1,0 +1,22 @@
+{{/* 
+ 
+  Generates a summary preview card.
+  
+  Required parameters:
+    url:          The URL of the card's target.    
+    video:        The video URL for video cards.
+    
+  */}}
+
+{{- /* Check that a url and some video were provided. */ -}}
+{{ if (and .url .video) -}}
+  {{- with .video -}}
+  <video src="{{ . }}" playsinline autoplay muted loop></video>
+  {{- end -}}
+  <div>
+    {{- with .title }}<h3>{{ . }}</h3>{{ end -}}
+    {{- with .summary }}<p>{{ . | safeHTML }}</p>{{ end -}}    
+    <a href="{{ .url }}"></a>
+    {{- with .publish_date }}<p><small>{{ . }}</small></p>{{ end -}}
+  </div>
+{{- end }}

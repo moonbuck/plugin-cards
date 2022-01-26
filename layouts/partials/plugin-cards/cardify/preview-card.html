@@ -2,12 +2,13 @@
  
   Generates a preview card using the specified parameter values.
   
-  Parameters:
-  
-    url: The URL of the card's target.    
+  Required parameters:
+    url:          The URL of the card's target.    
     class:        The class name to assign to the wrapper.
     layout:       horizontal or vertical.
     type:         summary, video, or audio.
+    
+  Optional parameters:
     image:        The image URL for summary cards.
     audio:        The audio URL for audio cards.
     video:        The video URL for video cards.
@@ -16,29 +17,33 @@
   
   */}}
 
+{{- /* Check that the required parameters were provided. */ -}}
 {{- if (and .class (and .layout (and .url .type))) -}}
 
-<div class="{{ .class }}{{ if (eq .layout "horizontal") }} horizontal{{ end }}">
-  {{- if (and (eq .type "summary") .image) -}}
-  <img src="{{ .image }}" />
-  {{- else if (and (eq .type "audio") .audio) -}}
-  <audio src="{{ .audio }}" controls preload="metadata"></audio>
-  {{- else if (and (eq .type "video") .video) -}}
-  <video src="{{ .video }}" playsinline autoplay muted loop></video>
-  {{- end }}
-  <div>
-      {{ with .title }}<h3>{{ . }}</h3>{{ end }}
-      {{ with .summary }}<p>{{ . | safeHTML }}</p>{{ end }}
-      <a href="{{ .url }}"></a>
-      <p>
-      {{- with .publish_date -}}
-        <small>{{ . }}</small>
-      {{- end -}}
-      {{- if (and (eq .type "summary") .reading_time) -}}
-        <small>reading time {{ .reading_time }}</small>
-      {{- end -}}
-      </p>
-  </div>
+  {{- /* Resolve the class value. */ -}}
+  {{- $class := slice .class (printf "type-%s" .type) -}}
+  {{- if (eq .layout "horizontal") -}}
+  {{- $class = $class | append "horizontal" -}}
+  {{- end -}}
+  {{- $class = delimit $class " " -}}
+
+<div class="{{ $class }}">
+  
+  {{- $type_dir := "plugin-cards/cardify/card-types" -}}
+
+  {{- /* Check for audio card type. */ -}}
+  {{- if (eq "audio" .type) -}}  
+    {{- partial (path.Join $type_dir "audio-card.html") . -}}
+  
+  {{- /* Otherwise, check for video card type */ -}}
+  {{- else if (eq "video" .type) -}}  
+    {{- partial (path.Join $type_dir "video-card.html") . -}}
+  
+  {{- /* Otherwise go with a summary card type */ -}}
+  {{- else -}}
+    {{- partial (path.Join $type_dir "summary-card.html") . -}}  
+  {{- end -}}
+
 </div>
 
 {{- end }}
