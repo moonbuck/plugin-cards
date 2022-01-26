@@ -35,8 +35,9 @@
   {{- if .Config.Fingerprint }}{{ $style = $style | fingerprint }}{{ end -}}
   
   {{- print "\n" -}}
-<link rel="stylesheet" href="{{ $style.Permalink }}">
-
+<link rel="stylesheet" href="{{ $style.Permalink }}"
+{{- if .Config.Fingerprint }} integrity="{{ $style.Data.Integrity }}"{{ end -}}
+>
 
   {{- if $include_script -}}
     {{- $source_dir = "js/plugin-cards/" -}}
@@ -49,8 +50,10 @@
     {{- if .Config.Fingerprint }}{{ $script = $script | fingerprint }}{{ end -}}
     
     {{- print "\n" -}}
-<script src="{{ $script.Permalink }}"></script>
-  
+<script defer src="{{ $script.Permalink }}"
+{{- if .Config.Fingerprint }} integrity="{{ $script.Data.Integrity }}"{{ end -}}
+></script>
+
   {{- end -}}
 
 {{- end }}

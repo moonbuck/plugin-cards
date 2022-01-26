@@ -3,7 +3,7 @@
 
 # The plugin version (printed to HTML comment when the plugin loads).
 #
-Version = '5.0.7'
+Version = '5.0.8'
 
 # Whether to include HTML comments with debugging information
 #
