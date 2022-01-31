@@ -243,6 +243,8 @@
     
 {{- end -}}
 
-{{- $Parameters = merge $Parameters (dict (slice "TwitterOG" "Attributes") $Attributes) -}}
+{{- return $Attributes -}}
 
-{{- .Scratch.Set "plugin-cards.Parameters" $Parameters -}}
+{{- /* {{- $Parameters = merge $Parameters (dict (slice "TwitterOG" "Attributes") $Attributes) -}} */ -}}
+
+{{- /* {{- .Scratch.Set "plugin-cards.Parameters" $Parameters -}} */ -}}

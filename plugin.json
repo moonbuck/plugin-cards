@@ -1,5 +1,5 @@
 {
-  "version": "5.0.9",
+  "version": "5.0.10",
   "title": "Moondeer's Cards",
   "description": "Injects Twitter/Open Graph card meta data, structured data for search engines, and contains Javascript for generating preview cards for links inside list and post pages.",
   "includes": ["plugin-cards/injection.html"]

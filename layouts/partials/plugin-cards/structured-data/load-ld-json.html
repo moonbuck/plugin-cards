@@ -1,70 +1,58 @@
-{{- /*
-  Loads the JSON object into the provided scratch.
-  */ -}}
-{{- $scratch := newScratch -}}
+{{- $Parameters := (.Scratch.Get "plugin-cards.Parameters").StructuredData.Config -}}
 
-{{- $Parameters := (.Scratch.Get "plugin-cards.Parameters").StructuredData -}}
+{{- $JSON := dict "@context" "https://schema.org" -}}
 
-{{- /* 
-  Insert the context and type.
-  */ -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "@context" "https://schema.org" -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "@type" "BlogPosting" -}}
+{{- if (eq .Type "post") -}}
 
-{{- /* 
-  When an author name is available, generate a map for the
-  author with the name and, optionally, the URL.
-  */ -}}
-{{- with $Parameters.AuthorName -}}
-{{- $scratch.SetInMap "StructuredData.Author" "@type" "Person" -}}
-{{- $scratch.SetInMap "StructuredData.Author" "name" . -}}
-{{- with $Parameters.ProfileURL -}}
-{{- $scratch.SetInMap "StructuredData.Author" "url" . -}}
-{{- end -}}
-{{- end -}}
-{{- $author := $scratch.Get "StructuredData.Author" -}}
-{{- with $author -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "author" . -}}
-{{- end -}}
+  {{- $JSON = merge $JSON (dict "@type" "BlogPosting") -}}
+  
+  {{- /* 
+    When an author name is available, generate a map for the
+    author with the name and, optionally, the URL.
+    */ -}}
+  {{- with $Parameters.AuthorName -}}
+    {{- $author := dict "@type" "Person" "name" . -}}
 
-{{- /* 
-  Insert the published and modified dates.
-  */ -}}
-{{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
-{{- $datePublished := .PublishDate.Format $iso8601 -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "datePublished" $datePublished -}}
-{{- $dateModified := .Lastmod.Format $iso8601 -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "dateModified" $dateModified -}}
+    {{- with $Parameters.ProfileURL -}}
+      {{- $author = merge $author (dict "url" .) -}}
+    {{- end -}}
+    
+  {{- $JSON = merge $JSON (dict "author" $author) -}}
+  {{- end -}}
 
-{{- /* 
-  Insert the post title as the headline.
-  */ -}}
-{{- with .Title -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "headline" . -}}
-{{- end -}}
+  {{- /* Insert the published and modified dates. */ -}}
+  {{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
+  {{- $JSON = merge $JSON (dict
+    "datePublished" (.PublishDate.Format $iso8601)
+    "dateModified" (.Lastmod.Format $iso8601)
+    ) -}}
+    
+  {{- /* Insert the post title as the headline. */ -}}
+  {{- with .Title -}}
+    {{- $JSON = merge $JSON (dict "headline" .) -}}
+  {{- end -}}
 
-{{- /* 
-  Insert any images found in the page front matter. 
-  */ -}}
-{{- with .Params.images -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "image" (apply . "absURL" ".") -}}
-{{- end -}}
+  {{- /* Insert any images found in the page front matter. */ -}}
+  {{- with .Params.images -}}
+    {{- $JSON = merge $JSON (dict 
+      "image" (apply . "absURL" ".")
+      ) -}}
+  {{- end -}}
 
-{{- /* 
-  Insert the page summary for a description.
-  */ -}}
-{{- with .Summary -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "description" (. | plainify | chomp) -}}
+  {{- /* Insert the page summary for a description. */ -}}
+  {{- with .Summary -}}
+  {{- $JSON = merge $JSON (dict 
+    "description" (. | plainify | chomp)
+    ) -}}
+  {{- end -}}
+
+  {{- /* Insert the page's word count. */ -}}
+  {{- with .WordCount -}}
+    {{- $JSON = merge $JSON (dict 
+      "wordcount" .
+      ) -}}
+  {{- end -}}
+
 {{- end -}}
 
-{{- /* 
-  Insert the page's word count.
-  */ -}}
-{{- with .WordCount -}}
-{{- $scratch.SetInMap "StructuredData.JSON" "wordcount" . -}}
-{{- end -}}
-
-{{- /* Move the constructed JSON object under StructuredData. */ -}}
-{{- $JSON := $scratch.Get "StructuredData.JSON" -}}
-
-{{- .Scratch.Set "plugin-cards.StructuredData" $JSON -}}
+{{- return $JSON -}}

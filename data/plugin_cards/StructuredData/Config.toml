@@ -9,9 +9,9 @@ Enable = true
 # The value to set for author.name within the JSON object.
 # Defaults to site.Author.name or site.Params.Author.name when empty
 #
-AuthorName = ''
+# AuthorName = ''
 
 # The value to set for author.url within the JSON object.
 # Defaults to site.Author.profileurl when empty
 #
-ProfileURL = ''
+# ProfileURL = ''

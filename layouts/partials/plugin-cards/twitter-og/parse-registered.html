@@ -13,10 +13,8 @@
 
   {{- $text := index . 0 -}}  
   {{- $inner := substr $text 16 -4 -}}
-  {{- printf "\n<!-- inner = %#v -->\n" $inner | safeHTML -}}
   
   {{- $lines := split $inner "\n" -}}
-  {{- printf "\n<!-- lines = %#v -->\n" $lines | safeHTML -}}
   
   {{- range $lines -}}
 
@@ -29,9 +27,7 @@
     <!-- Correct for autolinking -->
     {{- $url_re := `[[][^]]+[]][(]([^)]+)[)]` -}}
     {{- $value := replaceRE $url_re "$1" (index $key_value 1) -}}
-    
-    {{- printf "\n<!-- %s = %s -->\n" $key $value | safeHTML -}}
-    
+        
     <!-- Load the entry into the map -->
     {{- $registered = merge $registered (dict $key $value) -}}
     
