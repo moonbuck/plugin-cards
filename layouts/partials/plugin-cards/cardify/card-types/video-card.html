@@ -14,7 +14,7 @@
   <video src="{{ . }}" playsinline autoplay muted loop></video>
   {{- end -}}
   <div>
-    {{- with .title }}<h3>{{ . }}</h3>{{ end -}}
+    {{- with .title }}<h3>{{ . | htmlUnescape | safeHTML }}</h3>{{ end -}}
     {{- with .summary }}<p>{{ . | safeHTML }}</p>{{ end -}}    
     <a href="{{ .url }}"></a>
     {{- with .publish_date }}<p><small>{{ . }}</small></p>{{ end -}}
