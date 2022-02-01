@@ -9,7 +9,9 @@
     {{- end -}}
     
     {{- if (isset . "@type") -}}
-  <script type="application/ld+json">{{ . | jsonify | safeJS }}</script>
+<script type="application/ld+json">
+{{ . | jsonify (dict "indent" "  ") | safeJS }}
+</script>
     {{- end -}}
   
   {{- end -}}
