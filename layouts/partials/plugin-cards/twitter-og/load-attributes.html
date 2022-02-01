@@ -16,9 +16,7 @@
 {{- $Attributes = merge $Attributes $Parameters.TwitterOG.Registered -}}
 
 {{/* Grab the Twitter username for the site and creator attributes. */}}
-{{- $site := false -}}
-{{- $creator := false -}}
-{{- with $Parameters.TwitterOG.Twitter.Username -}}
+{{- with $Parameters.TwitterOG.Twitter.Config.Username -}}
 {{- $handle := printf "@%s" . -}}
 {{- $Attributes = merge $Attributes (dict "site" $handle "creator" $handle) -}}
 {{- end -}}
