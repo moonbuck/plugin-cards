@@ -33,6 +33,7 @@ ReadingTime = 'color: #9091AB;'
 #
 PublishDate = 'color: #666;'
 
+# Values that appear in multiple places within the Sass template file.
 [Variables]
 
 # Width value for the border applied to card container.

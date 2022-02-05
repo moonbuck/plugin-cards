@@ -1,27 +1,27 @@
 @import "vendor/rfs";
 
-{{/* Template for injecting rfs include directives into a Sass block. */}}
-{{ define "rfs-wrap" }}
+{{- /* Template for injecting rfs include directives into a Sass block. */ -}}
+{{- define "rfs-wrap" -}}
 
-  {{/* Generate a slice with all the property names. */}}
-  {{ $edges := slice "top" "right" "bottom" "left" }}  
-  {{ $properties := 
+  {{- /* Generate a slice with all the property names. */ -}}
+  {{- $edges := slice "top" "right" "bottom" "left" -}}
+  {{- $properties := 
     slice "font-size" "padding" "margin"
     | append (apply $edges "printf" "padding-%s" ".") 
-    | append (apply $edges "printf" "margin-%s" ".") }}
+    | append (apply $edges "printf" "margin-%s" ".") -}}
 
-  {{/* Convert the slice for use within the regular expression. */}}
-  {{ $properties = delimit $properties "|" }}
+  {{- /* Convert the slice for use within the regular expression. */ -}}
+  {{- $properties = delimit $properties "|" -}}
   
-  {{/* Create the regular expression */}}
-  {{ $pattern := printf `(%s):\w*([^;]+)` $properties }}
+  {{- /* Create the regular expression */ -}}
+  {{- $pattern := printf `(%s):\w*([^;]+)` $properties -}}
   
-  {{/* Replace matches with the appropriate rfs include. */}}
-  {{ replaceRE $pattern `@include $1($2)` . }}
+  {{- /* Replace matches with the appropriate rfs include. */ -}}
+  {{- replaceRE $pattern `@include $1($2)` . -}}
   
-{{ end }}
+{{- end -}}
 
-{{ with (.Scratch.Get "plugin-cards.Parameters").Cardify }}
+{{- with (.Scratch.Get "plugin-cards.Parameters").Cardify -}}
 
 // Plugin parameter values
 $border-width:         {{ .Style.Variables.BorderWidth }};
@@ -76,20 +76,25 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
   div {
     flex: 1 1 auto;
     @include margin(.125rem .25rem);
+    @include padding(1rem);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    gap: .25rem; 
-    {{ with .Style.Body }}{{ template "rfs-wrap" . }}{{ end }}
+    gap: .25rem;
+    {{- with .Style.Body -}}
+    {{ template "rfs-wrap" . }}
+    {{- end -}}
     
-    /// The card title
+    // The card title
     h3 {
       padding: 0;
-      margin: 0;
+      @include margin(0 0 .5rem 0);
       @include font-size(1rem);
       line-height: 1.1;    
-      {{ with .Style.Title }}{{ template "rfs-wrap" . }}{{ end }}
+      {{- with .Style.Title -}}
+      {{ template "rfs-wrap" . }}
+      {{- end -}}
     }
 
     // The remaining card text (description and time/date/reading-time) 
@@ -101,7 +106,9 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
       
       /// Just the description
       &:not(&:last-child) {        
-        {{ with .Style.Text }}{{ template "rfs-wrap" . }}{{ end }}
+        {{- with .Style.Text -}}
+        {{ template "rfs-wrap" . }}
+        {{- end -}}
       }
       
       // Just the time/date/reading-time
@@ -121,7 +128,9 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
       // The publish date.
       small:first-child {
         color: #666;        
-        {{ with .Style.PublishDate }}{{ template "rfs-wrap" . }}{{ end }}   
+        {{- with .Style.PublishDate -}}
+        {{ template "rfs-wrap" . }}
+        {{- end -}}
       }
       
     } // p
@@ -144,7 +153,9 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
     // The reading time.
     p small:last-child {
       color: #9091AB;        
-      {{ with .Style.ReadingTime }}{{ template "rfs-wrap" . }}{{ end }}    
+      {{- with .Style.ReadingTime -}}
+      {{ template "rfs-wrap" . }}
+      {{- end -}}
     }  
     
   }
@@ -206,13 +217,13 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
     border-bottom-left-radius: $inner-border-radius;      
   }
   
-  /// The card title
+  // The card title
   h3 { @media (max-width: 600px) { text-align: center; } }
 
   // The remaining card text (description and time/date/reading-time) 
   p {    
     
-    /// Just the description
+    // Just the description
     &:not(&:last-child) { @media (max-width: 600px) { display: none; } }
     
     // Just the time/date/reading-time
@@ -237,4 +248,4 @@ $inner-border-radius:  calc(#{$border-radius} - #{$border-width});
   }
 } // .Style.ClassName
   
-{{ end }}
+{{- end }}
