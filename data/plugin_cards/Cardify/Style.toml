@@ -7,19 +7,15 @@ ClassName = 'cardify-card'
 
 # Sass block to apply to the card container.
 #
-Card = '''
-background-color: white;
-border-color: rgba(black, .125);
-border-style: solid;
-'''
+Card = ''
 
 # Sass block to apply to the card body.
 #
-Body = 'padding: 1rem;'
+Body = ''
 
 # Sass block to apply to the card title.
 #
-Title = 'margin-bottom: .5rem;'
+Title = ''
 
 # Sass block to apply to the card text.
 #
@@ -27,11 +23,11 @@ Text = ''
 
 # Sass block to apply to the reading time element.
 #
-ReadingTime = 'color: #9091AB;'
+ReadingTime = ''
 
 # Sass block to apply to the publish date element.
 #
-PublishDate = 'color: #666;'
+PublishDate = ''
 
 # Values that appear in multiple places within the Sass template file.
 [Variables]
