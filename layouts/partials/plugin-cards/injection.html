@@ -4,7 +4,7 @@
 {{- with .Scratch.Get "plugin-cards.Parameters" -}}
 
   {{- if .Config.DebugPrint -}}
-    {{- printf "\n<!--\nplugin-cards.Parameters:\n%s\n-->" (jsonify .) | safeHTML -}}
+    {{- printf "\n<!--\nplugin-cards.Parameters:\n%s\n-->" (. | jsonify (dict "prefix" " " "indent" "  ")) | safeHTML -}}
   {{- end -}}
 
   {{/* Insert the plugin version and build time */}}
