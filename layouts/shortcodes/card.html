@@ -19,77 +19,102 @@
   (.Get "url" | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1")
   (.Get 0 | replaceRE `^[[][^]]*[]][(]([^)]+)[)]` "$1") -}}
   
-{{- $layout := (cond .IsNamedParams
-  (.Get "layout")
-  (.Get 1)) | default "vertical" -}}
-  
-{{- $cross := cond .IsNamedParams 
-  (and (.Get "cross") (eq (.Get "cross") "true"))
-  (and (.Get 2) (eq (.Get 2) "cross")) -}}
+{{- $url_object := urls.Parse $url -}}
 
-{{/* Fetch the page. */}}
-{{- with resources.GetRemote $url -}}
-
-  {{/* Check for fetch error. */}}
-  {{- with .Err -}}
-    {{- warnf "%s" . -}}
+{{- if eq $url_object.Host "twitter.com" -}}
   
-    {{/* Fallback to an anchor tag */}}
-<a href="{{ $url | safeHTMLAttr }}">{{ $url | safeHTML }}</a>
-    
-  {{/* Otherwise, proceed with preview card generation. */}}
-  {{- else -}}
-  
-    {{/* Scrape the page for meta tag attributes. */}}
-    {{- $tags := partial "plugin-cards/cardify/scrape-page.html" . -}}
+  {{- $path := $url_object.Path -}}
+  {{- $regex := `^/([^/]+)/status/([0-9]+)` -}}
+  {{- $user := $path | replaceRE $regex "$1" -}}
+  {{- $id := $path | replaceRE $regex "$2" -}}
+  {{- $dnt := .Page.Site.Config.Privacy.Twitter.EnableDNT -}}
 
-    {{- with $tags.description -}}  
-    {{- $tags = merge $tags (dict "summary" .) -}}
-    {{- end -}}
-    
-    {{- with $tags.reading_time -}}  
-    {{- $reading_time := printf "%v minute" . -}}
-    {{- if (gt (int .) 1) -}}
-    {{- $reading_time = printf "%ss" $reading_time -}}
-    {{- end -}}  
-    {{- $tags = merge $tags (dict "reading_time" $reading_time) -}}
-    {{- end -}}
-    
-    {{- with $tags.published_time -}}
-    {{ $publish_date := time.Format "3:04 PM • Jan 2, 2006" . }}
-    {{- $tags = merge $tags (dict "publish_date" $publish_date) -}}
-    {{- end -}}
-    
-    {{/* Resolve the card type */}}
-    {{- $type := "summary" -}}
-    {{- if $tags.video }}{{ $type = "video" -}}
-    {{- else if $tags.audio }}{{ $type = "audio" }}{{ end -}}
-    
-    {{- $params := dict
-      "type" $type
-      "layout" $layout
-      "class" ($.Page.Scratch.Get "plugin-cards.Parameters").Cardify.Style.ClassName
-      -}}
-    {{- $params := merge $tags $params -}}
-    
-    {{/* 
-      If flagged for cross posting, drop an anchor 
-      and comment out the generated preview card 
-      */}}
-    {{- if $cross -}}
-    
-      <a class="cardify" href="{{ $url | safeHTMLAttr }}">{{ $url | safeHTML }}
-        {{- printf "<!--" | safeHTML -}}
-        {{- partial "plugin-cards/cardify/preview-card.html" $params -}}
-        {{- printf "-->" | safeHTML -}} </a>
+  {{- $url = printf "https://twitter.com/%v/status/%v" $user $id -}}
+  {{- $query := querify "url" $url "dnt" $dnt "hide_thread" true -}}
+  {{- $request := printf "https://publish.twitter.com/oembed?%s" $query -}}
+  
+  {{- $json := getJSON $request -}}
+  
+  <a class="cardify" href="{{ $url | safeHTMLAttr }}">{{ $url | safeHTML }}
+    {{- printf "<!--" | safeHTML -}}
+    {{- $json.html | safeHTML -}}
+    {{- printf "-->" | safeHTML -}} </a>
       
-    {{/* Otherwise just drop the generated preview card */}}
+{{- else -}}
+  
+  {{- $layout := (cond .IsNamedParams
+    (.Get "layout")
+    (.Get 1)) | default "vertical" -}}
+    
+  {{- $cross := cond .IsNamedParams 
+    (and (.Get "cross") (eq (.Get "cross") "true"))
+    (and (.Get 2) (eq (.Get 2) "cross")) -}}
+  
+  {{/* Fetch the page. */}}
+  {{- with resources.GetRemote $url -}}
+  
+    {{/* Check for fetch error. */}}
+    {{- with .Err -}}
+      {{- warnf "%s" . -}}
+    
+      {{/* Fallback to an anchor tag */}}
+  <a href="{{ $url | safeHTMLAttr }}">{{ $url | safeHTML }}</a>
+      
+    {{/* Otherwise, proceed with preview card generation. */}}
     {{- else -}}
     
-      {{- partial "plugin-cards/cardify/preview-card.html" $params -}}
-    
-    {{- end -}}
-     
-  {{- end -}} {{/* with .Err */}}
+      {{/* Scrape the page for meta tag attributes. */}}
+      {{- $tags := partial "plugin-cards/cardify/scrape-page.html" . -}}
+  
+      {{- with $tags.description -}}  
+      {{- $tags = merge $tags (dict "summary" .) -}}
+      {{- end -}}
+      
+      {{- with $tags.reading_time -}}  
+      {{- $reading_time := printf "%v minute" . -}}
+      {{- if (gt (int .) 1) -}}
+      {{- $reading_time = printf "%ss" $reading_time -}}
+      {{- end -}}  
+      {{- $tags = merge $tags (dict "reading_time" $reading_time) -}}
+      {{- end -}}
+      
+      {{- with $tags.published_time -}}
+      {{ $publish_date := time.Format "3:04 PM • Jan 2, 2006" . }}
+      {{- $tags = merge $tags (dict "publish_date" $publish_date) -}}
+      {{- end -}}
+      
+      {{/* Resolve the card type */}}
+      {{- $type := "summary" -}}
+      {{- if $tags.video }}{{ $type = "video" -}}
+      {{- else if $tags.audio }}{{ $type = "audio" }}{{ end -}}
+      
+      {{- $params := dict
+        "type" $type
+        "layout" $layout
+        "class" ($.Page.Scratch.Get "plugin-cards.Parameters").Cardify.Style.ClassName
+        -}}
+      {{- $params := merge $tags $params -}}
+      
+      {{/* 
+        If flagged for cross posting, drop an anchor 
+        and comment out the generated preview card 
+        */}}
+      {{- if $cross -}}
+      
+        <a class="cardify" href="{{ $url | safeHTMLAttr }}">{{ $url | safeHTML }}
+          {{- printf "<!--" | safeHTML -}}
+          {{- partial "plugin-cards/cardify/preview-card.html" $params -}}
+          {{- printf "-->" | safeHTML -}} </a>
+        
+      {{/* Otherwise just drop the generated preview card */}}
+      {{- else -}}
+      
+        {{- partial "plugin-cards/cardify/preview-card.html" $params -}}
+      
+      {{- end -}}
+       
+    {{- end -}} {{/* with .Err */}}
+  
+  {{- end -}} {{/* with resources.GetRemote $url */}}
 
-{{- end }} {{/* with resources.GetRemote $url */}}
+{{- end }} {{/* if eq $url_object.Host "twitter.com" */}}

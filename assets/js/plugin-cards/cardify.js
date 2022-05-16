@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded',() => {
   // Fetch and process any eligible links with the query parameter.
   document.querySelectorAll('a.cardify').forEach(link => {
     link.outerHTML = link.childNodes[1].textContent;
+    twttr?.widgets.load();
     })
 });
 
